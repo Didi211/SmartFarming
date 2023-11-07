@@ -1,13 +1,15 @@
+import edgeGatewayService from "../services/edge-gateway-service.js";
 import mockPersistanceService from "../services/mock/mock-persistance-service.js";
+import persistenceService from "../services/persistence-service.js";
 import deviceValidator from "../utils/device-validator.js";
 
 const getAllDevices = async (type) => { 
     type = type.toUpperCase();
-    return mockPersistanceService.getAllDevices(type);
+    return persistenceService.getDevices(type);
 }
 
 const get = async (id) => { 
-    return mockPersistanceService.getDevice(id);
+    return persistenceService.getDevice(id);
 }
 
 const add = async (device) => { 
@@ -19,13 +21,11 @@ const add = async (device) => {
             details: result
         };
     }
-    result = mockPersistanceService.addDevice(device);
+    result = persistenceService.addDevice(device);
     if (result) { 
-        console.log("Updating edge system.")
         // propagate the call to the edge 
-            // to analytics
-            // to edgex
-    }
+        edgeGatewayService.addDevice(result);
+    }   
     return result;
 }
 
@@ -38,22 +38,20 @@ const update = async (id, device) => {
             details: result
         };
     }
-    result = await mockPersistanceService.updateDevice(device)
+    result = await persistenceService.updateDevice(device);
+    // other services will handle error and throw exceptions if necesesary
     if (result) { 
         // propagate call to the edge
-                // to analytics
-                // to edgex
+        edgeGatewayService.updateDevice(result);
     }
     return result;
 }
 
 const remove = async (id) => { 
-    let result = await mockPersistanceService.removeDevice(id); // throws ex if object does not exist
+    let result = await persistenceService.removeDevice(id); // throws ex if object does not exist
     if (result) { 
-        console.log('Updating edge system.');
         // propagate call to the edge
-                    // to analytics
-                    // to edgex
+        edgeGatewayService.removeDevice(id);
     }
 }
 

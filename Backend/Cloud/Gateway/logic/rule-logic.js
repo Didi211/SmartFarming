@@ -1,8 +1,10 @@
+import edgeGatewayService from "../services/edge-gateway-service.js";
 import mockPersistanceService from "../services/mock/mock-persistance-service.js"
+import persistenceService from "../services/persistence-service.js";
 import ruleValidator from "../utils/rule-validator.js";
 
 const getRuleFromDeviceId = async (id) => { 
-    return mockPersistanceService.getRuleFromDeviceId(id);
+    return persistenceService.getRuleFromDeviceId(id);
 }
 
 const add = async (rule) => { 
@@ -14,22 +16,16 @@ const add = async (rule) => {
             details: result
         };
     }
-    result = await mockPersistanceService.addRule(rule);
+    result = await persistenceService.addRule(rule);
     if (result) { 
-        console.log("Updating edge system.")
-        // propagate the call to the edge 
-            // to analytics
-            // to edgex
+        edgeGatewayService.addRule(result);
     }
     return result;
 }
 
 const update = async (id, rule) => { 
-
     // update rule - only trigger level or name can be updated
     // cannot reconnect different devices 
-    // prapagate call to the edge
-        // to analytics
 
     let result = ruleValidator.validateForUpdate(id, rule);
     if (result != "") { 
@@ -39,22 +35,19 @@ const update = async (id, rule) => {
             details: result
         };
     }
-    result = await mockPersistanceService.updateRule(rule)
+    result = await persistenceService.updateRule(rule)
     if (result) { 
         // propagate call to the edge
-                // to analytics
-                // to edgex
+        edgeGatewayService.updateRule(result);
     }
     return result;
 }
 
 const remove = async (id) => { 
-    let result = await mockPersistanceService.removeRule(id); // throws ex if object does not exist
+    let result = await persistenceService.removeRule(id); // throws ex if object does not exist
     if (result) { 
-        console.log('Updating edge system.');
         // propagate call to the edge
-                    // to analytics
-                    // to edgex
+        edgeGatewayService.removeRule(id);
     }
 }
 
