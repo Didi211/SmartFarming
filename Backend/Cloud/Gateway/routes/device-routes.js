@@ -4,7 +4,7 @@ import deviceController from '../controllers/device-controller.js'
 import ruleController from '../controllers/rule-controller.js';
 
 
-// calling this api from frontend
+// calling all this api from frontend
 // devices
 router.get('/', deviceController.getAll);
 router.get('/:id', deviceController.getById);
