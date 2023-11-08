@@ -18,10 +18,6 @@ const updateRule = async (rule) => { return true }
 
 const removeRule = async (id) => { return true }
 
-const saveSensorData = async (data) => { return true }
-
-const saveAlert = async (alert) => { return true } 
-
 export default { 
     getDevices,
     getDevice,

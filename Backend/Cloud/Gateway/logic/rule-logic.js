@@ -1,10 +1,9 @@
 import edgeGatewayService from "../services/edge-gateway-service.js";
-import mockPersistanceService from "../services/mock/mock-persistance-service.js"
-import persistenceService from "../services/persistence-service.js";
+import deviceManagementService from "../services/device-management-service.js";
 import ruleValidator from "../utils/rule-validator.js";
 
 const getRuleFromDeviceId = async (id) => { 
-    return persistenceService.getRuleFromDeviceId(id);
+    return deviceManagementService.getRuleFromDeviceId(id);
 }
 
 const add = async (rule) => { 
@@ -16,7 +15,7 @@ const add = async (rule) => {
             details: result
         };
     }
-    result = await persistenceService.addRule(rule);
+    result = await deviceManagementService.addRule(rule);
     if (result) { 
         edgeGatewayService.addRule(result);
     }
@@ -36,7 +35,7 @@ const update = async (id, rule) => {
             details: result
         };
     }
-    result = await persistenceService.updateRule(rule)
+    result = await deviceManagementService.updateRule(rule)
     if (result) { 
         // propagate call to the edge
         edgeGatewayService.updateRule(result);
@@ -45,7 +44,7 @@ const update = async (id, rule) => {
 }
 
 const remove = async (id) => { 
-    let result = await persistenceService.removeRule(id); // throws ex if object does not exist
+    let result = await deviceManagementService.removeRule(id); // throws ex if object does not exist
     if (result) { 
         // propagate call to the edge
         edgeGatewayService.removeRule(id);
