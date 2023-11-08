@@ -2,6 +2,7 @@ import service from "../services/notification-service.js";
 
 const add = async (notification) => { 
     await service.saveNotification(notification);
+    // push notification to the android app
 }
 
 const getAll = async () => { 

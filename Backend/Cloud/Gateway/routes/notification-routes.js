@@ -1,8 +1,11 @@
 import Router from 'express';
 const router = Router();
-import notificationController from '../controllers/notification-controller.js';
+import controller from '../controllers/notification-controller.js';
 
-router.post('/', notificationController.add);
-router.get('/',notificationController.getAll);
-router.put('/:id', notificationController.markRead);
-router.delete('/:id', notificationController.remove);
+// calling this api from edge
+router.post('/', controller.add);
+
+// calling this api from frontend
+router.get('/',controller.getAll);
+router.put('/:id', controller.markRead);
+router.delete('/:id', controller.remove);

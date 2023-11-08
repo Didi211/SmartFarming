@@ -1,3 +1,4 @@
+// all communication goes via MQTT
 const addDevice = async (device) => { }
 
 const updateDevice = async (device) => { }
