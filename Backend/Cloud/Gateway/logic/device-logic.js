@@ -4,7 +4,7 @@ import persistenceService from "../services/persistence-service.js";
 import deviceValidator from "../utils/device-validator.js";
 
 const getAllDevices = async (type) => { 
-    type = type.toUpperCase();
+    type = type?.toUpperCase();
     return persistenceService.getDevices(type);
 }
 

@@ -26,6 +26,7 @@ const add = async (rule) => {
 const update = async (id, rule) => { 
     // update rule - only trigger level or name can be updated
     // cannot reconnect different devices 
+    // will be checked on persistence service
 
     let result = ruleValidator.validateForUpdate(id, rule);
     if (result != "") { 
