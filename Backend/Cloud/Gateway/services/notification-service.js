@@ -1,7 +1,7 @@
 
 const saveNotification = async (alert) => { return true } 
 
-const getAllNotifications = async () => { return [] }
+const getAllNotifications = async (userId) => { return [] }
 
 const removeNotification = async (id) => { return true }
 

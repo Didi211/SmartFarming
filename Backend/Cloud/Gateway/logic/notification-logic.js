@@ -5,16 +5,16 @@ const add = async (notification) => {
     // push notification to the android app
 }
 
-const getAll = async () => { 
-    await service.getAllNotifications();
+const getAll = async (userId) => { 
+    return await service.getAllNotifications(userId);
 }
 
 const markRead = async (id) => {
-    service.markRead(id);
+    await service.markRead(id);
 }
 
 const remove = async (id) => {
-    service.removeNotification(id);
+    await service.removeNotification(id);
 }
 
 
