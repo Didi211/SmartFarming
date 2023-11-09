@@ -7,4 +7,6 @@ router.post('/register',controller.register);
 router.post('/login', controller.login);
 
 // this api calls edge for MQTT connection
-router.post('/token', controller.fetchMqttToken);
+router.post('/fetch-token', controller.fetchMqttToken);
+
+export default router
