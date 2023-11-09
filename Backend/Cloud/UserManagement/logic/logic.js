@@ -2,7 +2,8 @@ import validator from '../utils/user-validator.js';
 import * as firebaseAuth from 'firebase/auth';
 import * as firestore from 'firebase/firestore';
 import { firebaseInstance } from '../firebase-config.js';
-
+import { toUserDto } from '../utils/dto-mapper.js';
+import { uuid } from 'uuidv4';
 
 const auth = firebaseAuth.getAuth(firebaseInstance);
 const db = firestore.getFirestore(firebaseInstance);
@@ -31,8 +32,9 @@ const login = async (email, password) => {
         firestore.where('authId', "==", result.user.uid)
     );
     let querySnapshot = await firestore.getDocs(query);
+    let id = querySnapshot.docs[0].id;
     let user = querySnapshot.docs[0].data();
-    return user;
+    return toUserDto(id, user);
 }
 
 const register = async (user) => { 
@@ -49,14 +51,14 @@ const register = async (user) => {
     }
     
     let result = await firebaseAuth.createUserWithEmailAndPassword(auth, user.email, user.password);
-    let userDb = { 
+    let userData = { 
         authId: result.user.uid,
         email: user.email,
         name: user.name,
-        mqttToken: result.user.email
+        mqttToken: uuid()
     }
-    await firestore.addDoc(usersRef, userDb)
-    return userDb;
+    let id = (await firestore.addDoc(usersRef, userData)).id;
+    return toUserDto(id, userData);
 }
 
 const fetchMqttToken = async (email) => { 
@@ -70,8 +72,6 @@ const fetchMqttToken = async (email) => {
     let user = querySnapshot.docs[0].data();
     return user.mqttToken;
 }
-
-
 
 export default { 
     register,
