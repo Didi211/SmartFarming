@@ -12,9 +12,9 @@ const register = async (req, res) => {
 
 const login = async (req, res) => { 
     try { 
-        let username = req.body?.username;
+        let email = req.body?.email;
         let password = req.body?.password;
-        let result = await logic.login(username, password);
+        let result = await logic.login(email, password);
         res.status(200).send(result);
     }
     catch(error) { 
@@ -25,9 +25,8 @@ const login = async (req, res) => {
 const fetchMqttToken = async (req, res) => { 
     
     try { 
-        let username = req.body?.username;
-        let password = req.body?.password;
-        let result = await logic.fetchMqttToken(username, password);
+        let email = req.body?.email;
+        let result = await logic.fetchMqttToken(email);
         res.status(200).send(result);
     }
     catch(error) { 
