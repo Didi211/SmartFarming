@@ -1,4 +1,4 @@
-import logic from '../logic/user-management-logic.js';
+import logic from "../logic/logic.js";
 
 const register = async (req, res) => { 
     try { 
@@ -6,6 +6,7 @@ const register = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
+        console.log(error);
         res.status(500).send(error);
     }
 }
@@ -18,6 +19,7 @@ const login = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
+        console.log(error);
         res.status(500).send(error);
     }
 }
@@ -34,8 +36,8 @@ const fetchMqttToken = async (req, res) => {
     }
 }
 
-export default {
-    register,
+export default { 
     login,
+    register,
     fetchMqttToken
 }
