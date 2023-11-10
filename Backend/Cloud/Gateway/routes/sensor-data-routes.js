@@ -8,3 +8,5 @@ router.post('/sync/:id', controller.saveData);
 router.get('/data-hours',controller.getHourlyHistory);
 router.get('/data-months',controller.getMonthlyHistory);
 router.get('/data-years',controller.getYearlyHistory);
+
+export default router;

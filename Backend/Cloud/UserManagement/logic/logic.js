@@ -69,8 +69,14 @@ const fetchMqttToken = async (email) => {
         firestore.where('email', "==", email)
     );
     let querySnapshot = await firestore.getDocs(query);
-    let user = querySnapshot.docs[0].data();
-    return user.mqttToken;
+    if (querySnapshot.docs.length > 0) { 
+        let user = querySnapshot.docs[0].data();
+        return user.mqttToken;
+    }
+    throw { 
+        status: 400,
+        message: `User with email [${email}] not found.`
+    }
 }
 
 export default { 
