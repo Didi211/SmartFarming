@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  cloud-gateway:
+    image: gateway
+    build:
+      context: Cloud/Gateway
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4000:4000
+    env_file:
+      - Cloud/Gateway/gateway.env
+
+  user-management:
+    image: usermanagement
+    build:
+      context: Cloud/UserManagement
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+    - 3000:3000
+    env_file:
+    - Cloud/UserManagement/user-management.env
+      
