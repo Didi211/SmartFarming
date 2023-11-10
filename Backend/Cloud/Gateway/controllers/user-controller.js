@@ -1,13 +1,12 @@
 import logic from '../logic/user-management-logic.js';
-
+import { handleApiError } from '../utils/error-handler.js';
 const register = async (req, res) => { 
     try { 
         let result = await logic.register(req.body);
         res.status(200).send(result);
     }
     catch(error) { 
-        error = JSON.parse(error);
-        res.status(error.status || 500).send(error);
+        handleApiError(res, error);
     }
 }
 
@@ -19,8 +18,7 @@ const login = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        error = JSON.parse(error);
-        res.status(error.status || 500).send(error);
+        handleApiError(res, error);
     }
 }
 
@@ -32,10 +30,11 @@ const fetchMqttToken = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        error = JSON.parse(error);
-        res.status(error.status || 500).send(error);
+        handleApiError(res, error);
     }
 }
+
+
 
 export default {
     register,
