@@ -1,4 +1,7 @@
 import { Axios } from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config({path: 'gateway.env'});
 
 const sensorDataUrl = process.env.SENSOR_DATA_SERVICE_URL;
 const deviceManagementUrl = process.env.DEVICE_MANAGEMENT_SERVICE_URL;
@@ -16,11 +19,16 @@ let notificationsAxios = new Axios({
     baseURL: `${notificationsAUrl}`
 })
 let usersAxios = new Axios({
-    baseURL: `${usersUrl}`
+    baseURL: `${usersUrl}`,
+    withCredentials: false,
+    headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+    }
 })
 
 
-export default { 
+export  { 
     sensorDataAxios, 
     deviceManagementAxios,
     notificationsAxios,

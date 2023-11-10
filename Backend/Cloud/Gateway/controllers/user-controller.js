@@ -6,7 +6,8 @@ const register = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        res.status(500).send(error);
+        error = JSON.parse(error);
+        res.status(error.status || 500).send(error);
     }
 }
 
@@ -18,7 +19,8 @@ const login = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        res.status(500).send(error);
+        error = JSON.parse(error);
+        res.status(error.status || 500).send(error);
     }
 }
 
@@ -30,7 +32,8 @@ const fetchMqttToken = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        res.status(500).send(error);
+        error = JSON.parse(error);
+        res.status(error.status || 500).send(error);
     }
 }
 

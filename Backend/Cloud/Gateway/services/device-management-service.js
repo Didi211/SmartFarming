@@ -30,7 +30,5 @@ export default {
     updateRule,
     removeRule,
 
-    saveSensorData, 
-    saveAlert
 }
 
