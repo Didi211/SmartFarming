@@ -1,4 +1,5 @@
 import logic from "../logic/notification-logic.js"
+import { handleApiError } from "../utils/error-handler.js";
 
 const add = async (req, res) => { 
     let notification = req.body;
@@ -7,12 +8,12 @@ const add = async (req, res) => {
         res.status(204).send();
     }
     catch(error) { 
-        res.status(500).send(error);
+        handleApiError(res, error);
     }
 }
 
 const getAll = async (req, res) => { 
-    let userId = req.body.params.userId;
+    let userId = req.params.id;
     try { 
         let notifications = await logic.getAll(userId);
         if (notifications.length > 0) { 
@@ -23,7 +24,7 @@ const getAll = async (req, res) => {
         }
     }
     catch(error) { 
-        res.status(500).send(error);
+       handleApiError(res, error);
     }
 }
 
@@ -34,7 +35,7 @@ const markRead = async (req, res) => {
         res.status(204).send();
     }
     catch(error) { 
-        res.status(500).send(error);
+        handleApiError(res, error);
     }
 }
 
@@ -45,7 +46,18 @@ const remove = async (req, res) => {
         res.status(204).send();
     }
     catch(error) { 
-        res.status(500).send(error);
+        handleApiError(res, error);
+    }
+}
+
+const hasUnread = async (req, res) => { 
+    let userId = req.params;
+    try { 
+        await logic.hasUnread(userId);
+        res.status(204).send();
+    }
+    catch(error) { 
+        handleApiError(res, error);
     }
 }
 
@@ -53,5 +65,6 @@ export default {
     add,
     getAll,
     markRead,
-    remove
+    remove,
+    hasUnread
 }

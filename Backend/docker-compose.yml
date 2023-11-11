@@ -24,4 +24,15 @@ services:
     - 3000:3000
     env_file:
     - Cloud/UserManagement/user-management.env
-      
+
+  notification:
+    image: notification
+    build:
+      context: Cloud/Notification
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+    - 3001:3001
+    env_file:
+    - Cloud/Notification/notification.env     

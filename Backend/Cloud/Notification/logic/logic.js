@@ -54,7 +54,6 @@ const removeNotification = async (id) => {
 const hasUnreadNotifications = async (id) => { 
     try {
         let unreadNotifications = await Notification.exists({isRead: false, userId: id});
-        console.log(unreadNotifications);
         return unreadNotifications != null;
     }
     catch(error) { 
