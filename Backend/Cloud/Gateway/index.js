@@ -25,5 +25,5 @@ app.use('/api/sensor-data', sensorDataRoutes);
 
 const port = process.env.PORT;
 app.listen(port, () => { 
-    console.log(`Server is listening on port ${port}`);
+    console.log(`Gateway Service is listening on port ${port}`);
 })

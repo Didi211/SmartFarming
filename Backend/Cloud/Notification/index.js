@@ -1,0 +1,18 @@
+import cors from 'cors';
+import express, { json, urlencoded } from 'express';
+import dotenv from 'dotenv'
+import routes from './routes/routes.js'
+
+const app = express();
+dotenv.config({path: 'notification.env'});
+
+app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(cors());
+
+app.use('/api/notifications', routes);
+
+const port = process.env.PORT;
+app.listen(port, () => { 
+    console.log(`Notification Service is running on port ${port}`);
+});
