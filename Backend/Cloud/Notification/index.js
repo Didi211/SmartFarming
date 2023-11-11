@@ -1,10 +1,16 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import routes from './routes/routes.js'
 
-const app = express();
 dotenv.config({path: 'notification.env'});
+
+
+import mongoClient from './mongodb-config.js';
+
+const app = express();
+ 
+await mongoClient.config();
 
 app.use(json());
 app.use(urlencoded({ extended: false }));
