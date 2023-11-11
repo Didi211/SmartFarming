@@ -4,8 +4,8 @@ import { handleApiError } from '../utils/error-handler.js';
 const add = async (req, res) => { 
     let notification = req.body;
     try { 
-        await logic.addNotification(notification);
-        res.status(204).send();
+        let result = await logic.addNotification(notification);
+        res.status(200).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -52,7 +52,8 @@ const remove = async (req, res) => {
 const hasUnread = async (req, res) => { 
     let userId = req.params.id;
     try { 
-        return await logic.hasUnread(userId);
+        let result = await logic.hasUnreadNotifications(userId);
+        res.status(200).send(result);
         
     }
     catch(error) { 
