@@ -1,4 +1,5 @@
 import logic from "../logic/logic.js";
+import { handleApiError } from "../utils/error-handler.js";
 
 const register = async (req, res) => { 
     try { 
@@ -6,8 +7,7 @@ const register = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        console.log(error);
-        res.status(500).send(error);
+        handleApiError(res, error);
     }
 }
 
@@ -19,8 +19,7 @@ const login = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        console.log(error);
-        res.status(500).send(error);
+        handleApiError(res, error);
     }
 }
 
@@ -32,13 +31,25 @@ const fetchMqttToken = async (req, res) => {
         res.status(200).send(result);
     }
     catch(error) { 
-        console.log(error);
-        res.status(error.status || 500).send(error);
+        handleApiError(res, error);
+    }
+}
+
+const isUserExisting = async (req, res) => { 
+    
+    try { 
+        let userId = req.params.id;
+        let result = await logic.isUserExisting(userId);
+        res.status(200).send(result);
+    }
+    catch(error) { 
+        handleApiError(res, error);
     }
 }
 
 export default { 
     login,
     register,
-    fetchMqttToken
+    fetchMqttToken,
+    isUserExisting
 }

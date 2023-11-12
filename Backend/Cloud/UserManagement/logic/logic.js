@@ -8,7 +8,6 @@ import { uuid } from 'uuidv4';
 const auth = firebaseAuth.getAuth(firebaseInstance);
 const db = firestore.getFirestore(firebaseInstance);
 const usersRef = firestore.collection(db, "users");
-const userCodeRef = firestore.collection(db, "userCode");
 
 const login = async (email, password) => { 
     try { 
@@ -79,8 +78,15 @@ const fetchMqttToken = async (email) => {
     }
 }
 
+const isUserExisting = async (userId) => {
+    let docRef = firestore.doc(db, usersRef.id, userId);
+    let docSnap = await firestore.getDoc(docRef);
+    return docSnap.exists();
+}
+
 export default { 
     register,
     login,
-    fetchMqttToken
+    fetchMqttToken,
+    isUserExisting
 }

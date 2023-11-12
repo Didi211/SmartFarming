@@ -29,7 +29,7 @@ const getAll = async (req, res) => {
 }
 
 const markRead = async (req, res) => {
-    let id = req.params;
+    let id = req.params.id;
     try { 
         await logic.markRead(id);
         res.status(204).send();
@@ -40,7 +40,7 @@ const markRead = async (req, res) => {
 }
 
 const remove = async (req, res) => {
-    let id = req.params;
+    let id = req.params.id;
     try { 
         await logic.remove(id);
         res.status(204).send();
@@ -51,12 +51,19 @@ const remove = async (req, res) => {
 }
 
 const hasUnread = async (req, res) => { 
-    let userId = req.params;
+    let userId = req.params.id;
     try { 
-        await logic.hasUnread(userId);
-        res.status(204).send();
+        let result = await logic.hasUnread(userId);
+        console.log("result",result)
+        if (result.status == 200) { 
+            res.status(200).send(result);
+        }
+        else if (result.status == 400) { 
+            res.status(400).send(result);
+        }
     }
     catch(error) { 
+        console.log("wrong user throw", error)
         handleApiError(res, error);
     }
 }

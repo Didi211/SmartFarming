@@ -29,12 +29,18 @@ const getAll = async (userId) => {
 
 const markRead = async (id) => { 
     try {
-        await Notification.findById(id).updateOne({isUnread: false});
+        let result = await Notification.findByIdAndUpdate(id, { isRead: true});
+        if (!result) { 
+            throw { 
+                status: 400,
+                message: `Notification with ID [${id}] not found in database.`
+            }
+        }
     }
     catch(error) { 
         throw { 
-            status: 500,
-            message: error
+            status: error.status || 500,
+            message: error.message || error
         }
     }
 }
