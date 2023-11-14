@@ -56,10 +56,9 @@ const isUserExisting = async (req, res) => {
     try { 
         let userId = req.params.id;
         let result = await logic.isUserExisting(userId);
-        console.log(result);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
-            "User existing",
+            `User ${!result ? 'not' : ''} existing`,
             result
         );
         res.status(responseDto.status).send(responseDto);

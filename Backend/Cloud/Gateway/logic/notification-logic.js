@@ -14,11 +14,8 @@ const add = async (notification) => {
 const getAll = async (userId) => { 
     await isUserExisting(userId);
     let response = await notificationsAxios.get(`/user/${userId}`);
-    if (response.status == 200 ) { 
-        return JSON.parse(response.data);
-    }
-    if (response.status == 204) { 
-        return [];
+    if (response.status == 200 || response.status == 204 ) { 
+        return response.data;
     }
     else { 
         throw response.data;
@@ -27,7 +24,7 @@ const getAll = async (userId) => {
 
 const markRead = async (id) => {
     let response = await notificationsAxios.put(`/${id}/mark-read`);
-    if (response.status == 204) { 
+    if (response.status == 200) { 
         return response.data;
     }
     else { 
@@ -37,7 +34,7 @@ const markRead = async (id) => {
 
 const remove = async (id) => {
     let response = await notificationsAxios.delete(`/${id}`);
-    if (response.status == 204) { 
+    if (response.status == 200) { 
         return response.data;
     }
     else { 
@@ -48,26 +45,22 @@ const remove = async (id) => {
 const hasUnread = async (userId) => { 
     await isUserExisting(userId);
     let response = await notificationsAxios.get(`/user/${userId}/has-unread`);
-    console.log("resppnse:", response);
-    if (response.status == 200 || response.status == 400) { 
-        return { 
-            status: response.status,
-            data: response.data
-        }
+    if (response.status == 200) { 
+        return response.data;
     }
     else { 
-        console.log(response);
         throw response.data;
     }
 }
 
 const isUserExisting = async (userId) => { 
     let userExistsResult = await usersAxios.get(`/${userId}/exists`);
-    let userExists = JSON.parse(userExistsResult.data); // returns boolean as string - must parse
+    let userExists = (JSON.parse(userExistsResult.data)).details; // returns boolean as string - must parse
     if (!userExists) {  // JS sees "false" as true - string value with length > 0 is true
         throw { 
             status: 400,
-            message: `User with id [${userId}] not found in database.`
+            message: 'Query error',
+            details: `User with id [${userId}] not found in database.`
         }
     }
 }

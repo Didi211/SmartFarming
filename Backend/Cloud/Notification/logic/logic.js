@@ -9,7 +9,8 @@ const addNotification = async (notification) => {
     catch(error) { 
         throw { 
             status: 500,
-            message: error
+            message: 'MongoDB error',
+            details: error
         };
     }
 }
@@ -17,12 +18,14 @@ const addNotification = async (notification) => {
 const getAll = async (userId) => { 
     try { 
         let result = await Notification.find({userId: userId});
+        console.log(result);
         return notificationMapper.toNotificationsDto(result);
     }
     catch(error) { 
         throw { 
             status: 400,
-            message: error
+            message: 'MongoDB error',
+            details: error
         };
     }
 }
@@ -33,14 +36,16 @@ const markRead = async (id) => {
         if (!result) { 
             throw { 
                 status: 400,
-                message: `Notification with ID [${id}] not found in database.`
+                message: 'MongoDB error',
+                details: `Notification with ID [${id}] not found in database.`
             }
         }
     }
     catch(error) { 
         throw { 
-            status: error.status || 500,
-            message: error.message || error
+            status: error.status ?? 500,
+            message: error.message,
+            details: error.details ?? error
         }
     }
 }
@@ -52,7 +57,8 @@ const removeNotification = async (id) => {
     catch(error) { 
         throw { 
             status: 500,
-            message: error
+            message: 'MongoDB error',
+            details: error
         }
     }
 }
@@ -65,7 +71,8 @@ const hasUnreadNotifications = async (id) => {
     catch(error) { 
         throw { 
             status: 500,
-            message: error
+            message: 'MongoDB error',
+            details: error
         }
     }
 }

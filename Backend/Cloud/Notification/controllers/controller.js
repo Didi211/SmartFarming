@@ -1,11 +1,17 @@
 import logic from '../logic/logic.js';
 import { handleApiError } from '../utils/error-handler.js';
+import responseDtoMapper from '../utils/response-dto-mapper.js';
 
 const add = async (req, res) => { 
     let notification = req.body;
     try { 
         let result = await logic.addNotification(notification);
-        res.status(200).send(result);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Creating notification successfull.",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -16,11 +22,22 @@ const getAll = async (req, res) => {
     let userId = req.params.id;
     try { 
         let result = await logic.getAll(userId);
+        console.log('controller', result.length);
         if (result.length > 0) { 
-            res.status(200).send(result);
+            let responseDto = responseDtoMapper.succesfullResponseDto(
+                200,
+                "Notifications fetched",
+                result
+            )
+            res.status(responseDto.status).send(responseDto);
         }
         else { 
-            res.status(204).send();
+            let responseDto = responseDtoMapper.succesfullResponseDto(
+                200, // 204 has no response data
+                "No existing notifications.",
+                result
+            )
+            res.status(responseDto.status).send(responseDto);
         }
     }
     catch(error) { 
@@ -32,7 +49,12 @@ const markRead = async (req, res) => {
 let id = req.params.id;
     try { 
         await logic.markRead(id);
-        res.status(204).send();
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Updated notification",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -43,7 +65,12 @@ const remove = async (req, res) => {
     let id = req.params.id;
     try { 
         await logic.removeNotification(id);
-        res.status(204).send();
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Removed notification",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -53,7 +80,12 @@ const hasUnread = async (req, res) => {
     let userId = req.params.id;
     try { 
         let result = await logic.hasUnreadNotifications(userId);
-        res.status(200).send(result);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            result ? 'Has new notifications' : 'No new notifications',
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
         
     }
     catch(error) { 

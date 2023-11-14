@@ -31,7 +31,6 @@ const fetchMqttToken = async (email) => {
     let response = await usersAxios.post('/fetch-token',JSON.stringify({
         email: email
     }));
-    
     if (response.status == 200) { 
         return response.data;
     }
