@@ -1,14 +1,42 @@
+import responseDtoMapper from "./response-dto-mapper.js";
+
 export const handleApiError = (res, error) => { 
+    console.log(error);
     if (error.code == "ECONNREFUSED") { 
-        res.status(500).send("Gateway couldn't connect to required service.");
+        let errorDto = responseDtoMapper.errorToResponseDto(
+            500,
+            "Connection failure",
+            "Gateway couldn't connect to required service."
+        );
+        res.status(errorDto.status).send(errorDto);
         return;
     }
-    try { 
-        let parsedError = JSON.parse(error); 
-        res.status(parsedError.status || 500).send(parsedError);
+    if (isJsonParsable(error)) { 
+        let parsedError = JSON.parse(error);
+        let errorDto = responseDtoMapper.errorToResponseDto(
+            parsedError.status ?? 500,
+            parsedError.message,
+            parsedError.details 
+        )
+        res.status(errorDto.status).send(errorDto);
     }
-    catch(err) { 
-        console.log(error);
-        res.status(500).send(error);
+    else { 
+        let errorDto = responseDtoMapper.errorToResponseDto(
+            error.status,
+            error.message,
+            error.details ?? error
+        )
+        res.status(errorDto.status).send(errorDto);
     }
 } 
+
+const isJsonParsable = (obj) => { 
+    try { 
+        JSON.parse(obj);
+    }
+    catch(error) { 
+        
+        return false
+    }
+    return true;
+}
