@@ -16,6 +16,7 @@ const getAll = async (req, res) => {
     let userId = req.params.id;
     try { 
         let notifications = await logic.getAll(userId);
+        console.log(notifications)
         if (notifications.length > 0) { 
             res.status(200).send(notifications);
         }
@@ -54,16 +55,9 @@ const hasUnread = async (req, res) => {
     let userId = req.params.id;
     try { 
         let result = await logic.hasUnread(userId);
-        console.log("result",result)
-        if (result.status == 200) { 
-            res.status(200).send(result);
-        }
-        else if (result.status == 400) { 
-            res.status(400).send(result);
-        }
+        res.status(200).send(result);
     }
     catch(error) { 
-        console.log("wrong user throw", error)
         handleApiError(res, error);
     }
 }
