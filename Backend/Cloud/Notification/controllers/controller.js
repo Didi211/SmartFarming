@@ -22,7 +22,6 @@ const getAll = async (req, res) => {
     let userId = req.params.id;
     try { 
         let result = await logic.getAll(userId);
-        console.log('controller', result.length);
         if (result.length > 0) { 
             let responseDto = responseDtoMapper.succesfullResponseDto(
                 200,

@@ -18,7 +18,6 @@ const addNotification = async (notification) => {
 const getAll = async (userId) => { 
     try { 
         let result = await Notification.find({userId: userId});
-        console.log(result);
         return notificationMapper.toNotificationsDto(result);
     }
     catch(error) { 

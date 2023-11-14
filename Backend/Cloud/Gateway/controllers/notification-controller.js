@@ -16,7 +16,6 @@ const getAll = async (req, res) => {
     let userId = req.params.id;
     try { 
         let notifications = await logic.getAll(userId);
-        console.log(notifications)
         if (notifications.length > 0) { 
             res.status(200).send(notifications);
         }
