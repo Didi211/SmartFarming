@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import routes from './routes/routes.js';
 
 dotenv.config({path: 'device-management.env'});
-import mongoClient from './mongodb-config/js';
+import mongoClient from './mongodb-config.js';
 
 const app = express();
 

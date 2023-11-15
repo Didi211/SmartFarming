@@ -4,7 +4,7 @@ import deviceController from '../controllers/device-controller.js'
 import ruleController from '../controllers/rule-controller.js';
 
 // devices
-router.get('/', deviceController.getAll);
+router.get('/user/:userId', deviceController.getAll);
 router.get('/:id', deviceController.getById);
 router.post('/', deviceController.add);
 router.put('/:id', deviceController.update);

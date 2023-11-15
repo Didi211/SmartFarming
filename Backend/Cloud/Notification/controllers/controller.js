@@ -51,7 +51,6 @@ let id = req.params.id;
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
             "Updated notification",
-            result
         )
         res.status(responseDto.status).send(responseDto);
     }
@@ -67,7 +66,6 @@ const remove = async (req, res) => {
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
             "Removed notification",
-            result
         )
         res.status(responseDto.status).send(responseDto);
     }
