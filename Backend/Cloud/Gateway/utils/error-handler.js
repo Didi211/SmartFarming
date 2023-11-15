@@ -8,7 +8,7 @@ export const handleApiError = (res, error) => {
         res.status(parsedError.status || 500).send(parsedError);
     }
     catch(err) { 
-        console.log(err);
+        console.log(error);
         res.status(500).send(error);
     }
 } 

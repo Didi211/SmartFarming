@@ -10,13 +10,28 @@ const usersUrl = process.env.USER_MANAGEMENT_SERVICE_URL;
 
 
 let sensorDataAxios = new Axios({
-    baseURL: `${sensorDataUrl}`
+    baseURL: `${sensorDataUrl}`,
+    withCredentials: false,
+    headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+    }
 })
 let deviceManagementAxios = new Axios({
-    baseURL: `${deviceManagementUrl}`
+    baseURL: `${deviceManagementUrl}`,
+    withCredentials: false,
+    headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+    }
 })
 let notificationsAxios = new Axios({
-    baseURL: `${notificationsAUrl}`
+    baseURL: `${notificationsAUrl}`,
+    withCredentials: false,
+    headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+    }
 })
 let usersAxios = new Axios({
     baseURL: `${usersUrl}`,

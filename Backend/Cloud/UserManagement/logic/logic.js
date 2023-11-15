@@ -2,13 +2,12 @@ import validator from '../utils/user-validator.js';
 import * as firebaseAuth from 'firebase/auth';
 import * as firestore from 'firebase/firestore';
 import { firebaseInstance } from '../firebase-config.js';
-import { toUserDto } from '../utils/dto-mapper.js';
+import dtoMapper from '../utils/dto-mapper.js';
 import { uuid } from 'uuidv4';
 
 const auth = firebaseAuth.getAuth(firebaseInstance);
 const db = firestore.getFirestore(firebaseInstance);
 const usersRef = firestore.collection(db, "users");
-const userCodeRef = firestore.collection(db, "userCode");
 
 const login = async (email, password) => { 
     try { 
@@ -17,15 +16,12 @@ const login = async (email, password) => {
     }
     catch(validateError) { 
         throw { 
-            code: 400,
+            status: 400,
             message: 'Validation failed.',
             details: validateError
         };
     }
-    // login on firebase
     let result = await firebaseAuth.signInWithEmailAndPassword(auth, email, password);
-    // let jwt = result.user.getIdToken();
-    // fetch user name from firestore
     let query = firestore
     .query(
         usersRef, 
@@ -34,17 +30,16 @@ const login = async (email, password) => {
     let querySnapshot = await firestore.getDocs(query);
     let id = querySnapshot.docs[0].id;
     let user = querySnapshot.docs[0].data();
-    return toUserDto(id, user);
+    return dtoMapper.toUserDto(id, user);
 }
 
 const register = async (user) => { 
     try { 
         validator.registerValidate(user);
-
     }
     catch(validateError) { 
         throw { 
-            code: 400,
+            status: 400,
             message: 'Validation failed.',
             details: validateError
         };
@@ -58,7 +53,7 @@ const register = async (user) => {
         mqttToken: uuid()
     }
     let id = (await firestore.addDoc(usersRef, userData)).id;
-    return toUserDto(id, userData);
+    return dtoMapper.toUserDto(id, userData);
 }
 
 const fetchMqttToken = async (email) => { 
@@ -75,12 +70,20 @@ const fetchMqttToken = async (email) => {
     }
     throw { 
         status: 400,
-        message: `User with email [${email}] not found.`
-    }
+        message: `Query error`,
+        details: `User with email [${email}] not found.`
+    };
+}
+
+const isUserExisting = async (userId) => {
+    let docRef = firestore.doc(db, usersRef.id, userId);
+    let docSnap = await firestore.getDoc(docRef);
+    return docSnap.exists();
 }
 
 export default { 
     register,
     login,
-    fetchMqttToken
+    fetchMqttToken,
+    isUserExisting
 }

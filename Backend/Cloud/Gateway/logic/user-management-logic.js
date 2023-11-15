@@ -31,7 +31,6 @@ const fetchMqttToken = async (email) => {
     let response = await usersAxios.post('/fetch-token',JSON.stringify({
         email: email
     }));
-    
     if (response.status == 200) { 
         return response.data;
     }
@@ -40,8 +39,17 @@ const fetchMqttToken = async (email) => {
     }
 }
 
+const isUserExisting = async (userId) => { 
+    let response = await usersAxios.get(`/${userId}/exists`);
+    if (response.status == 200) { 
+        return response.data
+    }
+    throw response.data
+}
+
 export default {
     register,
     login,
-    fetchMqttToken
+    fetchMqttToken,
+    isUserExisting
 }
