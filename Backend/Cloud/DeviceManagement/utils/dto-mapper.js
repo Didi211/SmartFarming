@@ -14,7 +14,21 @@ const toDevicesDto = (devices) => {
     return devices.map(device => toDeviceDto(device));
 }
 
+const toRuleDto = (rule) => { 
+    return { 
+        id: rule._id,
+        name: rule.name,
+        sensorId: rule.sensorId, 
+        actuatorId: rule.actuatorId,
+        expression: rule.expression,
+        action: rule.action,
+        triggerLevel: rule.triggerLevel,
+        text: rule.text
+    };
+}
+
 export default { 
     toDevicesDto,
-    toDeviceDto
+    toDeviceDto,
+    toRuleDto
 }

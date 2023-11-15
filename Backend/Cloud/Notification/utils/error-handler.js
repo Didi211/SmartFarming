@@ -16,7 +16,7 @@ export const handleApiError = (res, error) => {
         let errorDto = responseDtoMapper.errorToResponseDto(
             parsedError.status ?? 500,
             parsedError.message,
-            parsedError.details 
+            parsedError.details?.toString() 
         )
         res.status(errorDto.status).send(errorDto);
     }
@@ -24,7 +24,7 @@ export const handleApiError = (res, error) => {
         let errorDto = responseDtoMapper.errorToResponseDto(
             error.status,
             error.message,
-            error.details ?? error
+            error.details?.toString() ?? error
         )
         res.status(errorDto.status).send(errorDto);
     }

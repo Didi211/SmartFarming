@@ -66,13 +66,14 @@ const updateDevice = async (id, device) => {
             details: `Device Id cannot be updated.`
         }
     }
+    let deviceModel = new Device(device);
+    deviceModel.validate();
     let result = await Device.findByIdAndUpdate(id, {
         name: device.name,
         status: device.status,
         unit: device.unit ?? null,
         state: device.state ?? null
     });
-    console.log(result);
     if (!result) { 
         throw { 
             status: 400,

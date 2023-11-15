@@ -8,16 +8,17 @@ const ruleSchema = new mongoose.Schema({
     },
     sensorId: { 
         type: String,
-        required: true
+        required: true,
+        unique: true,
     }, 
     actuatorId: { 
         type: String,
-        required: true
+        required: true,
+        unique: true,
     }, 
     expression: { 
         type: String,
         required: true,
-        immutable: true,
         enum: { 
             values: ['>', '<', '<=', '>='],
             message: '{VALUE} is not allowed.'
