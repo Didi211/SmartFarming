@@ -6,7 +6,7 @@ export const handleApiError = (res, error) => {
         let errorDto = responseDtoMapper.errorToResponseDto(
             500,
             "Connection failure",
-            "Notification couldn't connect to required service."
+            "Device Management couldn't connect to required service."
         );
         res.status(errorDto.status).send(errorDto);
         return;
