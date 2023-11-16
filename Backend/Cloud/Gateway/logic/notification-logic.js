@@ -4,7 +4,7 @@ const add = async (notification) => {
     let response = await notificationsAxios.post('/', JSON.stringify(notification));
     if (response.status == 200) { 
         // push notification to the android app
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
@@ -15,7 +15,7 @@ const getAll = async (userId) => {
     await isUserExisting(userId);
     let response = await notificationsAxios.get(`/user/${userId}`);
     if (response.status == 200 || response.status == 204 ) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
@@ -25,7 +25,7 @@ const getAll = async (userId) => {
 const markRead = async (id) => {
     let response = await notificationsAxios.put(`/${id}/mark-read`);
     if (response.status == 200) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
@@ -35,7 +35,7 @@ const markRead = async (id) => {
 const remove = async (id) => {
     let response = await notificationsAxios.delete(`/${id}`);
     if (response.status == 200) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
@@ -46,7 +46,8 @@ const hasUnread = async (userId) => {
     await isUserExisting(userId);
     let response = await notificationsAxios.get(`/user/${userId}/has-unread`);
     if (response.status == 200) { 
-        return response.data;
+        console.log(response.data);
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
