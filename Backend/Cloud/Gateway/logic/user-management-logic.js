@@ -9,7 +9,7 @@ const login = async (email, password) => {
     }));
     
     if (response.status == 200) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data
@@ -20,7 +20,7 @@ const register = async (user) => {
     let response = await usersAxios.post('/register', JSON.stringify(user));
 
     if (response.status == 200) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data
@@ -32,7 +32,7 @@ const fetchMqttToken = async (email) => {
         email: email
     }));
     if (response.status == 200) { 
-        return response.data;
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data
@@ -42,7 +42,7 @@ const fetchMqttToken = async (email) => {
 const isUserExisting = async (userId) => { 
     let response = await usersAxios.get(`/${userId}/exists`);
     if (response.status == 200) { 
-        return response.data
+        return JSON.parse(response.data);
     }
     throw response.data
 }
