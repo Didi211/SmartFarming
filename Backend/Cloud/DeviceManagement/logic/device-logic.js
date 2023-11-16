@@ -1,7 +1,8 @@
 import { Device } from '../models/device-model.js';
 import dtoMapper from '../utils/dto-mapper.js';
 
-const getAll = async (type, userId) => { 
+const getAll = async (type, userId) => {
+    type = type.toUpperCase(); 
     if (type != 'SENSOR' && type != 'ACTUATOR') { 
         throw { 
             status: 400,
@@ -67,12 +68,15 @@ const updateDevice = async (id, device) => {
         }
     }
     let deviceModel = new Device(device);
-    deviceModel.validate();
+    await deviceModel.validate();
+
+    let deviceDb = await Device.findById(id);
+    
     let result = await Device.findByIdAndUpdate(id, {
         name: device.name,
         status: device.status,
-        unit: device.unit ?? null,
-        state: device.state ?? null
+        unit: deviceDb.type == 'SENSOR' ? device.unit : null,
+        state: deviceDb.type == 'ACTUATOR' ? device.state : null
     });
     if (!result) { 
         throw { 

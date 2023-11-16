@@ -1,9 +1,8 @@
-import edgeGatewayService from "../services/edge-gateway-service.js";
-import deviceManagementService from "../services/device-management-service.js";
+// import edgeGatewayService from "../services/edge-gateway-service.js";
 import ruleValidator from "../utils/rule-validator.js";
 
 const getRuleFromDeviceId = async (id) => { 
-    return deviceManagementService.getRuleFromDeviceId(id);
+    // return deviceManagementService.getRuleFromDeviceId(id);
 }
 
 const add = async (rule) => { 
@@ -15,9 +14,9 @@ const add = async (rule) => {
             details: result
         };
     }
-    result = await deviceManagementService.addRule(rule);
+    // result = await deviceManagementService.addRule(rule);
     if (result) { 
-        edgeGatewayService.addRule(result);
+        // edgeGatewayService.addRule(result);
     }
     return result;
 }
@@ -35,19 +34,19 @@ const update = async (id, rule) => {
             details: result
         };
     }
-    result = await deviceManagementService.updateRule(rule)
+    // result = await deviceManagementService.updateRule(rule)
     if (result) { 
         // propagate call to the edge
-        edgeGatewayService.updateRule(result);
+        // edgeGatewayService.updateRule(result);
     }
     return result;
 }
 
 const remove = async (id) => { 
-    let result = await deviceManagementService.removeRule(id); // throws ex if object does not exist
+    // let result = await deviceManagementService.removeRule(id); // throws ex if object does not exist
     if (result) { 
         // propagate call to the edge
-        edgeGatewayService.removeRule(id);
+        // edgeGatewayService.removeRule(id);
     }
 }
 

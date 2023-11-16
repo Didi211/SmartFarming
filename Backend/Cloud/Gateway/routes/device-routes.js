@@ -6,7 +6,7 @@ import ruleController from '../controllers/rule-controller.js';
 
 // calling all this api from frontend
 // devices
-router.get('/', deviceController.getAll);
+router.get('/user/:userId', deviceController.getAll);
 router.get('/:id', deviceController.getById);
 router.post('/', deviceController.add);
 router.put('/:id', deviceController.update);

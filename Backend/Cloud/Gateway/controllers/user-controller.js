@@ -28,7 +28,7 @@ const fetchMqttToken = async (req, res) => {
     try { 
         let email = req.body?.email;
         let result = await logic.fetchMqttToken(email);
-        res.status(200).send(result);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -37,9 +37,9 @@ const fetchMqttToken = async (req, res) => {
 
 const isUserExisting = async (req, res) => { 
     try { 
-        let userId = req.paramas.id;
+        let userId = req.params.id;
         let result = await logic.isUserExisting(userId);
-        res.status(200).send(result);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
