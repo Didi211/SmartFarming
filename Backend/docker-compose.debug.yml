@@ -12,6 +12,9 @@ services:
       - 4000:4000
     env_file:
       - Cloud/Gateway/gateway.env
+    depends_on:
+      - user-management
+      - notification
 
   user-management:
     image: usermanagement
@@ -21,20 +24,31 @@ services:
     environment:
       NODE_ENV: production
     ports:
-    - 3000:3000
+      - 3000:3000
     env_file:
-    - Cloud/UserManagement/user-management.env
+      - Cloud/UserManagement/user-management.env
 
-  notification: 
+  notification:
     image: notification
-    build: 
+    build:
       context: Cloud/Notification
       dockerfile: ./Dockerfile
     environment:
-      - NODE_ENV: production
+      NODE_ENV: production
     ports:
       - 3001:3001
     env_file:
-      - Cloud/Notification/notifcation.env
-
-      
+      - Cloud/Notification/notification.env
+  
+  cloud-device-management:
+    image: devicemanagement
+    build: 
+      context: Cloud/devicemanagement
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3002:3002
+    env_file:
+      - Cloud/DeviceManagement/device-management.env
+    

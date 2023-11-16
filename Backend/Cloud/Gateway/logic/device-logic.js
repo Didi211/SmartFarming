@@ -2,6 +2,8 @@ import deviceValidator from "../utils/device-validator.js";
 import { deviceManagementAxios } from "../axios-config.js";
 import userValidator from "../utils/user-validator.js";
 
+// add propagating to the edge 
+
 const getAllDevices = async (userId, type) => { 
     await userValidator.isUserExisting(userId);
     let response = await deviceManagementAxios.get(`/user/${userId}?type=${type}`);

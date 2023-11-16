@@ -22,30 +22,31 @@ const getByDeviceId = async (deviceId) => {
 
 const addRule = async (rule) => { 
     let sensor, actuator;
+    // check if device ids are from existing devices 
     try { 
-        // check if device ids are from existing devices 
-        try { 
-            sensor = deviceLogic.findById(rule.sensorId);
-            actuator = deviceLogic.findById(rule.actuatorId);
-            await sensor; await actuator;
+         [sensor, actuator] = await Promise.all([
+            deviceLogic.findById(rule.sensorId),
+            deviceLogic.findById(rule.actuatorId)
+        ]);
+    }
+    catch(error) { 
+        throw {
+            status: 400,
+            message: "Invalid devices",
+            details: `One or both devices are not created. Internal error: ${error.details}`
         }
-        catch(error) { 
-            throw {
-                status: 400,
-                message: "Invalid devices",
-                details: `One or both devices are not created. Internal error: ${error.details}`
-            }
-        }
+    }
         
-        // check if devices are from the same tenant
-        // add checking from jwt 
-        if (sensor.userId != actuator.userId) { 
-            throw {
-                status: 400,
-                message: "Invalid devices",
-                details: `Devices are not belonging to the same user.`
-            }
+    // check if devices are from the same tenant
+    // add checking from jwt 
+    if (sensor.userId != actuator.userId) { 
+        throw {
+            status: 400,
+            message: "Invalid devices",
+            details: `Devices are not belonging to the same user.`
         }
+    }
+    try { 
         let result = await Rule.create(rule);
         return dtoMapper.toRuleDto(result);
     }
