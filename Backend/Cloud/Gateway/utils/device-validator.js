@@ -13,6 +13,9 @@ const validate = (device) => {
         if (typeUpperCase != 'SENSOR' && typeUpperCase != 'ACTUATOR') { 
             throw "Device type must be either SENSOR or ACTUATOR."
         }
+        if (device.userId == undefined || device.userId == "") { 
+            throw "User Id for device is required field.";
+        }
     }
     catch(error) { 
         result = error;

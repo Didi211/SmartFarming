@@ -3,7 +3,7 @@ import * as firebaseAuth from 'firebase/auth';
 import * as firestore from 'firebase/firestore';
 import { firebaseInstance } from '../firebase-config.js';
 import dtoMapper from '../utils/dto-mapper.js';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid'
 
 const auth = firebaseAuth.getAuth(firebaseInstance);
 const db = firestore.getFirestore(firebaseInstance);
@@ -50,7 +50,7 @@ const register = async (user) => {
         authId: result.user.uid,
         email: user.email,
         name: user.name,
-        mqttToken: uuid()
+        mqttToken: v4()
     }
     let id = (await firestore.addDoc(usersRef, userData)).id;
     return dtoMapper.toUserDto(id, userData);

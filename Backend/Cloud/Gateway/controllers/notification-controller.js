@@ -4,8 +4,8 @@ import { handleApiError } from "../utils/error-handler.js";
 const add = async (req, res) => { 
     let notification = req.body;
     try { 
-        await logic.add(notification);
-        res.status(204).send();
+        let result = await logic.add(notification);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -15,13 +15,8 @@ const add = async (req, res) => {
 const getAll = async (req, res) => { 
     let userId = req.params.id;
     try { 
-        let notifications = await logic.getAll(userId);
-        if (notifications.length > 0) { 
-            res.status(200).send(notifications);
-        }
-        else { 
-            res.status(204).send();
-        }
+        let result = await logic.getAll(userId);
+        res.status(result.status).send(result);
     }
     catch(error) { 
        handleApiError(res, error);
@@ -31,8 +26,8 @@ const getAll = async (req, res) => {
 const markRead = async (req, res) => {
     let id = req.params.id;
     try { 
-        await logic.markRead(id);
-        res.status(204).send();
+        let result = await logic.markRead(id);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -42,8 +37,8 @@ const markRead = async (req, res) => {
 const remove = async (req, res) => {
     let id = req.params.id;
     try { 
-        await logic.remove(id);
-        res.status(204).send();
+        let result = await logic.remove(id);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
@@ -54,7 +49,7 @@ const hasUnread = async (req, res) => {
     let userId = req.params.id;
     try { 
         let result = await logic.hasUnread(userId);
-        res.status(200).send(result);
+        res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);

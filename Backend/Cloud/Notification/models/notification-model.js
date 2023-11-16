@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const notificationSchema = new mongoose.Schema({ 
     message: { 
         type: String,
-        required: true
+        required: true,
+        trim: true
     }, 
     userId: { 
         type: String,

@@ -24,9 +24,6 @@ const validateForAdd = (rule) => {
         if (rule.expression == undefined) { 
             throw "Rule expression is required."
         }
-        if (rule.expression != '>' && rule.expression != '<') { 
-            throw "Rule expression must be either '>' or '<'."
-        }
     }
     catch(error) { 
         result = error;
