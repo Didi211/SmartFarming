@@ -1,4 +1,9 @@
-version: '3.4'
+version: '3.8'
+
+volumes: 
+  influxdb_data: {}
+  influxdb_conf: {}
+  influxdb_init: {}
 
 services:
   cloud-gateway:
@@ -51,4 +56,13 @@ services:
       - 3002:3002
     env_file:
       - Cloud/DeviceManagement/device-management.env
+  
+  influxdb:
+    image: influxdb:latest-alpine
+    ports: 
+      - 8086:8086
+    restart: always
+    volumes: 
+      - influxdb_data:/var/lib/influxdb
+    
     

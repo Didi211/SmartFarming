@@ -5,6 +5,10 @@ import responseDtoMapper from '../utils/response-dto-mapper.js';
 const syncData = async (req, res) => { 
     let userId = req.headers['user-id'];
     let data = req.body;
+    console.log('controller', { 
+        userId: userId,
+        data: data
+    })
     try { 
         let result = await logic.syncData(userId, data);
         let responseDto = responseDtoMapper.succesfullResponseDto(
