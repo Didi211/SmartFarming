@@ -1,4 +1,3 @@
-// import edgeGatewayService from "../services/edge-gateway-service.js";
 import { deviceManagementAxios } from "../axios-config.js";
 import ruleValidator from "../utils/rule-validator.js";
 

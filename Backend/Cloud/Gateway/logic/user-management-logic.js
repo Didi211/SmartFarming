@@ -1,7 +1,6 @@
 import {usersAxios } from '../axios-config.js';
 
 
-// call remote service
 const login = async (email, password) => { 
     let response = await usersAxios.post('/login', JSON.stringify({
         email: email,

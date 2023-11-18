@@ -7,6 +7,7 @@ volumes:
 
 services:
   cloud-gateway:
+    container_name: cloud-gateway
     image: gateway
     build:
       context: Cloud/Gateway
@@ -14,14 +15,18 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - 4000:4000
+      - 4001:4001
     env_file:
       - Cloud/Gateway/gateway.env
     depends_on:
-      - user-management
-      - notification
+      - cloud-user-management
+      - cloud-notification
+      - cloud-device-management
+      - cloud-sensor-data
+      - cloud-mqtt
 
-  user-management:
+  cloud-user-management:
+    container_name: cloud-user-management
     image: usermanagement
     build:
       context: Cloud/UserManagement
@@ -33,7 +38,8 @@ services:
     env_file:
       - Cloud/UserManagement/user-management.env
 
-  notification:
+  cloud-notification:
+    container_name: cloud-notification
     image: notification
     build:
       context: Cloud/Notification
@@ -46,6 +52,7 @@ services:
       - Cloud/Notification/notification.env
   
   cloud-device-management:
+    container_name: cloud-device-management
     image: devicemanagement
     build: 
       context: Cloud/DeviceManagement
@@ -57,7 +64,8 @@ services:
     env_file:
       - Cloud/DeviceManagement/device-management.env
 
-  sensor-data:
+  cloud-sensor-data:
+    container_name: cloud-sensor-data
     image: sensordata
     build: 
       context: Cloud/SensorData
@@ -69,13 +77,22 @@ services:
     env_file:
       - Cloud/SensorData/sensor-data.env
     depends_on:
-      - influxdb
+      - cloud-influxdb
   
-  influxdb:
+  cloud-influxdb:
+    container_name: cloud-influxdb
     image: influxdb:alpine
     ports: 
       - 8086:8086
     volumes: 
       - influxdb_data:/var/lib/influxdb
     
+  cloud-mqtt:
+    container_name: cloud-mqtt
+    image: eclipse-mosquitto:latest
+    ports:
+      - 1883:1883
+      - 9002:9001
+    volumes:
+      - ./volumes/config:/mosquitto/config
     
