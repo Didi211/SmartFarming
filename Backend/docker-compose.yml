@@ -1,4 +1,9 @@
-version: '3.4'
+version: '3.8'
+
+volumes: 
+  influxdb_data: {}
+  influxdb_conf: {}
+  influxdb_init: {}
 
 services:
   cloud-gateway:
@@ -43,7 +48,7 @@ services:
   cloud-device-management:
     image: devicemanagement
     build: 
-      context: Cloud/devicemanagement
+      context: Cloud/DeviceManagement
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
@@ -51,4 +56,26 @@ services:
       - 3002:3002
     env_file:
       - Cloud/DeviceManagement/device-management.env
+
+  sensor-data:
+    image: sensordata
+    build: 
+      context: Cloud/SensorData
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3003:3003
+    env_file:
+      - Cloud/SensorData/sensor-data.env
+    depends_on:
+      - influxdb
+  
+  influxdb:
+    image: influxdb:alpine
+    ports: 
+      - 8086:8086
+    volumes: 
+      - influxdb_data:/var/lib/influxdb
+    
     

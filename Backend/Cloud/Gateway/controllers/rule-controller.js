@@ -17,7 +17,6 @@ const add = async (req, res) => {
     // add rule
     try { 
         let result = await logic.add(req.body);
-        console.log(result);
         res.status(result.status).send(result);
     }
     catch(error) { 
