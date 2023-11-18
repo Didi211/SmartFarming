@@ -1,26 +1,45 @@
 import service from '../services/sensor-data-service.js';
+import { sensorDataAxios } from '../axios-config.js';
 
-const saveSensorData = async (sensorId, data) => { 
-    await service.saveSensorData(sensorId, data);
+const saveSensorData = async (userId, data) => { 
+    let response = await sensorDataAxios.post(`/sync`, { 
+        data: data
+    }, { 
+        headers: { 
+            'user-id': userId 
+        }
+    });
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
 }
 
-const getHourlyHistory = async (sensorId, startDate, endDate) => { 
-    return await service.getHourlyHistory(sensorId, startDate, endDate);
+const getHistoryData = async (data) => { 
+    let response = await sensorDataAxios.post(`/${data.sensorId}?period=${data.period}`, {
+        startDate: data.startDate,
+        endDate: data.endDate
+    }, { 
+        headers: { 
+            'user-id': data.userId
+        } 
+    });
+
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
 }
 
-const getMonthlyHistory = async (sensorId, startDate, endDate) => { 
-    return await service.getMonthlyHistory(sensorId, startDate, endDate);
-}
 
-const getYearlyHistory = async (sensorId, startDate, endDate) => { 
-    return await service.getYearlyHistory(sensorId, startDate, endDate);
-}
 
 
 
 export default { 
     saveSensorData,
-    getHourlyHistory,
-    getMonthlyHistory,
-    getYearlyHistory,
+    getHistoryData
 }

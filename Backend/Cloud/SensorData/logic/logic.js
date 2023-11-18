@@ -14,6 +14,7 @@ const syncData = async (userId, data) => {
                 .tag('sensor-id',element.sensorId)
                 .floatField('reading', element.reading);
             writeClient.writePoint(point);
+            writeClient.flush();
         });
     }
     catch(error) { 

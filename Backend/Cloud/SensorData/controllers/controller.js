@@ -49,7 +49,6 @@ const getHistoryData = async (req, res) => {
                 }
             }
         }
-        // let result = await logic.getHourlyData(userId, sensorId, startDate, endDate);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
             "Fetching hourly data successfull.",

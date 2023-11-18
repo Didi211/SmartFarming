@@ -38,7 +38,6 @@ const validateHours = (startDate, endDate) => {
     endDate = new Date(endDate); 
     const maxDays = 10
     let timeDifference = endDate.getTime() - startDate.getTime();
-    console.log(timeDifference);
     let hoursDifference = timeDifference / (1000 * 60 * 60);
     if (hoursDifference > 24 * maxDays) {
         throw `Between ${formatDate(startDate)} and ${formatDate(endDate)} has ${hoursDifference} hours. Maximum allowed is ${maxDays * 24} hours.`
