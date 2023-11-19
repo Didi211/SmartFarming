@@ -1,4 +1,4 @@
-import { deviceManagementAxios } from "../axios-config.js";
+import { deviceManagementAxios } from "../config/axios-config.js";
 import ruleValidator from "../utils/rule-validator.js";
 
 const getRuleFromDeviceId = async (id) => { 

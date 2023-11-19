@@ -1,10 +1,14 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
-import * as axios from './axios-config.js';
+import dotenv from 'dotenv';
+dotenv.config({path: 'gateway.env'});
+
+import * as axios from './config/axios-config.js';
 import deviceRoutes from './routes/device-routes.js';
 import userRoutes from './routes/user-routes.js';
 import notificationRoutes from './routes/notification-routes.js';
 import sensorDataRoutes from './routes/sensor-data-routes.js';
+import mqtt from './messaging/subscribing-mqtt.js';
 
 
 const app = express();
@@ -24,6 +28,7 @@ app.use('/api/sensor-data', sensorDataRoutes);
 
 
 const port = process.env.PORT;
-app.listen(port, () => { 
+app.listen(port, async () => { 
     console.log(`Gateway Service is listening on port ${port}`);
-})
+    mqtt.startListening();
+});

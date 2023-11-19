@@ -1,5 +1,5 @@
 import deviceValidator from "../utils/device-validator.js";
-import { deviceManagementAxios } from "../axios-config.js";
+import { deviceManagementAxios } from "../config/axios-config.js";
 import userValidator from "../utils/user-validator.js";
 
 // add propagating to the edge 

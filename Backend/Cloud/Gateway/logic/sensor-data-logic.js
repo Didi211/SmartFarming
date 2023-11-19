@@ -1,5 +1,4 @@
-import service from '../services/sensor-data-service.js';
-import { sensorDataAxios } from '../axios-config.js';
+import { sensorDataAxios } from '../config/axios-config.js';
 
 const saveSensorData = async (userId, data) => { 
     let response = await sensorDataAxios.post(`/sync`, { 

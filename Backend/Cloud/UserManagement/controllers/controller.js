@@ -68,9 +68,28 @@ const isUserExisting = async (req, res) => {
     }
 }
 
+const getIdByMqttToken = async (req, res) => {
+    try { 
+        let token = req.params.token;
+        let result = await logic.getIdByMqttToken(token);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            `Fetching id successfull.`,
+            result
+        );
+        res.status(responseDto.status).send(responseDto);
+        
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+
+}
+
 export default { 
     login,
     register,
     fetchMqttToken,
-    isUserExisting
+    isUserExisting,
+    getIdByMqttToken
 }

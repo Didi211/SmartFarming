@@ -1,1 +1,0 @@
-// receives real time data from edge 

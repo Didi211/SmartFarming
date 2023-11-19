@@ -1,4 +1,4 @@
-import { notificationsAxios } from "../axios-config.js";
+import { notificationsAxios } from "../config/axios-config.js";
 import userValidator from "../utils/user-validator.js";
 
 const add = async (notification) => { 

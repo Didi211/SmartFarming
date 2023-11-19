@@ -1,7 +1,5 @@
 import { Axios } from 'axios';
-import dotenv from 'dotenv';
 
-dotenv.config({path: 'gateway.env'});
 
 const sensorDataUrl = process.env.SENSOR_DATA_SERVICE_URL;
 const deviceManagementUrl = process.env.DEVICE_MANAGEMENT_SERVICE_URL;
