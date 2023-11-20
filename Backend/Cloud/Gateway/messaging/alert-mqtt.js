@@ -1,5 +1,5 @@
 // receives alerts from edge 
-// receives real time data from edge 
+
 import { mqttClient } from "../config/mqtt-config.js";
 import notificationLogic from "../logic/notification-logic.js";
 import userManagementLogic from "../logic/user-management-logic.js";

@@ -26,7 +26,8 @@ const getById = async (req, res) => {
 
 const add = async (req, res) => {
     try { 
-        let result = await logic.add(req.body)
+        let email = req.headers['user-email'];
+        let result = await logic.add(req.body, email)
         res.status(result.status).send(result);
     }
     catch(error) { 
@@ -37,7 +38,8 @@ const add = async (req, res) => {
 
 const update = async (req, res) => {
     try { 
-        let result = await logic.update(req.params.id, req.body)
+        let email = req.headers['user-email'];
+        let result = await logic.update(req.params.id, req.body, email)
         res.status(result.status).send(result);
     }
     catch(error) { 
@@ -49,7 +51,8 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try { 
-        let result = await logic.remove(req.params.id);
+        let email = req.headers['user-email'];
+        let result = await logic.remove(req.params.id, email);
         res.status(result.status).send(result);
     }
     catch(error) { 

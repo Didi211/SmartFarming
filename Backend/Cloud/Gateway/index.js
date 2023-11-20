@@ -8,7 +8,7 @@ import deviceRoutes from './routes/device-routes.js';
 import userRoutes from './routes/user-routes.js';
 import notificationRoutes from './routes/notification-routes.js';
 import sensorDataRoutes from './routes/sensor-data-routes.js';
-import mqtt from './messaging/subscribing-mqtt.js';
+import mqtt from './messaging/alert-mqtt.js';
 
 
 const app = express();

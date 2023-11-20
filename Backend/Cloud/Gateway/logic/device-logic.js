@@ -1,6 +1,8 @@
 import deviceValidator from "../utils/device-validator.js";
 import { deviceManagementAxios } from "../config/axios-config.js";
 import userValidator from "../utils/user-validator.js";
+import deviceMqtt from "../messaging/device-mqtt.js";
+import userManagementLogic from "./user-management-logic.js";
 
 // add propagating to the edge 
 
@@ -25,7 +27,7 @@ const get = async (id) => {
     }
 }
 
-const add = async (device) => { 
+const add = async (device, email) => { 
     let validationResult = deviceValidator.validate(device);
     if (validationResult != "") { 
         throw { 
@@ -39,6 +41,8 @@ const add = async (device) => {
     let response = await deviceManagementAxios.post(`/`, JSON.stringify(device));
     if (response.status == 200) { 
         // propagate the call to the edge 
+        let token = (await userManagementLogic.fetchMqttToken(email)).details;
+        deviceMqtt.publishAddDevice(token, device);
         return JSON.parse(response.data);
     }
     else { 
@@ -46,7 +50,7 @@ const add = async (device) => {
     }
 }
 
-const update = async (id, device) => { 
+const update = async (id, device, email) => { 
     let result = deviceValidator.validateForUpdate(id, device);
     if (result != "") { 
         throw { 
@@ -60,6 +64,8 @@ const update = async (id, device) => {
     let response = await deviceManagementAxios.put(`/${id}`, JSON.stringify(device));
     if (response.status == 200) { 
         // propagate the call to the edge 
+        let token = (await userManagementLogic.fetchMqttToken(email)).details;
+        deviceMqtt.publishUpdateDevice(token, id, device);
         return JSON.parse(response.data);
     }
     else { 
@@ -67,10 +73,12 @@ const update = async (id, device) => {
     }
 }
 
-const remove = async (id) => { 
+const remove = async (id, email) => { 
     let response = await deviceManagementAxios.delete(`/${id}`);
     if (response.status == 200) { 
         // propagate the call to the edge 
+        let token = (await userManagementLogic.fetchMqttToken(email)).details;
+        deviceMqtt.publishRemoveDevice(token, id);
         return JSON.parse(response.data);
     }
     else { 
