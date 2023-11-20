@@ -49,11 +49,21 @@ const getHistoryData = async (req, res) => {
                 }
             }
         }
-        let responseDto = responseDtoMapper.succesfullResponseDto(
-            200,
-            "Fetching hourly data successfull.",
-            result
-        )
+        let responseDto;
+        if (result.length > 0) { 
+            responseDto = responseDtoMapper.succesfullResponseDto(
+                200,
+                "Fetching hourly data successfull.",
+                result
+            )
+        }
+        else { 
+            responseDto = responseDtoMapper.succesfullResponseDto(
+                200,
+                "No history data for chosen time period.",
+                result
+            )
+        }
         res.status(responseDto.status).send(responseDto);
     }
     catch(error) { 

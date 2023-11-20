@@ -81,9 +81,28 @@ const isUserExisting = async (userId) => {
     return docSnap.exists();
 }
 
+const getIdByMqttToken = async (token) => { 
+    let query = firestore
+    .query(
+        usersRef, 
+        firestore.where('mqttToken', "==", token)
+    );
+    let querySnapshot = await firestore.getDocs(query);
+    if (querySnapshot.docs.length > 0) { 
+        let id = querySnapshot.docs[0].id;
+        return id;
+    }
+    throw { 
+        status: 400,
+        message: `Query error`,
+        details: `User with MQTT token [${token}] not found.`
+    };
+}
+
 export default { 
     register,
     login,
     fetchMqttToken,
-    isUserExisting
+    isUserExisting,
+    getIdByMqttToken
 }

@@ -1,7 +1,6 @@
-import {usersAxios } from '../axios-config.js';
+import {usersAxios } from '../config/axios-config.js';
 
 
-// call remote service
 const login = async (email, password) => { 
     let response = await usersAxios.post('/login', JSON.stringify({
         email: email,
@@ -47,9 +46,20 @@ const isUserExisting = async (userId) => {
     throw response.data
 }
 
+const getIdByMqttToken = async (mqttToken) => { 
+    let response = await usersAxios.get(`/get-id/${mqttToken}`);
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    throw response.data
+}
+
+
+
 export default {
     register,
     login,
     fetchMqttToken,
-    isUserExisting
+    isUserExisting,
+    getIdByMqttToken
 }

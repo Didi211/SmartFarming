@@ -1,4 +1,5 @@
 import { Device } from '../models/device-model.js';
+import { Rule } from '../models/rule-model.js';
 import dtoMapper from '../utils/dto-mapper.js';
 
 const getAll = async (type, userId) => {
@@ -88,6 +89,19 @@ const updateDevice = async (id, device) => {
 }
 
 const removeDevice = async (id) => { 
+    let hasRule = await Rule.findOne({
+        $or: [
+            {sensorId: id},
+            {actuatorId: id}
+        ]
+    });
+    if (hasRule) { 
+        throw { 
+            status: 400,
+            message: "MongoDB error",
+            details: `Device with ID [${id}] has a rule. Delete rule first then device.`
+        };
+    }
     try { 
         await Device.findByIdAndDelete(id);
     }

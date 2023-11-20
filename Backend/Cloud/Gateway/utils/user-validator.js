@@ -1,5 +1,5 @@
 
-import { usersAxios } from "../axios-config.js";
+import { usersAxios } from "../config/axios-config.js";
 
 const isUserExisting = async (userId) => { 
     let userExistsResult = await usersAxios.get(`/${userId}/exists`);
