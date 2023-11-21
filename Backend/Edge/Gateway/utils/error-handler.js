@@ -6,7 +6,7 @@ export const handleApiError = (res, error) => {
         let errorDto = responseDtoMapper.errorToResponseDto(
             500,
             "Connection failure",
-            "Notification couldn't connect to required service."
+            "Sensor Data couldn't connect to required service."
         );
         res.status(errorDto.status).send(errorDto);
         return;
@@ -16,7 +16,7 @@ export const handleApiError = (res, error) => {
         let errorDto = responseDtoMapper.errorToResponseDto(
             parsedError.status ?? 500,
             parsedError.message,
-            parsedError.details?.toString() 
+            parsedError.details?.toString()
         )
         res.status(errorDto.status).send(errorDto);
     }

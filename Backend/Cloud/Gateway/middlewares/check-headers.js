@@ -33,7 +33,24 @@ const checkUserId = (req, res, next) => {
     }
 }
 
+const checkMqttToken = (req, res, next) => { 
+    try { 
+        if (!req.headers[constants.mqttToken]) { 
+            throw {
+                status: 400,
+                message: 'Missing header',
+                details: `Required header: [${constants.mqttToken}]`
+            }
+        }
+        next();
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+}
+
 export default { 
     checkEmail,
-    checkUserId
+    checkUserId,
+    checkMqttToken
 }

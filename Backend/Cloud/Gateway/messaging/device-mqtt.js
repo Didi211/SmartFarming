@@ -8,7 +8,6 @@ const publishAddDevice = (token, device) => {
         throw "MQTT client is not connected. Cannot publish message to the Edge."
     }
     let topic = mqttTopicBuilder(process.env.MQTT_TOPIC_EDGE, token, 'devices', 'add');
-    console.log(topic)
     mqttClient.publish(topic, JSON.stringify({
         data: device
     }));

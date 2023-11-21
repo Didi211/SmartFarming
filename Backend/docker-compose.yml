@@ -6,6 +6,7 @@ volumes:
   influxdb_init: {}
 
 services:
+  # CLOUD
   cloud-gateway:
     container_name: cloud-gateway
     image: gateway
@@ -94,5 +95,30 @@ services:
       - 1883:1883
       - 9002:9001
     volumes:
-      - ./volumes/config:/mosquitto/config
+      - ./Cloud/volumes/config:/mosquitto/config
     
+
+  # EDGE
+  edge-gateway:
+    container_name: edge-gateway
+    image: edge-gateway
+    build:
+      context: Edge/Gateway
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5001:5001
+    env_file:
+      - Edge/Gateway/edge-gateway.env
+    depends_on:
+      - edge-mqtt
+
+  edge-mqtt:
+    container_name: edge-mqtt
+    image: eclipse-mosquitto:latest
+    ports:
+      - 1884:1884
+      - 9003:9001
+    volumes:
+      - ./Edge/volumes/config:/mosquitto/config
