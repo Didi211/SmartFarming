@@ -1,6 +1,5 @@
 import { mqttCloudClient, mqttEdgeClient } from '../config/mqtt-config.js';
 import { mqttTopicBuilder } from '../utils/path-builder.js';
-// import { fetchMqttToken } from '../utils/mqtt-token-getter.js';
 import { MqttTokenManager } from '../utils/mqtt-token-manager.js';
 
 export const startListening = () => { 
