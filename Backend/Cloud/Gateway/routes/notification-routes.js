@@ -2,9 +2,6 @@ import Router from 'express';
 const router = Router();
 import controller from '../controllers/notification-controller.js';
 
-// calling this api from edge
-router.post('/', controller.add);
-
 // calling this api from frontend
 router.get('/user/:id',controller.getAll);
 router.put('/:id/mark-read', controller.markRead);

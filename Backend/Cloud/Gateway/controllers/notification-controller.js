@@ -1,16 +1,6 @@
 import logic from "../logic/notification-logic.js"
 import { handleApiError } from "../utils/error-handler.js";
 
-const add = async (req, res) => { 
-    let notification = req.body;
-    try { 
-        let result = await logic.add(notification);
-        res.status(result.status).send(result);
-    }
-    catch(error) { 
-        handleApiError(res, error);
-    }
-}
 
 const getAll = async (req, res) => { 
     let userId = req.params.id;
