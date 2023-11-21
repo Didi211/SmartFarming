@@ -1,12 +1,17 @@
 import logic from "../logic/sensor-data-logic.js";
+import userLogic from '../logic/user-management-logic.js';
 import { handleApiError } from "../utils/error-handler.js";
 
 const saveData = async (req, res) => {
     try { 
-        let userId = req.headers['user-id'];
-        let data = req.body.data;
-        let result = await logic.saveSensorData(userId, data);
-        res.status(result.status).send(result)
+        let mqttToken = req.headers['mqtt-token'];
+        let userIdResult = await userLogic.getIdByMqttToken(mqttToken);
+        if (userIdResult.status == 200) { 
+            let userId = userIdResult.details;
+            let data = req.body.data;
+            let result = await logic.saveSensorData(userId, data);
+            res.status(result.status).send(result)
+        }
     }
     catch(error) { 
         handleApiError(res, error);
