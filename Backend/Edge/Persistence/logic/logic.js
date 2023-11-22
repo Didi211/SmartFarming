@@ -33,10 +33,10 @@ const sendAggregatedData = async () => {
             reading: o._value
         });
     }
-    let response = await edgeGatewayAxios.post('/sync', JSON.stringify({
+    edgeGatewayAxios.post('/sync', JSON.stringify({
         data: result
     }));
-    console.log(response.data);
+    return result;
 }
 
 export default { 

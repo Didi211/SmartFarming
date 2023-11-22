@@ -15,12 +15,16 @@ app.use(urlencoded({ extended: false }));
 app.use(cors());
 
 import { startListening as startListeningRTData} from './messaging/rt-data-mqtt.js';
+import { startSimulating } from './scheduler/sensor-simulator-mqtt.js';
+import { startAggregationScheduler } from './scheduler/aggregation-scheduler.js';
 
 try { 
     influxDbConfig();
     const port = process.env.PORT;
     app.listen(port, () => { 
         startListeningRTData();
+        startSimulating();
+        startAggregationScheduler();
         console.log(`Edge Persistence Service is running on port ${port}`);
     });
 }
