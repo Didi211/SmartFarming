@@ -4,6 +4,9 @@ volumes:
   influxdb_data: {}
   influxdb_conf: {}
   influxdb_init: {}
+  edge_influxdb_data: {}
+  edge_influxdb_conf: {}
+  edge_influxdb_init: {}
 
 services:
   # CLOUD
@@ -122,3 +125,26 @@ services:
       - 9003:9001
     volumes:
       - ./Edge/volumes/config:/mosquitto/config
+  
+  edge-persistence:
+    container_name: edge-persistence
+    image: edge-persistence
+    build: 
+      context: Edge/persistence
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5002:5002
+    env_file:
+      - Edge/Persistence/edge-persistence.env
+    depends_on:
+      - edge-influxdb
+
+  edge-influxdb:
+    container_name: edge-influxdb
+    image: influxdb:alpine
+    ports: 
+      - 8087:8086
+    volumes: 
+      - edge_influxdb_data:/var/lib/influxdb
