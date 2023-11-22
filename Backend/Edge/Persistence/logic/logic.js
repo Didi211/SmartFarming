@@ -1,5 +1,6 @@
 import { Point } from "@influxdata/influxdb-client";
-import { writeClient } from "../config/influxdb-config.js";
+import { queryClient, writeClient } from "../config/influxdb-config.js";
+import { edgeGatewayAxios } from "../config/axios-config.js";
 
 const saveToDb = async (sensorId, reading) => { 
     try {
@@ -17,6 +18,28 @@ const saveToDb = async (sensorId, reading) => {
     }
 }
 
+const sendAggregatedData = async () => { 
+    let query = 
+        `from(bucket: "local-sensor-data")
+            |> range(start: -10m)
+            |> filter(fn: (r) => r["_measurement"] == "sensor-data")
+            |> group(columns: ["host", "sensor-id"], mode: "by")
+            |> mean(column: "_value")`;
+    let result = [];
+    for await (const {values, tableMeta} of queryClient.iterateRows(query)) { 
+        const o = tableMeta.toObject(values);
+        result.push({
+            sensorId: o['sensor-id'],
+            reading: o._value
+        });
+    }
+    let response = await edgeGatewayAxios.post('/sync', JSON.stringify({
+        data: result
+    }));
+    console.log(response.data);
+}
+
 export default { 
-    saveToDb
+    saveToDb,
+    sendAggregatedData
 }
