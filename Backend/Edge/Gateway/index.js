@@ -18,6 +18,7 @@ app.use('/api/persistence', persistenceRoutes);
 import { config as mqttConfig } from './config/mqtt-config.js';
 import { startListening as startListeningRTData } from './messaging/rt-data-mqtt.js';
 import { MqttTokenManager } from './utils/mqtt-token-manager.js';
+import { startListening as startListeningDeviceUpdates } from './messaging/device-mqtt.js';
 
 await MqttTokenManager.initialize(process.env.USER_EMAIL);
 
@@ -26,5 +27,6 @@ app.listen(port, async () => {
     // configure mqtt 
     await mqttConfig();
     startListeningRTData();
+    // startListeningDeviceUpdates();
     console.log(`Edge Gateway Service is listening on port ${port}`);
 });

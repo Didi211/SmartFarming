@@ -3,9 +3,10 @@ import { handleApiError } from '../utils/error-handler.js';
 import responseDtoMapper from '../utils/response-dto-mapper.js';
 
 const alert = async (req, res) => { 
-    let message = req.body.message;
+    // let message = req.body.message;
+    let data = req.body
     try { 
-        let result = await logic.sendAlertToCloud(message);
+        let result = await logic.sendAlertToCloud(data);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
             "Alerting user successfull.",
