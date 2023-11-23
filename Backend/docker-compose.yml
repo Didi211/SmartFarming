@@ -140,6 +140,7 @@ services:
       - Edge/Persistence/edge-persistence.env
     depends_on:
       - edge-influxdb
+      - edge-mqtt
 
   edge-influxdb:
     container_name: edge-influxdb
@@ -161,3 +162,18 @@ services:
       - 5003:5003
     env_file:
       - Edge/DeviceManagement/edge-device-management.env
+  
+  edge-analytics:
+    container_name: edge-analytics
+    image: edge-analytics
+    build: 
+      context: Edge/analytics
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5004:5004
+    env_file:
+      - Edge/Analytics/edge-analytics.env
+    depends_on:
+      - edge-mqtt
