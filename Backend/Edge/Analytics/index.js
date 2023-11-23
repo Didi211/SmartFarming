@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 
 dotenv.config({path: 'edge-analytics.env'});
 
+import mongoClient from './config/mongodb-config.js';
+
+
 import * as axios from './config/axios-config.js';
 
 import deviceRoutes from './routes/device-routes.js';
@@ -22,6 +25,7 @@ import { startListening as startListeningRTData } from './messaging/rt-data-mqtt
 
 const port = process.env.PORT;
 app.listen(port, async () => { 
+    await mongoClient.config();
     startListeningRTData();
     console.log(`Edge Analytics Service is listening on port ${port}`);
 });

@@ -7,6 +7,7 @@ volumes:
   edge_influxdb_data: {}
   edge_influxdb_conf: {}
   edge_influxdb_init: {}
+  edge_mongodb_data: {}
 
 services:
   # CLOUD
@@ -177,3 +178,11 @@ services:
       - Edge/Analytics/edge-analytics.env
     depends_on:
       - edge-mqtt
+
+  edge-mongodb:
+    container_name: edge-mongodb
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - edge_mongodb_data:/data/db

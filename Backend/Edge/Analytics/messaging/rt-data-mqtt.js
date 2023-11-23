@@ -1,5 +1,5 @@
 import { mqttClient } from '../config/mqtt-config.js';
-import logic from '../logic/logic.js';
+import logic from '../logic/analytics-logic.js';
 
 
 export const startListening = () => { 
