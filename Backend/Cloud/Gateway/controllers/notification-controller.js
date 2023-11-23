@@ -47,7 +47,6 @@ const hasUnread = async (req, res) => {
 }
 
 export default { 
-    add,
     getAll,
     markRead,
     remove,

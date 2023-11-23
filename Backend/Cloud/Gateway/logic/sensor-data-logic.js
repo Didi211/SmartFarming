@@ -49,7 +49,7 @@ const validateUserSensors = async (userSensors, userId) => {
                 throw { 
                     status: 400,
                     message: "Unregistered sensor ID",
-                    details: `Sensor with ID [$${sensor.sensorId}] does not belong to user [${userId}]`
+                    details: `Sensor with ID [${sensor.sensorId}] does not belong to user [${userId}]`
                 }
             }
         });
