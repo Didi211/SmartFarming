@@ -99,10 +99,17 @@ const getIdByMqttToken = async (token) => {
     };
 }
 
+const getById = async (id) => { 
+    let docRef = firestore.doc(db, usersRef.id, id);
+    let docSnap = await firestore.getDoc(docRef);
+    return docSnap.data();
+}
+
 export default { 
     register,
     login,
     fetchMqttToken,
     isUserExisting,
-    getIdByMqttToken
+    getIdByMqttToken,
+    getById
 }

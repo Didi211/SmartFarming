@@ -7,5 +7,6 @@ router.post('/register', controller.register);
 router.post('/fetch-token', controller.fetchMqttToken);
 router.get('/:id/exists', controller.isUserExisting);
 router.get('/get-id/:token', controller.getIdByMqttToken);
+router.get('/:id', controller.get);
 
 export default router
