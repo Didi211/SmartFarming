@@ -33,9 +33,11 @@ const sendAggregatedData = async () => {
             reading: o._value
         });
     }
-    edgeGatewayAxios.post('/sync', JSON.stringify({
-        data: result
-    }));
+    if (result.length > 0) { 
+        edgeGatewayAxios.post('/sync', JSON.stringify({
+            data: result
+        }));
+    }
     return result;
 }
 
