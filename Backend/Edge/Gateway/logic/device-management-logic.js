@@ -1,9 +1,9 @@
 
 import { publishAlert } from "../messaging/alert-mqtt.js";
 
-const sendAlertToCloud = async (message) => { 
+const sendAlertToCloud = async (data) => { 
     try {
-        publishAlert(message);
+        publishAlert(data);
     } catch (error) {
         throw { 
             status: 500,

@@ -54,6 +54,14 @@ const getIdByMqttToken = async (mqttToken) => {
     throw response.data
 }
 
+const get = async (id) => { 
+    let response = await usersAxios.get(`/${id}`);
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    throw response.data;
+}
+
 
 
 export default {
@@ -61,5 +69,6 @@ export default {
     login,
     fetchMqttToken,
     isUserExisting,
-    getIdByMqttToken
+    getIdByMqttToken,
+    get
 }

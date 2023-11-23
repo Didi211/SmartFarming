@@ -1,6 +1,7 @@
 // receives alerts from edge 
 
 import { mqttClient } from "../config/mqtt-config.js";
+import deviceLogic from "../logic/device-logic.js";
 import notificationLogic from "../logic/notification-logic.js";
 import userManagementLogic from "../logic/user-management-logic.js";
 
@@ -34,7 +35,18 @@ const handleAlertMessage = async (topic, message) => {
     if (messageJson.message == undefined) { 
         throw "Message from MQTT does not have 'message' property."
     }
-
+    if (messageJson.metadata != undefined) {
+        if (messageJson.metadata.sensorId == undefined) {
+            throw "Message from MQTT does not have 'metadata.sensorId' property."
+        } 
+        if (messageJson.metadata.status == undefined) {
+            throw "Message from MQTT does not have 'metadata.status' property."
+        } 
+    }
+    else { 
+        throw "Message from MQTT does not have 'metadata' property."
+    }
+    console.log(mqttToken);
     let userResult = await userManagementLogic.getIdByMqttToken(mqttToken);
     if (userResult.status != 200) { 
         throw userResult.details
@@ -43,7 +55,18 @@ const handleAlertMessage = async (topic, message) => {
         userId: userResult.details,
         message: messageJson.message
     }
-    await notificationLogic.add(notification);
+    
+    let notificationPromise = notificationLogic.add(notification);
+    let devicePromise = deviceLogic.get(messageJson.metadata.sensorId);
+    let userPromise = userManagementLogic.get(userResult.details);
+    await Promise.all([notificationPromise, devicePromise, userPromise]);
+
+    // call device management service and update device
+    let userEmail = (await userPromise).details.email;
+    let device = (await devicePromise).details;
+    device.status = messageJson.metadata.status;
+    await deviceLogic.update(device.id, device, userEmail);
+
 }
 
 export default { 

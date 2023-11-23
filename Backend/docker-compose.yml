@@ -148,3 +148,16 @@ services:
       - 8087:8086
     volumes: 
       - edge_influxdb_data:/var/lib/influxdb
+
+  edge-device-management:
+    container_name: edge-device-management
+    image: edge-devicemanagement
+    build: 
+      context: Edge/DeviceManagement
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5003:5003
+    env_file:
+      - Edge/DeviceManagement/edge-device-management.env
