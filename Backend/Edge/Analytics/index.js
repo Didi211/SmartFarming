@@ -18,8 +18,8 @@ app.use(json());
 app.use(urlencoded({extended: false}));
 app.use(cors());
 
-app.use('/api/devices', deviceRoutes);
-app.use('/api/rules', ruleRoutes);
+app.use('/api/updates/devices', deviceRoutes);
+app.use('/api/updates/rules', ruleRoutes);
 
 import { startListening as startListeningRTData } from './messaging/rt-data-mqtt.js';
 

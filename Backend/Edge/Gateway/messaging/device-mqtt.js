@@ -35,11 +35,11 @@ const handleCloudUpdateMessage = async (topic, message) => {
     // }
     switch(updateType.toUpperCase()) { 
         case constants.devices: { 
-            handleDeviceUpdates(action, messageJson);
+            await handleDeviceUpdates(action, messageJson.data);
             break;
         }
         case constants.rules: { 
-            handleRuleUpdates(action, messageJson);
+            await handleRuleUpdates(action, messageJson.data);
             break;
         }
         default: { 
@@ -48,22 +48,23 @@ const handleCloudUpdateMessage = async (topic, message) => {
     }
 }
 
-const handleDeviceUpdates = async (action, message) => { 
+const handleDeviceUpdates = async (action, data) => { 
     // call action
+    console.log('handle', data)
     switch (action.toUpperCase()) {
         case constants.add: { 
             // call add action
-            await analyticsLogic.addDevice(message);
+            await analyticsLogic.addDevice(data.device);
             break;
         }
         case constants.update: { 
             // call update action
-            await analyticsLogic.updateDevice(message);
+            await analyticsLogic.updateDevice(data.id, data.device);
             break;
         }
         case constants.remove: { 
             // call remove action
-            await analyticsLogic.removeDevice(message);
+            await analyticsLogic.removeDevice(data.id);
             break;
         }
         default:
@@ -71,22 +72,22 @@ const handleDeviceUpdates = async (action, message) => {
     }
 }
 
-const handleRuleUpdates = async (action, message) => { 
+const handleRuleUpdates = async (action, data) => { 
     // call action
     switch (action.toUpperCase()) {
         case constants.add: { 
             // call add action
-            await analyticsLogic.addRule(message);
+            await analyticsLogic.addRule(data);
             break;
         }
         case constants.update: { 
             // call update action
-            await analyticsLogic.updateRule(message);
+            await analyticsLogic.updateRule(data);
             break;
         }
         case constants.remove: { 
             // call remove action
-            await analyticsLogic.removeRule(message);
+            await analyticsLogic.removeRule(data);
             break;
         }
         default:

@@ -27,6 +27,6 @@ app.listen(port, async () => {
     // configure mqtt 
     await mqttConfig();
     startListeningRTData();
-    // startListeningDeviceUpdates();
+    startListeningDeviceUpdates();
     console.log(`Edge Gateway Service is listening on port ${port}`);
 });

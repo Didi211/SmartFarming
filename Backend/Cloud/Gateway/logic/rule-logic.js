@@ -27,7 +27,7 @@ const add = async (rule, email) => {
     if (response.status == 200) { 
         // propagate to the edge 
         let token = (await userManagementLogic.fetchMqttToken(email)).details;
-        ruleMqtt.publishAddRule(token, rule);
+        ruleMqtt.publishAddRule(token, JSON.parse(response.data).details);
         return JSON.parse(response.data);
     }
     else { 

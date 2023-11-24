@@ -117,6 +117,8 @@ services:
       - Edge/Gateway/edge-gateway.env
     depends_on:
       - edge-mqtt
+      - cloud-gateway
+      - edge-analytics
 
   edge-mqtt:
     container_name: edge-mqtt
@@ -142,6 +144,7 @@ services:
     depends_on:
       - edge-influxdb
       - edge-mqtt
+      - edge-gateway
 
   edge-influxdb:
     container_name: edge-influxdb
@@ -163,6 +166,8 @@ services:
       - 5003:5003
     env_file:
       - Edge/DeviceManagement/edge-device-management.env
+    depends_on:
+      - edge-gateway
   
   edge-analytics:
     container_name: edge-analytics
