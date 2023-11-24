@@ -16,32 +16,36 @@ const ruleSchema = new mongoose.Schema({
         required: true,
         unique: true,
     }, 
-    expression: { 
+    startExpression: { 
         type: String,
         required: true,
         enum: { 
-            values: ['>', '<', '<=', '>='],
+            values: ['>', '<'],
             message: '{VALUE} is not allowed.'
         }
     },
-    action: { 
+    stopExpression: { 
         type: String,
         required: true,
-        uppercase: true,
         enum: { 
-            values: ['START', 'STOP'],
+            values: ['>', '<'],
             message: '{VALUE} is not allowed.'
-        },
+        }
     },
-    triggerLevel: { 
+    startTriggerLevel: { 
         type: Number,
         required: true 
-    }
+    },
+    stopTriggerLevel: { 
+        type: Number,
+        required: true 
+    },
 }, { 
     virtuals: { 
         text: { 
             get: function() { 
-                return `${this.action} the actuator when trigger level is ${this.expression} than ${this.triggerLevel}`
+                return `Start the actuator when start trigger level is ${this.startExpression} than ${this.startTriggerLevel}.
+                        Stop the actuator when stop trigger level is ${this.stopExpression} than ${this.stopTriggerLevel}`;
             }
            
         }

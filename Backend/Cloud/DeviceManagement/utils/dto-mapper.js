@@ -20,9 +20,10 @@ const toRuleDto = (rule) => {
         name: rule.name,
         sensorId: rule.sensorId, 
         actuatorId: rule.actuatorId,
-        expression: rule.expression,
-        action: rule.action,
-        triggerLevel: rule.triggerLevel,
+        startExpression: rule.startExpression,
+        stopExpression: rule.stopExpression,
+        startTriggerLevel: rule.startTriggerLevel,
+        stopTriggerLevel: rule.stopTriggerLevel,
         text: rule.text
     };
 }

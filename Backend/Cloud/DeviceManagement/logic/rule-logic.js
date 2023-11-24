@@ -71,9 +71,10 @@ const updateRule = async (id, rule) => {
     await ruleModel.validate();
     let result = await Rule.findByIdAndUpdate(id, {
         name: rule.name,
-        expression: rule.expression,
-        action: rule.action,
-        triggerLevel: rule.triggerLevel
+        startExpression: rule.startExpression,
+        stopExpression: rule.stopExpression,
+        startTriggerLevel: rule.startTriggerLevel,
+        stopTriggerLevel: rule.stopTriggerLevel,
     });
     if (!result) { 
         throw { 
