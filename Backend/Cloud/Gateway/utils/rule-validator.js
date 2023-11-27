@@ -8,21 +8,23 @@ const validateForAdd = (rule) => {
         if (rule.actuatorId == undefined || rule.actuatorId == "") { 
             throw "Rule must have actuator ID."
         }
-        if (rule.action == undefined) { 
-            throw "Rule action is required."
+        if (rule.startTriggerLevel == undefined) { 
+            throw "Rule start trigger level is required."
         }
-        let actionUpperCase = rule.action.toUpperCase();
-        if (actionUpperCase != 'START' && actionUpperCase != 'STOP') { 
-            throw "Rule action must be either START or STOP."
+        if (!Number.isInteger(rule.startTriggerLevel) ) { 
+            throw "Rule start trigger level must be number."
         }
-        if (rule.triggerLevel == undefined) { 
-            throw "Rule trigger level is required."
+        if (rule.stopTriggerLevel == undefined) { 
+            throw "Rule stop trigger level is required."
         }
-        if (!Number.isInteger(rule.triggerLevel) ) { 
-            throw "Rule trigger level must be number."
+        if (!Number.isInteger(rule.stopTriggerLevel) ) { 
+            throw "Rule stop trigger level must be number."
         }
-        if (rule.expression == undefined) { 
-            throw "Rule expression is required."
+        if (rule.startExpression == undefined) { 
+            throw "Rule start expression is required."
+        }
+        if (rule.stopExpression == undefined) { 
+            throw "Rule stop start expression is required."
         }
     }
     catch(error) { 

@@ -1,7 +1,7 @@
 import { analyticsAxios } from "../config/axios-config.js";
 
 const addDevice = async (device) => { 
-    let response = await analyticsAxios.post('/devices/', JSON.stringify({device}));
+    let response = await analyticsAxios.post('/devices/', JSON.stringify(device));
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }
@@ -10,8 +10,8 @@ const addDevice = async (device) => {
     }
 }
 
-const updateDevice = async (device) => { 
-    let response = await analyticsAxios.put(`/devices/${device.id}`, JSON.stringify({device}));
+const updateDevice = async (id, device) => { 
+    let response = await analyticsAxios.put(`/devices/${id}`, JSON.stringify(device));
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }
@@ -20,8 +20,8 @@ const updateDevice = async (device) => {
     }
 }
 
-const removeDevice = async (device) => { 
-    let response = await analyticsAxios.delete(`/devices/${device.id}`);
+const removeDevice = async (id) => { 
+    let response = await analyticsAxios.delete(`/devices/${id}`);
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }
@@ -31,7 +31,7 @@ const removeDevice = async (device) => {
 }
 
 const addRule = async (rule) => { 
-    let response = await analyticsAxios.post('/rules/', JSON.stringify({rule}));
+    let response = await analyticsAxios.post('/rules/', JSON.stringify(rule));
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }
@@ -40,8 +40,8 @@ const addRule = async (rule) => {
     }
 }
 
-const updateRule = async (rule) => { 
-    let response = await analyticsAxios.put(`/rules/${rule.id}`, JSON.stringify({rule}));
+const updateRule = async (id, rule) => { 
+    let response = await analyticsAxios.put(`/rules/${id}`, JSON.stringify(rule));
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }
@@ -50,8 +50,8 @@ const updateRule = async (rule) => {
     }
 }
 
-const removeRule = async (rule) => { 
-    let response = await analyticsAxios.delete(`/rules/${rule.id}`);
+const removeRule = async (id) => { 
+    let response = await analyticsAxios.delete(`/rules/${id}`);
     if (response.status == 200) { 
         return JSON.parse(response.data);
     }

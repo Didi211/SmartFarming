@@ -6,13 +6,12 @@ export const startStatusScheduler = () => {
         // check device statuses from edgex
         let shouldAlert = true
         let data = { 
-            message: `Sensor with ID [655613dab90f7a70bb421a26] stopped working.`,
+            message: `Sensor with ID [656096eac1afa1de958e6d61] stopped working.`,
             metadata: { 
-                sensorId: '655613dab90f7a70bb421a26',
+                sensorId: '656096eac1afa1de958e6d61',
                 status: 'OFFLINE'
             }
         }
-        console.log(data);
         if (shouldAlert) { 
             await logic.sendAlert(data)
         }

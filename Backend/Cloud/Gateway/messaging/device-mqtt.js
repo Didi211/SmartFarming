@@ -9,7 +9,9 @@ const publishAddDevice = (token, device) => {
     }
     let topic = mqttTopicBuilder(process.env.MQTT_TOPIC_EDGE, token, 'devices', 'add');
     mqttClient.publish(topic, JSON.stringify({
-        data: device
+        data: { 
+            device: device
+        }
     }));
 }
 
@@ -32,7 +34,9 @@ const publishRemoveDevice = (token, id) => {
     }
     let topic = mqttTopicBuilder(process.env.MQTT_TOPIC_EDGE, token, 'devices', 'remove');
     mqttClient.publish(topic, JSON.stringify({
-        data: id
+        data: {
+            id: id
+        }
     }));
 }
 

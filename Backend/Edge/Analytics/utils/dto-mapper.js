@@ -2,7 +2,7 @@ const toDeviceDto = (device) => {
     return { 
         id: device._id,
         name: device.name,
-        userId: device.userId,
+        // userId: device.userId,
         type: device.type,
         status: device.status,
         unit: device.unit ?? null,
@@ -24,7 +24,6 @@ const toRuleDto = (rule) => {
         stopExpression: rule.stopExpression,
         startTriggerLevel: rule.startTriggerLevel,
         stopTriggerLevel: rule.stopTriggerLevel,
-        text: rule.text
     };
 }
 

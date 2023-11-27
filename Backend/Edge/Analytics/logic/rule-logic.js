@@ -1,53 +1,11 @@
 import { Rule } from '../models/rule-model.js';
 import dtoMapper from '../utils/dto-mapper.js';
-import deviceLogic from './device-logic.js';
-
-
-const getByDeviceId = async (deviceId) => { 
-    let result = await Rule.findOne({
-        $or: [
-            {sensorId: deviceId},
-            {actuatorId: deviceId}
-        ]
-    });
-    if (!result) { 
-        throw { 
-            status: 400,
-            message: "MongoDB error",
-            details: `Rule for device with ID [${deviceId}] not found in database.`
-        };
-    }
-    return dtoMapper.toRuleDto(result);
-}
 
 const addRule = async (rule) => { 
-    let sensor, actuator;
-    // check if device ids are from existing devices 
     try { 
-         [sensor, actuator] = await Promise.all([
-            deviceLogic.findById(rule.sensorId),
-            deviceLogic.findById(rule.actuatorId)
-        ]);
-    }
-    catch(error) { 
-        throw {
-            status: 400,
-            message: "Invalid devices",
-            details: `One or both devices are not created. Internal error: ${error.details}`
-        }
-    }
-        
-    // check if devices are from the same tenant
-    // add checking from jwt 
-    if (sensor.userId != actuator.userId) { 
-        throw {
-            status: 400,
-            message: "Invalid devices",
-            details: `Devices are not belonging to the same user.`
-        }
-    }
-    try { 
-        let result = await Rule.create(rule);
+        let ruleModel = new Rule(rule);
+        ruleModel._id = rule.id;
+        let result = await Rule.create(ruleModel);
         return dtoMapper.toRuleDto(result);
     }
     catch(error) { 
@@ -99,7 +57,6 @@ const removeRule = async (id) => {
 }
 
 export default { 
-    getByDeviceId,
     addRule,
     updateRule,
     removeRule

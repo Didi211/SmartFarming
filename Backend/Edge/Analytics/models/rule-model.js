@@ -40,17 +40,6 @@ const ruleSchema = new mongoose.Schema({
         type: Number,
         required: true 
     },
-}, { 
-    virtuals: { 
-        text: { 
-            get: function() { 
-                return `Start the actuator when start trigger level is ${this.startExpression} than ${this.startTriggerLevel}. Stop the actuator when stop trigger level is ${this.stopExpression} than ${this.stopTriggerLevel}`;
-            }
-        }
-    },
-    toJSON: { 
-        virtuals: true
-    },
 });
 
 const Rule = mongoose.model('Rule', ruleSchema);

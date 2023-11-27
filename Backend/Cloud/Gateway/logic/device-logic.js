@@ -42,7 +42,7 @@ const add = async (device, email) => {
     if (response.status == 200) { 
         // propagate the call to the edge 
         let token = (await userManagementLogic.fetchMqttToken(email)).details;
-        deviceMqtt.publishAddDevice(token, device);
+        deviceMqtt.publishAddDevice(token, JSON.parse(response.data).details);
         return JSON.parse(response.data);
     }
     else { 

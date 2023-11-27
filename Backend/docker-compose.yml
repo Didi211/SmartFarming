@@ -7,6 +7,7 @@ volumes:
   edge_influxdb_data: {}
   edge_influxdb_conf: {}
   edge_influxdb_init: {}
+  edge_mongodb_data: {}
 
 services:
   # CLOUD
@@ -116,6 +117,8 @@ services:
       - Edge/Gateway/edge-gateway.env
     depends_on:
       - edge-mqtt
+      - cloud-gateway
+      - edge-analytics
 
   edge-mqtt:
     container_name: edge-mqtt
@@ -140,6 +143,8 @@ services:
       - Edge/Persistence/edge-persistence.env
     depends_on:
       - edge-influxdb
+      - edge-mqtt
+      - edge-gateway
 
   edge-influxdb:
     container_name: edge-influxdb
@@ -161,3 +166,28 @@ services:
       - 5003:5003
     env_file:
       - Edge/DeviceManagement/edge-device-management.env
+    depends_on:
+      - edge-gateway
+  
+  edge-analytics:
+    container_name: edge-analytics
+    image: edge-analytics
+    build: 
+      context: Edge/analytics
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5004:5004
+    env_file:
+      - Edge/Analytics/edge-analytics.env
+    depends_on:
+      - edge-mqtt
+
+  edge-mongodb:
+    container_name: edge-mongodb
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - edge_mongodb_data:/data/db
