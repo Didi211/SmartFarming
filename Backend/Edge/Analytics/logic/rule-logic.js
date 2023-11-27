@@ -3,7 +3,6 @@ import dtoMapper from '../utils/dto-mapper.js';
 
 const addRule = async (rule) => { 
     try { 
-        console.log(rule)
         let ruleModel = new Rule(rule);
         ruleModel._id = rule.id;
         let result = await Rule.create(ruleModel);

@@ -5,7 +5,6 @@ import responseDtoMapper from '../utils/response-dto-mapper.js';
 const add = async (req, res) => { 
     let device = req.body;
     try { 
-        console.log('analytics - add ',device);
         let result = await logic.addDevice(device);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,

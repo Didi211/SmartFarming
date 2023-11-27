@@ -50,7 +50,6 @@ const handleCloudUpdateMessage = async (topic, message) => {
 
 const handleDeviceUpdates = async (action, data) => { 
     // call action
-    console.log('handle', data)
     switch (action.toUpperCase()) {
         case constants.add: { 
             // call add action

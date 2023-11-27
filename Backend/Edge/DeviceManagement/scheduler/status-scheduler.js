@@ -12,7 +12,6 @@ export const startStatusScheduler = () => {
                 status: 'OFFLINE'
             }
         }
-        console.log(data);
         if (shouldAlert) { 
             await logic.sendAlert(data)
         }

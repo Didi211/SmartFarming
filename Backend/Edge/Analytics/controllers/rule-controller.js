@@ -5,7 +5,6 @@ import responseDtoMapper from '../utils/response-dto-mapper.js';
 const add = async (req, res) => { 
     let rule = req.body;
     try { 
-        console.log(rule);
         let result = await logic.addRule(rule);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
@@ -38,7 +37,6 @@ const update = async (req, res) => {
 const remove = async (req, res) => { 
     let id = req.params.id;
     try { 
-        console.log(id);
         await logic.removeRule(id);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,

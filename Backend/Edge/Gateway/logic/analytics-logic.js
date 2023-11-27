@@ -31,7 +31,6 @@ const removeDevice = async (id) => {
 }
 
 const addRule = async (rule) => { 
-    console.log(rule);
     let response = await analyticsAxios.post('/rules/', JSON.stringify(rule));
     if (response.status == 200) { 
         return JSON.parse(response.data);
