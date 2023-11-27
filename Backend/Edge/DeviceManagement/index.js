@@ -16,6 +16,6 @@ import { startStatusScheduler } from './scheduler/status-scheduler.js';
 
 const port = process.env.PORT;
 app.listen(port, async () => { 
-    // startStatusScheduler();
+    startStatusScheduler();
     console.log(`Edge Device Management Service is listening on port ${port}`);
 });

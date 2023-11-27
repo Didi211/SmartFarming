@@ -34,7 +34,7 @@ const updateDevice = async (id, device) => {
     
     let result = await Device.findByIdAndUpdate(id, {
         name: device.name,
-        // status: device.status,
+        // status: device.status, // updating directly from edge
         unit: deviceDb.type == 'SENSOR' ? device.unit : null,
         // state: deviceDb.type == 'ACTUATOR' ? device.state : null
     });
