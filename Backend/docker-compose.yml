@@ -183,6 +183,8 @@ services:
       - Edge/Analytics/edge-analytics.env
     depends_on:
       - edge-mqtt
+      - edge-mongodb
+
 
   edge-mongodb:
     container_name: edge-mongodb
