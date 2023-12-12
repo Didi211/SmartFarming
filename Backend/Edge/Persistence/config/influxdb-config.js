@@ -14,18 +14,28 @@ const influxDbConfig = () => {
     console.log('Connected to InfluxDB');
 }
 
-const writeClient = (() => { 
-    if (!isConfigured) { 
-        influxDbConfig();
+const writeClient = (() => {
+    try { 
+        if (!isConfigured) { 
+            influxDbConfig();
+        }
+        return client.getWriteApi(org,bucket,'ns');
+    } 
+    catch(error) { 
+        console.log("Couldn't get WriteClient for InfluxDB. Error:",error);
     }
-    return client.getWriteApi(org,bucket,'ns');
 })();
 
 const queryClient = (() => { 
-    if (!isConfigured) { 
-        influxDbConfig();
+    try { 
+        if (!isConfigured) { 
+            influxDbConfig();
+        }
+        return client.getQueryApi(org);
+    } 
+    catch(error) { 
+        console.log("Couldn't get QueryClient for InfluxDB. Error:",error);
     }
-    return client.getQueryApi(org);
 })();
 
 export {

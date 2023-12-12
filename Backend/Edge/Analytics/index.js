@@ -22,10 +22,12 @@ app.use('/api/updates/devices', deviceRoutes);
 app.use('/api/updates/rules', ruleRoutes);
 
 import { startListening as startListeningRTData } from './messaging/rt-data-mqtt.js';
+import { loadEdgexProfiles } from './config/edgex-profile-loader.js';
 
 const port = process.env.PORT;
 app.listen(port, async () => { 
     await mongoClient.config();
+    await loadEdgexProfiles();
     startListeningRTData();
     console.log(`Edge Analytics Service is listening on port ${port}`);
 });

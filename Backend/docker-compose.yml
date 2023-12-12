@@ -1,5 +1,6 @@
 version: '3.8'
 
+name: smart-farming
 volumes: 
   influxdb_data: {}
   influxdb_conf: {}
@@ -8,6 +9,20 @@ volumes:
   edge_influxdb_conf: {}
   edge_influxdb_init: {}
   edge_mongodb_data: {}
+  consul-config:
+    name: edgex_consul-config
+  consul-data:
+    name: edgex_consul-data
+  db-data:
+    name: edgex_db-data
+  kuiper-data:
+    name: edgex_kuiper-data
+  kuiper-etc:
+    name: edgex_kuiper-etc
+  kuiper-log:
+    name: edgex_kuiper-log
+  kuiper-plugins:
+    name: edgex_kuiper-plugins
 
 services:
   # CLOUD
@@ -185,7 +200,6 @@ services:
       - edge-mqtt
       - edge-mongodb
 
-
   edge-mongodb:
     container_name: edge-mongodb
     image: mongodb/mongodb-community-server:latest
@@ -193,3 +207,479 @@ services:
       - 27017:27017
     volumes:
       - edge_mongodb_data:/data/db
+
+# EDGEX
+  app-rules-engine:
+    container_name: edgex-app-rules-engine
+    depends_on:
+      consul:
+        condition: service_started
+      core-data:
+        condition: service_started
+    environment:
+      EDGEX_PROFILE: rules-engine
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-app-rules-engine
+    hostname: edgex-app-rules-engine
+    image: edgexfoundry/app-service-configurable:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59701
+      published: "59701"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  app-mqtt-export:
+    container_name: edgex-app-mqtt-export
+    depends_on:
+      consul:
+        condition: service_started
+      core-data:
+        condition: service_started
+    environment:
+      EDGEX_PROFILE: mqtt-export
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-app-mqtt-export
+      WRITABLE_LOGLEVEL: INFO
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTEXPORT_PARAMETERS_BROKERADDRESS: tcp://edge-mqtt:1884
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTEXPORT_PARAMETERS_TOPIC: edgex-events
+    hostname: edgex-app-mqtt-export
+    image: nexus3.edgexfoundry.org:10004/app-service-configurable:latest
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59703
+      published: "59703"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  consul:
+    command:
+    - agent
+    - -ui
+    - -bootstrap
+    - -server
+    - -client
+    - 0.0.0.0
+    container_name: edgex-core-consul
+    hostname: edgex-core-consul
+    image: hashicorp/consul:1.16.2
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 8500
+      published: "8500"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: root:root
+    volumes:
+    - type: volume
+      source: consul-config
+      target: /consul/config
+      volume: {}
+    - type: volume
+      source: consul-data
+      target: /consul/data
+      volume: {}
+  core-command:
+    container_name: edgex-core-command
+    depends_on:
+      consul:
+        condition: service_started
+      core-metadata:
+        condition: service_started
+      database:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      EXTERNALMQTT_URL: tcp://edge-mqtt:1884 # to receive commands via MQTT 
+      SERVICE_HOST: edgex-core-command
+    hostname: edgex-core-command
+    image: edgexfoundry/core-command:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59882
+      published: "59882"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  core-common-config-bootstrapper:
+    container_name: edgex-core-common-config-bootstrapper
+    depends_on:
+      consul:
+        condition: service_started
+    environment:
+      ALL_SERVICES_DATABASE_HOST: edgex-redis
+      ALL_SERVICES_MESSAGEBUS_HOST: edgex-redis
+      ALL_SERVICES_REGISTRY_HOST: edgex-core-consul
+      APP_SERVICES_CLIENTS_CORE_METADATA_HOST: edgex-core-metadata
+      DEVICE_SERVICES_CLIENTS_CORE_METADATA_HOST: edgex-core-metadata
+      EDGEX_SECURITY_SECRET_STORE: "false"
+    hostname: edgex-core-common-config-bootstrapper
+    image: edgexfoundry/core-common-config-bootstrapper:3.1.0
+    # networks:
+    #   edgex-network: null
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  core-data:
+    container_name: edgex-core-data
+    depends_on:
+      consul:
+        condition: service_started
+      core-metadata:
+        condition: service_started
+      database:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-core-data
+    hostname: edgex-core-data
+    image: edgexfoundry/core-data:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59880
+      published: "59880"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  core-metadata:
+    container_name: edgex-core-metadata
+    depends_on:
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-core-metadata
+    hostname: edgex-core-metadata
+    image: edgexfoundry/core-metadata:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59881
+      published: "59881"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  database:
+    container_name: edgex-redis
+    hostname: edgex-redis
+    image: redis:7.0.14-alpine
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 6379
+      published: "6379"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: root:root
+    volumes:
+    - type: volume
+      source: db-data
+      target: /data
+      volume: {}
+  device-rest:
+    container_name: edgex-device-rest
+    depends_on:
+      consul:
+        condition: service_started
+      core-data:
+        condition: service_started
+      core-metadata:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-device-rest
+    hostname: edgex-device-rest
+    image: edgexfoundry/device-rest:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59986
+      published: "59986"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  # FOR TESTING ONLY
+  # device-virtual:
+  #   container_name: edgex-device-virtual
+  #   depends_on:
+  #     consul:
+  #       condition: service_started
+  #     core-data:
+  #       condition: service_started
+  #     core-metadata:
+  #       condition: service_started
+  #   environment:
+  #     EDGEX_SECURITY_SECRET_STORE: "false"
+  #     SERVICE_HOST: edgex-device-virtual
+  #   hostname: edgex-device-virtual
+  #   image: edgexfoundry/device-virtual:3.1.0
+  #   # networks:
+  #   #   edgex-network: null
+  #   ports:
+  #   - mode: ingress
+  #     host_ip: 0.0.0.0
+  #     target: 59900
+  #     published: "59900"
+  #     protocol: tcp
+  #   read_only: true
+  #   restart: always
+  #   security_opt:
+  #   - no-new-privileges:true
+  #   user: 2002:2001
+  #   volumes:
+  #   - type: bind
+  #     source: /etc/localtime
+  #     target: /etc/localtime
+  #     read_only: true
+  #     bind:
+  #       create_host_path: true
+  rules-engine:
+    container_name: edgex-kuiper
+    depends_on:
+      database:
+        condition: service_started
+    environment:
+      CONNECTION__EDGEX__REDISMSGBUS__PORT: "6379"
+      CONNECTION__EDGEX__REDISMSGBUS__PROTOCOL: redis
+      CONNECTION__EDGEX__REDISMSGBUS__SERVER: edgex-redis
+      CONNECTION__EDGEX__REDISMSGBUS__TYPE: redis
+      EDGEX__DEFAULT__PORT: "6379"
+      EDGEX__DEFAULT__PROTOCOL: redis
+      EDGEX__DEFAULT__SERVER: edgex-redis
+      EDGEX__DEFAULT__TOPIC: edgex/rules-events
+      EDGEX__DEFAULT__TYPE: redis
+      KUIPER__BASIC__CONSOLELOG: "true"
+      KUIPER__BASIC__RESTPORT: "59720"
+    hostname: edgex-kuiper
+    image: lfedge/ekuiper:1.11.4-alpine
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59720
+      published: "59720"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: kuiper:kuiper
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: volume
+      source: kuiper-data
+      target: /kuiper/data
+      volume: {}
+    - type: volume
+      source: kuiper-etc
+      target: /kuiper/etc
+      volume: {}
+    - type: volume
+      source: kuiper-log
+      target: /kuiper/log
+      volume: {}
+    - type: volume
+      source: kuiper-plugins
+      target: /kuiper/plugins
+      volume: {}
+  support-notifications:
+    container_name: edgex-support-notifications
+    depends_on:
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-support-notifications
+    hostname: edgex-support-notifications
+    image: edgexfoundry/support-notifications:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59860
+      published: "59860"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  support-scheduler:
+    container_name: edgex-support-scheduler
+    depends_on:
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      INTERVALACTIONS_SCRUBAGED_HOST: edgex-core-data
+      INTERVALACTIONS_SCRUBPUSHED_HOST: edgex-core-data
+      SERVICE_HOST: edgex-support-scheduler
+    hostname: edgex-support-scheduler
+    image: edgexfoundry/support-scheduler:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      host_ip: 0.0.0.0
+      target: 59861
+      published: "59861"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+  ui:
+    container_name: edgex-ui-go
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: edgex-ui-go
+    hostname: edgex-ui-go
+    image: edgexfoundry/edgex-ui:3.1.0
+    # networks:
+    #   edgex-network: null
+    ports:
+    - mode: ingress
+      target: 4000
+      published: "4000"
+      protocol: tcp
+    read_only: true
+    restart: always
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+    volumes:
+    - type: bind
+      source: /etc/localtime
+      target: /etc/localtime
+      read_only: true
+      bind:
+        create_host_path: true
+# networks:
+#   edgex-network:
+#     name: edgex_edgex-network
+#     driver: bridge
+
+
