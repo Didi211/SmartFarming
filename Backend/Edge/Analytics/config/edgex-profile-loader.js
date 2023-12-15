@@ -2,22 +2,36 @@ import { edgexMetadataAxios } from "./axios-config.js";
 import { v4 } from 'uuid'
 
 export const loadEdgexProfiles = async () => { 
-    let data = [
-        loadSensorProfile(),
-        loadActuatorProfile()
-    ]
-    console.log(`Started loading profiles to EdgeX.`);
+    let sensorProfile =  loadSensorProfile();
+    let actuatorProfile =  loadActuatorProfile();
+   
+    // check if profiles are dreated
+    let [sensorProfileExist, actuatorProfileExist] = await Promise.all([
+        edgexMetadataAxios.get(`/deviceprofile/name/${sensorProfile.profile.name}`),
+        edgexMetadataAxios.get(`/deviceprofile/name/${actuatorProfile.profile.name}`),
+    ])
+    if (sensorProfileExist.status == 200 && actuatorProfileExist.status == 200) { 
+        console.log('Device profiles are already uploaded to Edgex Core Metadata.');
+        return;
+    }
+    let data = [];
+    if (sensorProfileExist.status == 404) { 
+        data.push(sensorProfile);
+    }
+    if (actuatorProfileExist.status == 404) { 
+        data.push(actuatorProfile);
+    }
+    data.forEach(profile => { 
+        console.log(`Profile - ${profile.profile.name} needs to be uploaded to Edgex Core Metadata.`);
+    })
+    console.log(`Started uploading profiles to EdgeX.`);
     try {
-        let response = await edgexMetadataAxios.post('deviceprofile', JSON.stringify(data), { 
-            headers: { 
-                "X-Correlation-ID": v4()
-            }
-        });
+        let response = await edgexMetadataAxios.post('deviceprofile', JSON.stringify(data));
         if (response.status != 207) { 
             throw response.data;
         }
         let arr = JSON.parse(response.data);
-        console.log('Displaying results of loading profiles:');
+        console.log('Displaying results of uploaded profiles:');
         arr.forEach(res => { 
             console.log(res);
         });
@@ -93,7 +107,6 @@ const loadActuatorProfile = () => {
                     "readWrite": "RW",
                     "resourceOperations": [
                         { "deviceResource": "PumpState" }
-
                     ]
                 }
             ]

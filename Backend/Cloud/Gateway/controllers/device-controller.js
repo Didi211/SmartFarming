@@ -44,9 +44,7 @@ const update = async (req, res) => {
     }
     catch(error) { 
         handleApiError(res, error);
-
     }
-    
 }
 
 const remove = async (req, res) => {
@@ -59,7 +57,6 @@ const remove = async (req, res) => {
         handleApiError(res, error);
 
     }
-
 }
 
 export default { 

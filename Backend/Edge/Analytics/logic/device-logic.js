@@ -2,24 +2,32 @@ import { Device } from '../models/device-model.js';
 import { Rule } from '../models/rule-model.js';
 import constants from '../utils/constants.js';
 import dtoMapper from '../utils/dto-mapper.js';
+import edgexLogic from './edgex-logic.js';
 
 const addDevice = async (device) => { 
     try { 
+        // create device in edgex
+        let edgexId = await edgexLogic.addDevice(device);
+
+        // add in mongodb 
         let deviceModel = new Device(device);
+        deviceModel.edgexId = edgexId;
         deviceModel._id = device.id;
         let result = await Device.create(deviceModel);
+        
         return dtoMapper.toDeviceDto(result);
     }
     catch(error) { 
         throw { 
             status: 500,
-            message: 'MongoDB error',
+            message: 'Error while adding new device',
             details: error
         };
     }
 }
 
 const updateDevice = async (id, device) => { 
+    // validation
     if (id != device.id) { 
         throw { 
             status: 400,
@@ -31,12 +39,13 @@ const updateDevice = async (id, device) => {
     await deviceModel.validate();
 
     let deviceDb = await Device.findById(id);
-    
+    await edgexLogic.updateDevice(deviceDb.edgexId, device);
+
     let result = await Device.findByIdAndUpdate(id, {
         name: device.name,
         // status: device.status, // updating directly from edge
         unit: deviceDb.type == 'SENSOR' ? device.unit : null,
-        // state: deviceDb.type == 'ACTUATOR' ? device.state : null
+        // state: deviceDb.type == 'ACTUATOR' ? device.state : null // kuiper updates this field
     });
     if (!result) { 
         throw { 
@@ -62,12 +71,15 @@ const removeDevice = async (id) => {
         };
     }
     try { 
-        await Device.findByIdAndDelete(id);
+        // remove in edgex also 
+        
+        let device = await Device.findByIdAndDelete(id);
+        await edgexLogic.removeDevice(device.name);
     }
     catch(error) { 
         throw { 
             status: 500,
-            message: 'MongoDB error',
+            message: 'Deletion error',
             details: error
         }
     }
@@ -102,6 +114,7 @@ const changeStatus = async (id, status) => {
             details: `Status [${status}] is not valid, only [${constants.ONLINE},${constants.OFFLINE}] are valid.`
         }
     }
+
     let result = await Device.findByIdAndUpdate(id, {
         status: status,
     });

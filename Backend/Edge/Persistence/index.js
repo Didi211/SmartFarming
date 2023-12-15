@@ -23,7 +23,7 @@ try {
     const port = process.env.PORT;
     app.listen(port, () => { 
         startListeningRTData();
-        startSimulating();
+        // startSimulating();
         startAggregationScheduler();
         console.log(`Edge Persistence Service is running on port ${port}`);
     });

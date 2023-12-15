@@ -72,20 +72,19 @@ const updateDevice = async (id, device) => {
     await deviceModel.validate();
 
     let deviceDb = await Device.findById(id);
-    
-    let result = await Device.findByIdAndUpdate(id, {
-        name: device.name,
-        status: device.status,
-        unit: deviceDb.type == 'SENSOR' ? device.unit : null,
-        state: deviceDb.type == 'ACTUATOR' ? device.state : null
-    });
-    if (!result) { 
+    if (!deviceDb) { 
         throw { 
             status: 400,
             message: 'MongoDB error',
             details: `Device with ID [${id}] not found in database.`
         }
     }
+    deviceDb.name = device.name;
+    deviceDb.status = device.status;
+    deviceDb.unit = deviceDb.type == 'SENSOR' ? device.unit : null;
+    deviceDb.state = deviceDb.type == 'ACTUATOR' ? device.state : null
+    deviceDb.markModified();
+    await deviceDb.save();
 }
 
 const removeDevice = async (id) => { 

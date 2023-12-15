@@ -2,6 +2,7 @@ const toDeviceDto = (device) => {
     return { 
         id: device._id,
         name: device.name,
+        edgexId: device.edgexId,
         // userId: device.userId,
         type: device.type,
         status: device.status,

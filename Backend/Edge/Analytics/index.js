@@ -7,7 +7,7 @@ dotenv.config({path: 'edge-analytics.env'});
 import mongoClient from './config/mongodb-config.js';
 
 
-import * as axios from './config/axios-config.js';
+import { edgexMetadataAxios } from './config/axios-config.js';
 
 import deviceRoutes from './routes/device-routes.js';
 import ruleRoutes from './routes/rule-routes.js'
@@ -23,10 +23,12 @@ app.use('/api/updates/rules', ruleRoutes);
 
 import { startListening as startListeningRTData } from './messaging/rt-data-mqtt.js';
 import { loadEdgexProfiles } from './config/edgex-profile-loader.js';
+import edgexLogic from './logic/edgex-logic.js';
 
 const port = process.env.PORT;
 app.listen(port, async () => { 
     await mongoClient.config();
+    await edgexLogic.waitForMetadataToBeReady();
     await loadEdgexProfiles();
     startListeningRTData();
     console.log(`Edge Analytics Service is listening on port ${port}`);
