@@ -25,6 +25,9 @@ const addDevice = async (device) => {
                 "Path": deviceConfig.path,
               }
             },
+            "tags": { 
+              "mongoId": device.id
+            }
           }
         }
     ]

@@ -10,8 +10,9 @@ const deviceSchema = new mongoose.Schema({
     },
     edgexId: { 
         type: String,
+        default: null
         // required: true,
-        unique: true
+        // unique: true
         
     },
     // userId: { 

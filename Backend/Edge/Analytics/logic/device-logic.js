@@ -6,16 +6,22 @@ import edgexLogic from './edgex-logic.js';
 
 const addDevice = async (device) => { 
     try { 
-        // create device in edgex
-        let edgexId = await edgexLogic.addDevice(device);
-
-        // add in mongodb 
+        // create device in mongo
         let deviceModel = new Device(device);
-        deviceModel.edgexId = edgexId;
-        deviceModel._id = device.id;
-        let result = await Device.create(deviceModel);
+        deviceModel._id = device.id; // set id from cloud 
+        let deviceDb = (await Device.create(deviceModel));
+
+        // create device in edgex
+        let deviceDto = dtoMapper.toDeviceDto(deviceDb);
+        let edgexId = await edgexLogic.addDevice(deviceDto);
         
-        return dtoMapper.toDeviceDto(result);
+        // set edgex id in mongo object
+        deviceDb = await Device.findByIdAndUpdate(deviceDb.id, { 
+            edgexId: edgexId
+        }, { new: true});     
+
+        deviceDto = dtoMapper.toDeviceDto(deviceDb);
+        return deviceDto;
     }
     catch(error) { 
         throw { 
