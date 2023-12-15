@@ -36,8 +36,8 @@ const handleAlertMessage = async (topic, message) => {
         throw "Message from MQTT does not have 'message' property."
     }
     if (messageJson.metadata != undefined) {
-        if (messageJson.metadata.sensorId == undefined) {
-            throw "Message from MQTT does not have 'metadata.sensorId' property."
+        if (messageJson.metadata.deviceId == undefined) {
+            throw "Message from MQTT does not have 'metadata.deviceId' property."
         } 
         if (messageJson.metadata.status == undefined) {
             throw "Message from MQTT does not have 'metadata.status' property."
@@ -46,18 +46,18 @@ const handleAlertMessage = async (topic, message) => {
     else { 
         throw "Message from MQTT does not have 'metadata' property."
     }
-    console.log(mqttToken);
     let userResult = await userManagementLogic.getIdByMqttToken(mqttToken);
     if (userResult.status != 200) { 
         throw userResult.details
     }
     let notification = { 
         userId: userResult.details,
-        message: messageJson.message
+        message: messageJson.message,
+        deviceId: messageJson.metadata.deviceId
     }
     
     let notificationPromise = notificationLogic.add(notification);
-    let devicePromise = deviceLogic.get(messageJson.metadata.sensorId);
+    let devicePromise = deviceLogic.get(messageJson.metadata.deviceId);
     let userPromise = userManagementLogic.get(userResult.details);
     await Promise.all([notificationPromise, devicePromise, userPromise]);
 

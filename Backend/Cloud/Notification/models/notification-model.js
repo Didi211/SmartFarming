@@ -10,15 +10,16 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now
+    deviceId: { 
+        type: String,
+        required: true
     },
     isRead: { 
         type: Boolean,
         default: false
     }
-
+}, { 
+    timestamps: true
 });
 
 const Notification = mongoose.model('Notification', notificationSchema);
