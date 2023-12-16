@@ -1,4 +1,4 @@
-import { edgeGatewayAxios } from "../config/axios-config.js"
+import { edgeGatewayAxios, edgexCoreMetadataAxios } from "../config/axios-config.js"
 
 const sendAlert = async (data) => { 
     let response = await edgeGatewayAxios.post('/alert', JSON.stringify(data));
@@ -10,6 +10,19 @@ const sendAlert = async (data) => {
     }
 }
 
+    }
+}
+
+const fetchAllDevices = async (profileName) => { 
+    try {
+        let response = await edgexCoreMetadataAxios.get(`/device/profile/name/${profileName}`);
+        if (response.status != 200) { 
+            throw response.data
+        }
+        let data = JSON.parse(response.data);
+        return data.devices;
+    } catch (error) {
+        throw error;
+
 export default { 
-    sendAlert
 }

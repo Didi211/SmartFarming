@@ -53,7 +53,8 @@ const handleAlertMessage = async (topic, message) => {
     let notification = { 
         userId: userResult.details,
         message: messageJson.message,
-        deviceId: messageJson.metadata.deviceId
+        deviceId: messageJson.metadata.deviceId,
+        deviceStatus: messageJson.metadata.status
     }
     
     let notificationPromise = notificationLogic.add(notification);
