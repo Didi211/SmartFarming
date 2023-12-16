@@ -12,10 +12,12 @@ app.use(urlencoded({extended: false}));
 app.use(cors());
 
 import { startStatusScheduler } from './scheduler/status-scheduler.js';
+import { startChangeStatusScheduler } from './scheduler/change-status-simulator.js';
 
 
 const port = process.env.PORT;
 app.listen(port, async () => { 
     startStatusScheduler();
+    startChangeStatusScheduler();
     console.log(`Edge Device Management Service is listening on port ${port}`);
 });

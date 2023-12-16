@@ -41,19 +41,3 @@ export const startStatusScheduler = () => {
     })
 }
 
-// //add another scheduler to change device statuses 
-// export const startChangeStatusScheduler = () => { 
-//     cron.schedule('/5 * * * *', async () => { 
-//         // fetch all devices for my profiles 
-//         let [sensors, actuators] = await Promise.all(
-//             logic.fetchAllDevices(process.env.SENSOR_PROFILE_NAME),
-//             logic.fetchAllDevices(process.env.ACTUATOR_PROFILE_NAME),
-//         )
-//         let allDevices = [sensors, actuators];
-//         allDevices.forEach(device => { 
-
-//         })
-//         // for some of them toggle operating state (status)
-        
-//     })
-// }

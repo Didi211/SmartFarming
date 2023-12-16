@@ -1,4 +1,5 @@
 import { edgeGatewayAxios, edgexCoreMetadataAxios } from "../config/axios-config.js"
+import constants from "../utils/constants.js";
 
 const sendStatusUpdate = async (data) => { 
     let response = await edgeGatewayAxios.post('/alert', JSON.stringify(data));
@@ -10,23 +11,29 @@ const sendStatusUpdate = async (data) => {
     }
 }
 
-// move this to device management service to simulator/scheduler
-const updateDeviceStatusOnEdgex = async (id, device) => { 
-    let operatingState = device.status == constants.ONLINE ? constants.STATE_UP : constants.STATE_DOWN;
+const updateDeviceStatusOnEdgex = async (id, status) => { 
+    let toggledStatus = status === constants.STATE_UP
+        ? constants.STATE_DOWN 
+        : constants.STATE_UP 
     let data = [
         {
           "apiVersion": "v3",
           "device": {
             "id": id,
-            "operatingState": operatingState,
+            "operatingState": toggledStatus,
           }
         }
     ]
     try {
         let response = await edgexCoreMetadataAxios.patch('/device',JSON.stringify(data));
         if (response.status != 207) { 
-            throw error
+            throw response.data
         }
+        let responseData = JSON.parse(response.data);
+        if (responseData[0].statusCode != 200) { 
+            throw response.data;
+        }
+        return toggledStatus;
     } catch (error) {
         throw error;
     }
