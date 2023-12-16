@@ -63,27 +63,7 @@ const updateDevice = async (id, device) => {
     }
 }
 
-// move this to device management service to simulator/scheduler
-const updateDeviceStatus = async (id, device) => { 
-    let operatingState = device.status == constants.ONLINE ? constants.STATE_UP : constants.STATE_DOWN;
-    let data = [
-        {
-          "apiVersion": "v3",
-          "device": {
-            "id": id,
-            "operatingState": operatingState,
-          }
-        }
-    ]
-    try {
-        let response = await edgexMetadataAxios.patch('/device',JSON.stringify(data));
-        if (response.status != 207) { 
-            throw error
-        }
-    } catch (error) {
-        throw error;
-    }
-}
+
 
 const removeDevice = async (name) => { 
     try {
@@ -117,7 +97,6 @@ const waitForMetadataToBeReady = async () => {
 export default { 
     addDevice,
     updateDevice,
-    updateDeviceStatus,
     removeDevice,
     waitForMetadataToBeReady
 }
