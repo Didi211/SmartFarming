@@ -3,7 +3,7 @@ import { SensorModel } from "../models/sensor-model.js";
 const add = async (req, res) => { 
     try { 
         let data = req.body;
-        SensorModel.create({_id: data.name, pumpState: data.pumpState}).save();
+        let result = SensorModel.create({_id: data.name, pumpState: data.pumpState}).save();
         console.log(`Added sensor ${data.name}`);
         res.status(200).send('Added')
     }
@@ -28,10 +28,10 @@ const remove = async (req, res) => {
 
 const setPumpState = async (req, res) => { 
     let name = req.params.name;
-    let state = req.body.state;
+    let state = req.body.state; 
     try { 
-        SensorModel.update({_id: name}, { pumpState: state}).save();
-        res.status(204).send();
+        let result = SensorModel.update({_id: name}, { pumpState: state}).save();
+        res.status(200).send(result);
     }
     catch(error) { 
         console.log(error);

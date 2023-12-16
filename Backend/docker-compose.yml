@@ -23,6 +23,7 @@ volumes:
     name: edgex_kuiper-log
   kuiper-plugins:
     name: edgex_kuiper-plugins
+  sensor-local-db: {}
 
 services:
   # CLOUD
@@ -207,6 +208,23 @@ services:
       - 27017:27017
     volumes:
       - edge_mongodb_data:/data/db
+
+#devices
+  sensor-device:
+    container_name: sensor-device
+    image: sensor-device
+    build: 
+      context: Edge/Devices/Sensor
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 6000:6000
+    env_file:
+      - Edge/Devices/Sensor/sensor.env
+    volumes:
+      - sensor-local-db:/usr/src/app/databases:rw
+    user: root:root
 
 # EDGEX
   app-rules-engine:
@@ -496,40 +514,40 @@ services:
       bind:
         create_host_path: true
   # FOR TESTING ONLY
-  device-virtual:
-    container_name: edgex-device-virtual
-    depends_on:
-      consul:
-        condition: service_started
-      core-data:
-        condition: service_started
-      core-metadata:
-        condition: service_started
-    environment:
-      EDGEX_SECURITY_SECRET_STORE: "false"
-      SERVICE_HOST: edgex-device-virtual
-    hostname: edgex-device-virtual
-    image: edgexfoundry/device-virtual:3.1.0
-    # networks:
-    #   edgex-network: null
-    ports:
-    - mode: ingress
-      host_ip: 0.0.0.0
-      target: 59900
-      published: "59900"
-      protocol: tcp
-    read_only: true
-    restart: always
-    security_opt:
-    - no-new-privileges:true
-    user: 2002:2001
-    volumes:
-    - type: bind
-      source: /etc/localtime
-      target: /etc/localtime
-      read_only: true
-      bind:
-        create_host_path: true
+  # device-virtual:
+  #   container_name: edgex-device-virtual
+  #   depends_on:
+  #     consul:
+  #       condition: service_started
+  #     core-data:
+  #       condition: service_started
+  #     core-metadata:
+  #       condition: service_started
+  #   environment:
+  #     EDGEX_SECURITY_SECRET_STORE: "false"
+  #     SERVICE_HOST: edgex-device-virtual
+  #   hostname: edgex-device-virtual
+  #   image: edgexfoundry/device-virtual:3.1.0
+  #   # networks:
+  #   #   edgex-network: null
+  #   ports:
+  #   - mode: ingress
+  #     host_ip: 0.0.0.0
+  #     target: 59900
+  #     published: "59900"
+  #     protocol: tcp
+  #   read_only: true
+  #   restart: always
+  #   security_opt:
+  #   - no-new-privileges:true
+  #   user: 2002:2001
+  #   volumes:
+  #   - type: bind
+  #     source: /etc/localtime
+  #     target: /etc/localtime
+  #     read_only: true
+  #     bind:
+  #       create_host_path: true
   rules-engine:
     container_name: edgex-kuiper
     depends_on:
