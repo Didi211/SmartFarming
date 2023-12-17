@@ -1,12 +1,10 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
 import dotenv from 'dotenv';
-
 dotenv.config({path: 'edge-persistence.env'});
 
 import { influxDbConfig } from './config/influxdb-config.js';
 import * as axios from './config/axios-config.js';
-
 
 const app = express();
 
@@ -15,7 +13,6 @@ app.use(urlencoded({ extended: false }));
 app.use(cors());
 
 import { startListening as startListeningRTData} from './messaging/rt-data-mqtt.js';
-import { startSimulating } from './scheduler/sensor-simulator-mqtt.js';
 import { startAggregationScheduler } from './scheduler/aggregation-scheduler.js';
 
 try { 
@@ -23,7 +20,6 @@ try {
     const port = process.env.PORT;
     app.listen(port, () => { 
         startListeningRTData();
-        // startSimulating();
         startAggregationScheduler();
         console.log(`Edge Persistence Service is running on port ${port}`);
     });

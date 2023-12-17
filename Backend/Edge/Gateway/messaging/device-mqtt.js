@@ -1,5 +1,5 @@
 import { mqttCloudClient } from '../config/mqtt-config.js';
-import constants from '../utils/constants.js';
+import {regular as constants} from '../utils/constants.js';
 import analyticsLogic from '../logic/analytics-logic.js';
 
 export const startListening = () => { 

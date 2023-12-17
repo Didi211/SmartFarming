@@ -1,4 +1,4 @@
-import constants from "./constants.js";
+import {regular as constants} from "./constants.js";
 
 export const getDeviceConfig = (deviceType) => { 
     if (deviceType === constants.SENSOR) { 
