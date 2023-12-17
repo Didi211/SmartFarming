@@ -3,6 +3,7 @@ import { Rule } from '../models/rule-model.js';
 import { regular as constants }  from '../utils/constants.js';
 import dtoMapper from '../utils/dto-mapper.js';
 import edgexLogic from './edgex-logic.js';
+import { deviceSimulatorAxios } from '../config/axios-config.js';
 
 const addDevice = async (device) => { 
     try { 
@@ -18,9 +19,18 @@ const addDevice = async (device) => {
         // set edgex id in mongo object
         deviceDb = await Device.findByIdAndUpdate(deviceDb.id, { 
             edgexId: edgexId
-        }, { new: true});     
+        }, { new: true});
 
+        
         deviceDto = dtoMapper.toDeviceDto(deviceDb);
+
+        if (process.env.DEVICE_SIMULATOR_ENABLED) { 
+            if (deviceDto.type === constants.SENSOR) { 
+                await deviceSimulatorAxios.post('/add', JSON.stringify({
+                    name: deviceDto.name
+                }))
+            }
+        }
         return deviceDto;
     }
     catch(error) { 
@@ -60,6 +70,14 @@ const updateDevice = async (id, device) => {
             details: `Device with ID [${id}] not found in database.`
         }
     }
+
+    if (process.env.DEVICE_SIMULATOR_ENABLED) { 
+        if (deviceDb.type === constants.SENSOR) { 
+            await deviceSimulatorAxios.post('/update-device', JSON.stringify({
+                name: device.name
+            }))
+        }
+    }
 }
 
 const removeDevice = async (id) => { 
@@ -81,6 +99,14 @@ const removeDevice = async (id) => {
         
         let device = await Device.findByIdAndDelete(id);
         await edgexLogic.removeDevice(device.name);
+
+        if (process.env.DEVICE_SIMULATOR_ENABLED) { 
+            if (deviceDb.type === constants.SENSOR) { 
+                await deviceSimulatorAxios.post('/update/device', JSON.stringify({
+                    name: device.name
+                }))
+            }
+        }
     }
     catch(error) { 
         throw { 

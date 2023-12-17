@@ -209,10 +209,9 @@ services:
     volumes:
       - edge_mongodb_data:/data/db
 
-#devices
-  sensor-device:
-    container_name: sensor-device
-    image: sensor-device
+  device-simulator:
+    container_name: device-simulator
+    image: device-simulator
     build: 
       context: Edge/Devices/Sensor
       dockerfile: ./Dockerfile

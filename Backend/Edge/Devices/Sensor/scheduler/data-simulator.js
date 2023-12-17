@@ -27,13 +27,13 @@ export const startDataSimulation = () => {
                     ? Math.min(sensor.lastReading + changeAmount, 100) // Ensure it doesn't go above 100
                     : Math.max(sensor.lastReading - changeAmount, 0); // Ensure it doesn't go below 0
                 sensor.lastReading = newHumidity;
-                console.log(`Sensor: [${sensor._id}] - Humidity: [${sensor.lastReading}]`);
+                console.log(`Sensor: [${sensor.sensorName}] - Humidity: [${sensor.lastReading}]`);
                 sensor.save();
         
                 // send data to edgex 
-                let response = await edgexDeviceRestAxios.post(`/resource/${sensor._id}/Humidity`,sensor.lastReading.toString());
+                let response = await edgexDeviceRestAxios.post(`/resource/${sensor.sensorName}/Humidity`,sensor.lastReading.toString());
                 if (response.status == 200) { 
-                    console.log(`Reading from sensor ${sensor._id} published to Edgex`);
+                    console.log(`Reading from sensor ${sensor.sensorName} published to Edgex`);
                 }
                 else { 
                     throw response

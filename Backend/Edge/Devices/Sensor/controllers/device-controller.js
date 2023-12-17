@@ -1,48 +1,111 @@
 import { SensorModel } from "../models/sensor-model.js";
 
-const add = async (req, res) => { 
+const addSensor = async (req, res) => { 
     try { 
-        let data = req.body;
-        let result = SensorModel.create({_id: data.name, pumpState: data.pumpState}).save();
-        console.log(`Added sensor ${data.name}`);
-        res.status(200).send('Added')
+        let device = req.body;
+        SensorModel.create({
+            _id: device.id,
+            sensorName: device.sensorName
+        }).save();
+        let message = `Added sensor ${device.sensorName}`
+        console.log(message);
+        res.status(200).send(message);
     }
     catch(error) { 
         console.log(error);
-        res.status(500).send(error);
+        res.status(500).send(error.toString());
     }
 }
 
-const remove = async (req, res) => { 
+const addActuator = async (req, res) => { 
     try { 
-        let name = req.params.name;
-        SensorModel.remove({ _id: name })
-        console.log(`Removed sensor ${name}`);
-        res.status(204).send();
+        let device = req.body;
+        SensorModel.update({_id: device.id}, {
+            actuatorName: device.actuatorName,
+            pumpState: device.pumpState
+        }).save();
+        let message = `Added actuator ${device.actuatorName}`
+        console.log(message);
+        res.status(200).send(message);
     }
     catch(error) { 
         console.log(error);
-        res.status(500).send(error);
+        res.status(500).send(error.toString());
+    }
+}
+
+const updateSensor = async (req, res) => { 
+    try { 
+        let id = req.params.id;
+        let device = req.body;
+        SensorModel.update({_id: id}, {
+            sensorName: device.sensorName 
+        }).save();
+        let message = `Updated sensor ${device.sensorName}`
+        console.log(message);
+        res.status(200).send(message);
+
+    }
+    catch(error) { 
+        console.log(error);
+        res.status(500).send(error.toString());
     }
 }
 
 const setPumpState = async (req, res) => { 
-    let name = req.params.name;
-    let state = req.body.state; 
-    try { 
-        let result = SensorModel.update({_id: name}, { pumpState: state}).save();
-        res.status(200).send(result);
-    }
-    catch(error) { 
-        console.log(error);
-        res.status(500).send(error);
-    }
-    
+  try {
+      let name = req.params.name;
+      let state = req.body.state; 
+      let result = SensorModel.update({actuatorName: name}, { pumpState: state}).save();
+      res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.toString());
+  }
 }
 
 
+const removeSensor = async (req, res) => { 
+    try { 
+        let name = req.params.name;
+        SensorModel.remove({ sensorName: name });
+        let message = `Removed sensor ${name}`
+        console.log(message);
+        res.status(200).send(message);
+    }
+    catch(error) { 
+        console.log(error);
+        res.status(500).send(error.toString());
+    }
+}
+
+const removeActuator = async (req, res) => { 
+    try { 
+        let name = req.params.name;
+        let result = SensorModel.find({ actuatorName: name });
+        if (result.length > 0) {
+            result.update({
+                actuatorName: null
+            }).save();
+        }
+        else { 
+            throw "Actuator not found"
+        }
+        let message = `Removed actuator ${name}`
+        console.log(message);
+        res.status(200).send(message);
+    }
+    catch(error) { 
+        console.log(error);
+        res.status(500).send(error.toString());
+    }
+}
+
 export default { 
-    add, 
-    remove,
+    addSensor,
+    updateSensor,
+    removeSensor,
+    addActuator,
     setPumpState,
+    removeActuator
 }
