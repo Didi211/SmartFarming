@@ -39,7 +39,7 @@ const add = async (req, res) => {
 const update = async (req, res) => {
     try { 
         let email = req.headers['user-email'];
-        let result = await logic.update(req.params.id, req.body, email)
+        let result = await logic.update(req.params.id, req.body, email);
         res.status(result.status).send(result);
     }
     catch(error) { 

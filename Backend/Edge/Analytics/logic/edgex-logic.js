@@ -48,6 +48,7 @@ const updateDevice = async (id, device) => {
         {
           "apiVersion": "v3",
           "device": {
+            "id": id,
             "name": device.name,
             "description": device.description ?? null,
           }

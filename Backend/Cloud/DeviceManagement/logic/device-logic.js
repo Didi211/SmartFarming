@@ -79,7 +79,13 @@ const updateDevice = async (id, device) => {
             details: `Device with ID [${id}] not found in database.`
         }
     }
-    deviceDb.name = device.name;
+    if (deviceDb.name !== device.name) { 
+        throw { 
+            status: 400,
+            message: 'Forbidden update.',
+            details: `Device name cannot be updated.`
+        }
+    }
     deviceDb.status = device.status;
     deviceDb.unit = deviceDb.type == 'SENSOR' ? device.unit : null;
     deviceDb.state = deviceDb.type == 'ACTUATOR' ? device.state : null
@@ -102,7 +108,10 @@ const removeDevice = async (id) => {
         };
     }
     try { 
-        await Device.findByIdAndDelete(id);
+        let result = await Device.findByIdAndDelete(id);
+        if (!result) { 
+            throw "Device is already deleted."
+        }
     }
     catch(error) { 
         throw { 

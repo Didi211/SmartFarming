@@ -12,6 +12,10 @@ export const startStatusScheduler = () => {
             logic.fetchAllDevices(process.env.ACTUATOR_PROFILE_NAME),
         ]);
         let allDevices = [...sensors, ...actuators];
+        if (allDevices.length === 0) { 
+            console.log('No devices available.');
+            return;
+        }
         for (let device of allDevices) { 
             let status, action;
             if (device.operatingState === constants.STATE_UP) { 

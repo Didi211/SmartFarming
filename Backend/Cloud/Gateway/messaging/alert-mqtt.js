@@ -66,7 +66,7 @@ const handleAlertMessage = async (topic, message) => {
     let userEmail = (await userPromise).details.email;
     let device = (await devicePromise).details;
     device.status = messageJson.metadata.status;
-    await deviceLogic.update(device.id, device, userEmail);
+    await deviceLogic.update(device.id, device, userEmail, false);
 
 }
 

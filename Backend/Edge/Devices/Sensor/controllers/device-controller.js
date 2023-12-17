@@ -52,6 +52,25 @@ const updateSensor = async (req, res) => {
     }
 }
 
+const updateActuatorName = async (req, res) => { 
+    try { 
+        let oldActuatorName = req.body.oldActuatorName;
+        let newActuatorName = req.body.newActuatorName;
+        SensorModel.update({actuatorName: oldActuatorName}, {
+            actuatorName: newActuatorName 
+        }).save();
+        let message = `Updated actuator name to ${newActuatorName}`
+        console.log(message);
+        res.status(200).send(message);
+
+    }
+    catch(error) { 
+        console.log(error);
+        res.status(500).send(error.toString());
+    }
+}
+
+
 const setPumpState = async (req, res) => { 
   try {
       let name = req.params.name;
@@ -104,6 +123,7 @@ const removeActuator = async (req, res) => {
 export default { 
     addSensor,
     updateSensor,
+    updateActuatorName,
     removeSensor,
     addActuator,
     setPumpState,

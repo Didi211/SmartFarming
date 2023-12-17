@@ -26,10 +26,12 @@ const addDevice = async (device) => {
 
         if (process.env.DEVICE_SIMULATOR_ENABLED) { 
             if (deviceDto.type === constants.SENSOR) { 
-                await deviceSimulatorAxios.post('/add', JSON.stringify({
-                    name: deviceDto.name
-                }))
+                await deviceSimulatorAxios.post('/add/sensor', JSON.stringify({
+                    id: deviceDto.id,
+                    sensorName: deviceDto.name
+                }));
             }
+            // if ACTUATOR call api only when rule is created
         }
         return deviceDto;
     }
@@ -55,6 +57,13 @@ const updateDevice = async (id, device) => {
     await deviceModel.validate();
 
     let deviceDb = await Device.findById(id);
+    if (deviceDb.name !== device.name) { 
+        throw { 
+            status: 400,
+            message: 'Forbidden update.',
+            details: `Device name cannot be updated.`
+        }
+    }
     await edgexLogic.updateDevice(deviceDb.edgexId, device);
 
     let result = await Device.findByIdAndUpdate(id, {
@@ -73,9 +82,15 @@ const updateDevice = async (id, device) => {
 
     if (process.env.DEVICE_SIMULATOR_ENABLED) { 
         if (deviceDb.type === constants.SENSOR) { 
-            await deviceSimulatorAxios.post('/update-device', JSON.stringify({
-                name: device.name
-            }))
+            await deviceSimulatorAxios.post(`/update/sensor/${device.id}`, JSON.stringify({
+                sensorName: device.name
+            }));
+        }
+        else { 
+            await deviceSimulatorAxios.post(`/update/actuator-name`, JSON.stringify({ 
+                oldActuatorName: deviceDb.name,
+                newActuatorName: device.name
+            }));
         }
     }
 }
@@ -98,14 +113,14 @@ const removeDevice = async (id) => {
         // remove in edgex also 
         
         let device = await Device.findByIdAndDelete(id);
+        console.log('device', device);
         await edgexLogic.removeDevice(device.name);
 
         if (process.env.DEVICE_SIMULATOR_ENABLED) { 
-            if (deviceDb.type === constants.SENSOR) { 
-                await deviceSimulatorAxios.post('/update/device', JSON.stringify({
-                    name: device.name
-                }))
-            }
+            let path = `/remove/${device.type.toLowerCase()}/${device.name}`;
+            console.log('path', path);
+            let simulatorResponse = await deviceSimulatorAxios.delete(path);
+            console.log(simulatorResponse);
         }
     }
     catch(error) { 
