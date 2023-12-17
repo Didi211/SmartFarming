@@ -1,5 +1,5 @@
 import { edgexMetadataAxios } from "../config/axios-config.js"
-import constants from "../utils/constants.js"
+import { regular as constants } from "../utils/constants.js"
 import { getDeviceConfig } from "../utils/device-config-factory.js";
 
 const addDevice = async (device) => { 

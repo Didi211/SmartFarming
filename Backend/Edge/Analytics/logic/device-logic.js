@@ -1,6 +1,6 @@
 import { Device } from '../models/device-model.js';
 import { Rule } from '../models/rule-model.js';
-import constants from '../utils/constants.js';
+import { regular as constants }  from '../utils/constants.js';
 import dtoMapper from '../utils/dto-mapper.js';
 import edgexLogic from './edgex-logic.js';
 
