@@ -6,7 +6,7 @@ router.post('/add/sensor', controller.addSensor);
 router.post('/add/actuator', controller.addActuator);
 router.put('/update/sensor/:id', controller.updateSensor);
 router.put('/update/actuator-name', controller.updateActuatorName)
-router.put('/update/actuator/pump-state/:name', controller.setPumpState);
+router.put('/update/actuator/:name/PumpState', controller.setPumpState);
 router.delete('/remove/sensor/:name', controller.removeSensor);
 router.delete('/remove/actuator/:name', controller.removeActuator);
 

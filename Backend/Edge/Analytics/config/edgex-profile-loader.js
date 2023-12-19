@@ -95,21 +95,11 @@ const loadActuatorProfile = () => {
                     "description": "Current state of the pump. True - Working. False - Not working",
                     "properties": {
                         "valueType": "Bool",
-                        "readWrite": "RW",
+                        "readWrite": "W",
                         "defaultValue": "false",
-                    }
+                    },
                 }
             ],
-            "deviceCommands": [
-                {
-                    "name": "ChangePumpState",
-                    "description": "Change to desired pump state.",
-                    "readWrite": "RW",
-                    "resourceOperations": [
-                        { "deviceResource": "PumpState" }
-                    ]
-                }
-            ]
         }
     }
 }

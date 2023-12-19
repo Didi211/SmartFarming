@@ -87,7 +87,10 @@ const updateRule = async (id, rule) => {
 
 const removeRule = async (id) => { 
     try { 
-        await Rule.findByIdAndDelete(id);
+        let result = await Rule.findByIdAndDelete(id);
+        if (!result) { 
+            throw `Rule with ID [${id}] not found in database.`;
+        }
     }
     catch(error) { 
         throw { 

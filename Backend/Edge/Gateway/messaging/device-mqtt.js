@@ -81,7 +81,7 @@ const handleRuleUpdates = async (action, data) => {
         }
         case constants.update: { 
             // call update action
-            await analyticsLogic.updateRule(data);
+            await analyticsLogic.updateRule(data.id, data.rule);
             break;
         }
         case constants.remove: { 

@@ -74,8 +74,10 @@ const updateActuatorName = async (req, res) => {
 const setPumpState = async (req, res) => { 
   try {
       let name = req.params.name;
-      let state = req.body.state; 
+      let state = JSON.parse(req.query.state); 
+      console.log(`Received changing pump state for '${name}'`);
       let result = SensorModel.update({actuatorName: name}, { pumpState: state}).save();
+      console.log(`Changed pump state to ${state}`);
       res.status(200).send(result);
   } catch (error) {
     console.log(error);
@@ -103,8 +105,8 @@ const removeActuator = async (req, res) => {
         let name = req.params.name;
         let result = SensorModel.find({ actuatorName: name });
         if (result.length > 0) {
-            result.update({
-                actuatorName: null
+            result[0].update({
+                actuatorName: ""
             }).save();
         }
         else { 
@@ -120,6 +122,7 @@ const removeActuator = async (req, res) => {
     }
 }
 
+
 export default { 
     addSensor,
     updateSensor,
@@ -127,5 +130,6 @@ export default {
     removeSensor,
     addActuator,
     setPumpState,
-    removeActuator
+    removeActuator,
+
 }
