@@ -38,10 +38,10 @@ const connectToCloud = () => {
 
 
 const connectToEdge = () => { 
-    let rtDataTopic = `${process.env.MQTT_TOPIC_RT_DATA}/+`;
+    let rtDataTopic = `${process.env.MQTT_TOPIC_RT_DATA_EDGE}`;
     if (mqttEdgeClient.connected) { 
         mqttEdgeClient.subscribe(rtDataTopic);
-        console.log(`Subcribed to topic on edge: (${rtDataTopic}).`);
+        console.log(`Subcribed to MQTT topic on edge: (${rtDataTopic}).`);
     }
     else {
         console.log('MQTT Connection to Edge not established.');

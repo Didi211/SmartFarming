@@ -5,9 +5,9 @@ import { publishAlert } from "../messaging/alert-mqtt.js";
 const sendAlertToCloud = async (data) => { 
     try {
         publishAlert(data);
-        let sensorId = data.metadata.sensorId;
-        let response = await analyticsAxios.put(`/devices/${sensorId}/status`, JSON.stringify({
-            status: 'OFFLINE'
+        let deviceId = data.metadata.deviceId;
+        let response = await analyticsAxios.put(`/devices/${deviceId}/status`, JSON.stringify({
+            status: data.metadata.status
         }));
     } catch (error) {
         throw { 

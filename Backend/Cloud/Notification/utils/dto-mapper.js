@@ -4,6 +4,7 @@ const toNotificationDto = (notification) => {
         message: notification.message,
         userId: notification.userId,
         createdAt: notification.createdAt,
+        updatedAt: notification.updatedAt,
         isRead: notification.isRead
     }
 }

@@ -10,7 +10,7 @@ const addDevice = async (device) => {
     }
 }
 
-const updateDevice = async (id, device) => { 
+const updateDevice = async (id, device) => {
     let response = await analyticsAxios.put(`/devices/${id}`, JSON.stringify(device));
     if (response.status == 200) { 
         return JSON.parse(response.data);

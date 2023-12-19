@@ -39,14 +39,12 @@ const add = async (req, res) => {
 const update = async (req, res) => {
     try { 
         let email = req.headers['user-email'];
-        let result = await logic.update(req.params.id, req.body, email)
+        let result = await logic.update(req.params.id, req.body, email);
         res.status(result.status).send(result);
     }
     catch(error) { 
         handleApiError(res, error);
-
     }
-    
 }
 
 const remove = async (req, res) => {
@@ -59,7 +57,6 @@ const remove = async (req, res) => {
         handleApiError(res, error);
 
     }
-
 }
 
 export default { 

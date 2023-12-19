@@ -50,7 +50,7 @@ const add = async (device, email) => {
     }
 }
 
-const update = async (id, device, email) => { 
+const update = async (id, device, email, updateEdge = true) => { 
     let result = deviceValidator.validateForUpdate(id, device);
     if (result != "") { 
         throw { 
@@ -63,14 +63,17 @@ const update = async (id, device, email) => {
 
     let response = await deviceManagementAxios.put(`/${id}`, JSON.stringify(device));
     if (response.status == 200) { 
-        // propagate the call to the edge 
-        let token = (await userManagementLogic.fetchMqttToken(email)).details;
-        deviceMqtt.publishUpdateDevice(token, id, device);
-        return JSON.parse(response.data);
+        if (updateEdge) { 
+            // propagate the call to the edge 
+            let token = (await userManagementLogic.fetchMqttToken(email)).details;
+            deviceMqtt.publishUpdateDevice(token, id, device);
+            return JSON.parse(response.data);
+        }
     }
     else { 
         throw response.data;
     }
+
 }
 
 const remove = async (id, email) => { 

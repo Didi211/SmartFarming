@@ -5,7 +5,15 @@ const deviceSchema = new mongoose.Schema({
     name: { 
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
+    },
+    edgexId: { 
+        type: String,
+        default: null
+        // required: true,
+        // unique: true
+        
     },
     // userId: { 
     //     type: String,

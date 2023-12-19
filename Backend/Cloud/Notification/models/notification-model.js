@@ -10,15 +10,25 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now
+    deviceId: { 
+        type: String,
+        required: true
+    },
+    deviceStatus: { 
+        type: String,
+        required: true,
+        uppercase: true,
+        enum: { 
+            values: ['ONLINE', 'OFFLINE'],
+            message: '{VALUE} is not allowed.'
+        },
     },
     isRead: { 
         type: Boolean,
         default: false
     }
-
+}, { 
+    timestamps: true
 });
 
 const Notification = mongoose.model('Notification', notificationSchema);

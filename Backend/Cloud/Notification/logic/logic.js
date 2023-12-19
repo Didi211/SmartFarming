@@ -3,7 +3,24 @@ import { notificationMapper } from "../utils/dto-mapper.js";
 
 const addNotification = async (notification) => { 
     try { 
+        let existing = await Notification
+       .findOne({
+            deviceId: notification.deviceId,
+            // deviceStatus: notification.deviceStatus
+        }).sort({
+            updatedAt: -1
+        });
+        console.log('Existing notif:', existing);
+        console.log('New notif:', notification);
+        if (existing) { 
+            if (existing.deviceStatus === notification.deviceStatus) { 
+                let updatedNotif = await Notification.findByIdAndUpdate(existing.id, notification, { new: true});
+                console.log('Updated existing notification.');
+                return notificationMapper.toNotificationDto(updatedNotif);
+            }
+        }
         let result = await Notification.create(notification);
+        console.log('Added new notification.');
         return notificationMapper.toNotificationDto(result);
     }
     catch(error) { 
