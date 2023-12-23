@@ -92,8 +92,30 @@ const removeRule = async (id) => {
     }
 }
 
+const getRule = async (id) => { 
+    try { 
+        let result = await Rule.findById(id);
+        if (!result) { 
+            throw { 
+                status: 400,
+                message: "MongoDB error",
+                details: `Rule with ID [${id}] not found in database.`
+            }
+        }
+        return dtoMapper.toRuleDto(result);
+    }
+    catch(error) { 
+        throw { 
+            status: error.status ?? 500,
+            message: error.message ?? 'MongoDB error',
+            details: error.details ?? error
+        };
+    }
+}
+
 export default { 
     addRule,
     updateRule,
-    removeRule
+    removeRule,
+    getRule
 }

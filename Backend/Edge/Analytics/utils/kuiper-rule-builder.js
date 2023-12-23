@@ -1,6 +1,5 @@
 export default class KuiperRuleBuilder { 
     static rule = { };
-    static actions = [];
 
     static addId(id) { 
         this.rule.id = id;
@@ -19,7 +18,9 @@ export default class KuiperRuleBuilder {
     }
 
     static addAction(type, properties) {
-        this.rule.actions = [];
+        if (this.rule.actions == undefined) { 
+            this.rule.actions = []
+        }
         this.rule.actions.push({
             [type]: properties
         });

@@ -49,22 +49,22 @@ const remove = async (req, res) => {
     }
 }
 
-const changeState = async (req, res) => { 
-    let id = req.params.id;
-    let state = req.body.state;
-    try { 
-        await logic.changeState(id, state);
-        let responseDto = responseDtoMapper.succesfullResponseDto(
-            200,
-            "Changing device state successfull.",
-        )
-        res.status(responseDto.status).send(responseDto);
-    }
-    catch(error) { 
-        handleApiError(res, error);
-    }
+// const changeState = async (req, res) => { 
+//     let id = req.params.id;
+//     let state = req.body.state;
+//     try { 
+//         await logic.changeState(id, state);
+//         let responseDto = responseDtoMapper.succesfullResponseDto(
+//             200,
+//             "Changing device state successfull.",
+//         )
+//         res.status(responseDto.status).send(responseDto);
+//     }
+//     catch(error) { 
+//         handleApiError(res, error);
+//     }
 
-}
+// }
 
 const changeStatus = async (req, res) => { 
     let id = req.params.id;
@@ -87,6 +87,6 @@ export default {
     add,
     update,
     remove,
-    changeState, 
+    // changeState, 
     changeStatus
 }

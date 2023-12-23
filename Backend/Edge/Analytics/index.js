@@ -21,7 +21,7 @@ app.use(cors());
 app.use('/api/updates/devices', deviceRoutes);
 app.use('/api/updates/rules', ruleRoutes);
 
-import { startListening as startListeningRTData } from './messaging/rt-data-mqtt.js';
+import { startListening as startListeningKuiper } from './messaging/kuiper-updates.js';
 import { loadEdgexProfiles } from './config/edgex-profile-loader.js';
 import { waitForServiceToBeReady } from './utils/service-checker.js';
 import { createRuleStream } from './config/edgex-rule-stream-loader.js';
@@ -38,6 +38,6 @@ app.listen(port, async () => {
         createRuleStream()
     ])
 
-    startListeningRTData();
+    startListeningKuiper();
     console.log(`Edge Analytics Service is listening on port ${port}`);
 });

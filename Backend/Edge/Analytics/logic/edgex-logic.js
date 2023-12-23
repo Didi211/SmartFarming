@@ -127,7 +127,7 @@ const addRule = async (rule, actuatorName) => {
       "dataTemplate": `{"name":"${actuatorName}", "state":"false"}`
     })
     .build();
-  
+
   let result = await Promise.all([
     edgexRulesEngineAxios.post('/rules', JSON.stringify(startRule)),
     edgexRulesEngineAxios.post('/rules', JSON.stringify(stopRule))
@@ -161,16 +161,24 @@ const updateRule = async (rule) => {
   
   let newStartRule = KuiperRuleBuilder
     .addId(startRule.id)
-    .addSqlString(stream, rule.startExpression, rule.startTriggerLevel)
-    .addAction('mqtt', startRule.actions['mqtt'])
-    .addAction('rest', startRule.actions['rest'])
-    .build();
+    .addSqlString(stream, rule.startExpression, rule.startTriggerLevel);
+  startRule.actions.forEach(action => { 
+    let actionType = Object.keys(action)[0];
+    let actionConfig = action[actionType];
+    newStartRule.addAction(actionType, actionConfig);
+  })
+  newStartRule = newStartRule.build();
+
+
   let newStopRule = KuiperRuleBuilder
     .addId(stopRule.id)
-    .addSqlString(stream, rule.stopExpression, rule.stopTriggerLevel)
-    .addAction('mqtt', stopRule.actions['mqtt'])
-    .addAction('rest', stopRule.actions['rest'])
-    .build();
+    .addSqlString(stream, rule.stopExpression, rule.stopTriggerLevel);
+  stopRule.actions.forEach(action => { 
+    let actionType = Object.keys(action)[0];
+    let actionConfig = action[actionType];
+    newStopRule.addAction(actionType, actionConfig);
+  });
+  newStopRule = newStopRule.build();
 
   let result = await Promise.all([
     edgexRulesEngineAxios.put(`/rules/${startRule.id}`, JSON.stringify(newStartRule)),
