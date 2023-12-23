@@ -47,6 +47,16 @@ const update = async (req, res) => {
     }
 }
 
+const updateState = async (req, res) => {
+    try { 
+        let result = await logic.updateState(req.params.id, req.body.state);
+        res.status(result.status).send(result);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+}
+
 const remove = async (req, res) => {
     try { 
         let email = req.headers['user-email'];
@@ -64,5 +74,6 @@ export default {
     getById,
     add,
     update,
-    remove
+    remove,
+    updateState
 }

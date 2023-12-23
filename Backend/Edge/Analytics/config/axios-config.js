@@ -3,6 +3,7 @@ import { v4 } from 'uuid'
 
 const edgexMetadataUrl = process.env.EDGEX_CORE_METADATA_URL;
 const edgexRulesEngineUrl = process.env.EDGEX_RULES_ENGINE_URL;
+const edgeGatewayUrl = process.env.EDGE_GATEWAY_URL;
 
 let deviceSimulatorAxios;
 if (process.env.DEVICE_SIMULATOR_ENABLED) { 
@@ -40,11 +41,22 @@ let edgexRulesEngineAxios = new Axios({
         "Content-Type": "application/json",
         "X-Correlation-ID": v4()
     }
-})
+});
+
+
+const edgeGatewayAxios = new Axios({
+    baseURL: `${edgeGatewayUrl}`,
+    withCredentials: false,
+    headers: { 
+        Accept: "application/json",
+        "Content-Type": "application/json"
+    }
+});
 
 
 export { 
     edgexMetadataAxios,
     deviceSimulatorAxios,
-    edgexRulesEngineAxios
+    edgexRulesEngineAxios,
+    edgeGatewayAxios
 }

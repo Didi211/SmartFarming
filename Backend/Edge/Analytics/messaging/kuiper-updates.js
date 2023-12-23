@@ -3,6 +3,7 @@ import deviceLogic from '../logic/device-logic.js';
 import ruleLogic from '../logic/rule-logic.js';
 import { runMqttMessageChecking } from '../utils/mqtt-message-validation.js';
 import { regular as constants } from '../utils/constants.js';
+import { edgeGatewayAxios } from '../config/axios-config.js';
 
 export const startListening = () => { 
     mqttClient.on('message', async (topic, message) => { 
@@ -31,6 +32,12 @@ const handleKuiperUpdateMessage = async (message) => {
         : constants.OFF;
 
     let rule = await ruleLogic.getRule(ruleId);
-    await deviceLogic.changeState(rule.actuatorId, state);
+    await Promise.all([
+        deviceLogic.changeState(rule.actuatorId, state),
+        edgeGatewayAxios.put(`/actuator/update/state`, JSON.stringify({
+            deviceId: rule.actuatorId,
+            state: state
+        }))
+    ])
     console.log(`Changed pump state for rule ${rule.name} to ${state}`);
 }

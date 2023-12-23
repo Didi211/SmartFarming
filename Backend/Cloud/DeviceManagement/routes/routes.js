@@ -8,6 +8,7 @@ router.get('/user/:userId', deviceController.getAll);
 router.get('/:id', deviceController.getById);
 router.post('/', deviceController.add);
 router.put('/:id', deviceController.update);
+router.put('/:id/state', deviceController.updateState)
 router.delete('/:id', deviceController.remove);
 
 // rules

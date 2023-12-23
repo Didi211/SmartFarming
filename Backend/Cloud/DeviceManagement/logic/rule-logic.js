@@ -36,6 +36,10 @@ const addRule = async (rule) => {
             details: `One or both devices are not created. Internal error: ${error.details}`
         }
     }
+
+    if (rule.startTriggerLevel === rule.stopTriggerLevel) { 
+        throw "START and STOP trigger level cannot have the same value.";
+    }
         
     // check if devices are from the same tenant
     // add checking from jwt 
@@ -66,6 +70,9 @@ const updateRule = async (id, rule) => {
             message: 'Forbidden update.',
             details: `Rule Id cannot be updated.`
         }
+    }
+    if (rule.startTriggerLevel === rule.stopTriggerLevel) { 
+        throw "START and STOP trigger level cannot have the same value.";
     }
     let ruleModel = new Rule(rule);
     await ruleModel.validate();

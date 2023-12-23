@@ -77,6 +77,24 @@ const update = async (req, res) => {
     }
 }
 
+const updateState = async (req, res) => { 
+    let state = req.body.state;
+    let id = req.params.id;
+    try { 
+        await logic.updateDeviceState(id, state);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Updating device state successfull.",
+        )
+        res.status(responseDto.status).send(responseDto);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+}
+
+
+
 const remove = async (req, res) => { 
     let id = req.params.id;
     try { 
@@ -97,5 +115,6 @@ export default {
     getById,
     add,
     update,
+    updateState,
     remove
 }

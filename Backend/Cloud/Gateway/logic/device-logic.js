@@ -3,6 +3,7 @@ import { deviceManagementAxios } from "../config/axios-config.js";
 import userValidator from "../utils/user-validator.js";
 import deviceMqtt from "../messaging/device-mqtt.js";
 import userManagementLogic from "./user-management-logic.js";
+import constants from "../utils/constants.js";
 
 // add propagating to the edge 
 
@@ -67,14 +68,30 @@ const update = async (id, device, email, updateEdge = true) => {
             // propagate the call to the edge 
             let token = (await userManagementLogic.fetchMqttToken(email)).details;
             deviceMqtt.publishUpdateDevice(token, id, device);
-            return JSON.parse(response.data);
         }
+        return JSON.parse(response.data);
     }
     else { 
         throw response.data;
     }
-
 }
+
+const updateState = async (id, state) => { 
+    if (state !== constants.STATE_ON && state !== constants.STATE_OFF) { 
+        throw `State must be one of the [${constants.STATE_ON}, ${constants.STATE_OFF}]`;
+    }
+
+    let response = await deviceManagementAxios.put(`/${id}/state`, JSON.stringify({
+        state: state
+    }));
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
+}
+
 
 const remove = async (id, email) => { 
     let response = await deviceManagementAxios.delete(`/${id}`);
@@ -96,5 +113,6 @@ export default {
     get,
     add,
     update,
+    updateState,
     remove
 }

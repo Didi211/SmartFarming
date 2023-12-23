@@ -7,7 +7,7 @@ dotenv.config({path: 'edge-analytics.env'});
 import mongoClient from './config/mongodb-config.js';
 
 
-import { edgexMetadataAxios } from './config/axios-config.js';
+import * as axiosConfig from './config/axios-config.js';
 
 import deviceRoutes from './routes/device-routes.js';
 import ruleRoutes from './routes/rule-routes.js'

@@ -19,6 +19,23 @@ const alert = async (req, res) => {
     }
 }
 
+const updateState = async (req, res) => { 
+     let data = req.body; // { deviceId, state: [ON,OFF]}
+     try { 
+         let result = await logic.sendStateUpdateToCloud(data);
+         let responseDto = responseDtoMapper.succesfullResponseDto(
+             200,
+             "Sending actuator state to cloud successfull.",
+             result
+         )
+         res.status(responseDto.status).send(responseDto);
+     }
+     catch(error) { 
+        handleApiError(res, error);
+     }
+}
+
 export default { 
-    alert
+    alert,
+    updateState
 }

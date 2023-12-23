@@ -88,9 +88,15 @@ const updateDevice = async (id, device) => {
     }
     deviceDb.status = device.status;
     deviceDb.unit = deviceDb.type == 'SENSOR' ? device.unit : null;
-    deviceDb.state = deviceDb.type == 'ACTUATOR' ? device.state : null
+    // deviceDb.state = deviceDb.type == 'ACTUATOR' ? device.state : null
     deviceDb.markModified();
     await deviceDb.save();
+}
+
+const updateDeviceState = async (id, state) => { 
+    let device = await Device.findById(id);
+    device.state = state;
+    await device.save();
 }
 
 const removeDevice = async (id) => { 
@@ -125,6 +131,7 @@ export default {
     addDevice,
     getAll,
     updateDevice,
+    updateDeviceState,
     removeDevice,
     findById
 }

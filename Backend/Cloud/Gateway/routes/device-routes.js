@@ -13,6 +13,9 @@ router.post('/', middlewares, deviceController.add);
 router.put('/:id', headerMiddleware.checkEmail ,deviceController.update);
 router.delete('/:id', headerMiddleware.checkEmail, deviceController.remove);
 
+// calling this from edge
+router.put('/actuator/:id/state', deviceController.updateState);
+
 // rules
 router.get('/:id/rule', ruleController.getByDeviceId);
 router.post('/rule', headerMiddleware.checkEmail, ruleController.add)
