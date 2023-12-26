@@ -5,7 +5,6 @@ const deviceSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true
     },
     userId: { 
         type: String,
@@ -51,6 +50,8 @@ const deviceSchema = new mongoose.Schema({
         uppercase: true,
     }
 });
+
+deviceSchema.index({ name: 1, userId: 1 }, { unique: true });
 
 const Device = mongoose.model('Device', deviceSchema);
 export { Device }
