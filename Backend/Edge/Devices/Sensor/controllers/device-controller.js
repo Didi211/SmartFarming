@@ -100,6 +100,20 @@ const removeSensor = async (req, res) => {
     }
 }
 
+const removeSensorById = async (req, res) => { 
+    try { 
+        let id = req.params.id;
+        SensorModel.remove({ _id: id });
+        let message = `Removed sensor ${id}`
+        console.log(message);
+        res.status(200).send(message);
+    }
+    catch(error) { 
+        console.log(error);
+        res.status(500).send(error.toString());
+    }
+}
+
 const removeActuator = async (req, res) => { 
     try { 
         let name = req.params.name;
@@ -131,5 +145,6 @@ export default {
     addActuator,
     setPumpState,
     removeActuator,
+    removeSensorById
 
 }

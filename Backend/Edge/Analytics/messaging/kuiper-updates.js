@@ -32,12 +32,19 @@ const handleKuiperUpdateMessage = async (message) => {
         : constants.OFF;
 
     let rule = await ruleLogic.getRule(ruleId);
-    await Promise.all([
-        deviceLogic.changeState(rule.actuatorId, state),
-        edgeGatewayAxios.put(`/actuator/update/state`, JSON.stringify({
-            deviceId: rule.actuatorId,
-            state: state
-        }))
-    ])
-    console.log(`Changed pump state for rule ${rule.name} to ${state}`);
+    let actuator = await deviceLogic.getDeviceById(rule.actuatorId);
+    if (actuator.state !== state) { 
+        await Promise.all([
+            deviceLogic.changeState(rule.actuatorId, state),
+            edgeGatewayAxios.put(`/actuator/update/state`, JSON.stringify({
+                deviceId: rule.actuatorId,
+                state: state
+            }))
+        ])
+        console.log(`Changed pump state for actuator ${actuator.name} to ${state}`);
+    }
+    else { 
+        console.log(`Pump state for actuator ${actuator.name} is already set to ${state}`);
+
+    }
 }

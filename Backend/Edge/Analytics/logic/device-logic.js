@@ -174,10 +174,32 @@ const changeStatus = async (id, status) => {
     }
 }
 
+const getDeviceById = async (id) => { 
+    try { 
+        let result = await Device.findById(id);
+        if (!result) { 
+            throw { 
+                status: 400,
+                message: "MongoDB error",
+                details: `Device with ID [${id}] not found in database.`
+            }
+        }
+        return dtoMapper.toDeviceDto(result);
+    }
+    catch(error) { 
+        throw { 
+            status: error.status ?? 500,
+            message: error.message ?? 'MongoDB error',
+            details: error.details ?? error
+        };
+    }
+}
+
 export default { 
     addDevice,
     updateDevice,
     removeDevice,
     changeState,
-    changeStatus
+    changeStatus,
+    getDeviceById
 }
