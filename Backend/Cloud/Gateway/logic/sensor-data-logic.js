@@ -12,6 +12,7 @@ const saveSensorData = async (userId, data) => {
         }
     });
     if (response.status == 200) { 
+        console.log('Send data to Cloud Sensor Data service:', data);
         return JSON.parse(response.data);
     }
     else { 

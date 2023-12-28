@@ -10,6 +10,7 @@ const saveDataToCloud = async (data) => {
         }
     });
     if (response.status == 200) { 
+        console.log(`Synced data to Cloud:`, data);
         return null;
     }
     else { 

@@ -16,6 +16,8 @@ const syncData = async (userId, data) => {
             writeClient.writePoint(point);
             writeClient.flush();
         });
+
+        console.log('Synced data:', data);
     }
     catch(error) { 
         throw { 
