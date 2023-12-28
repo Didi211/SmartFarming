@@ -6,14 +6,15 @@ export default class KuiperRuleBuilder {
         return this;
     }
 
-    static addSqlString(stream, expression, triggerLevel) { 
+    static addSqlString(stream, expression, triggerLevel, deviceName) { 
         this.rule.sql = `SELECT 
         RULE_ID() AS ruleId,
         Humidity as reading,
         meta(tags) as tags,
         meta(deviceName) as deviceName
         FROM ${stream}
-        WHERE Humidity ${expression} ${triggerLevel}`;
+        WHERE Humidity ${expression} ${triggerLevel}
+        AND deviceName = '${deviceName}'`;
         return this;
     }
 

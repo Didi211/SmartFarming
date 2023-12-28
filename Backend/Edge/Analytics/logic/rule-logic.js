@@ -16,12 +16,11 @@ const addRule = async (rule) => {
         }
         let result = await Rule.create(ruleModel);
         let actuator = devices.find(x => x.type === constants.ACTUATOR);
-        await edgexLogic.addRule(rule, actuator.name);
+        let sensor = devices.find(device => device.type === constants.SENSOR);
+        await edgexLogic.addRule(rule, actuator.name, sensor.name);
 
         if (process.env.DEVICE_SIMULATOR_ENABLED) { 
             // add actuator name in simulator
-            let sensor = devices.find(device => device.type === constants.SENSOR);
-            let actuator = devices.find(device => device.type === constants.ACTUATOR);
             await deviceSimulatorAxios.post(`/add/actuator`, JSON.stringify({
                 id: sensor._id,
                 actuatorName: actuator.name,
@@ -51,6 +50,11 @@ const updateRule = async (id, rule) => {
     }
     let ruleModel = new Rule(rule);
     await ruleModel.validate();
+    let ids = [ruleModel.sensorId, ruleModel.actuatorId];
+    let devices = await Device.find({_id: { $in: ids}});
+    if (devices.length !== 2) { 
+        throw "One or both device for rule are not found in database."
+    }
     let result = await Rule.findByIdAndUpdate(id, {
         name: rule.name,
         startExpression: rule.startExpression,
@@ -65,8 +69,9 @@ const updateRule = async (id, rule) => {
             details: `Rule with ID [${id}] not found in database.`
         }
     }
-    
-    await edgexLogic.updateRule(rule);
+
+    let sensor = devices.find(device => device.type === constants.SENSOR);
+    await edgexLogic.updateRule(rule, actuator.name, sensor.name);
 }
 
 const removeRule = async (id) => { 

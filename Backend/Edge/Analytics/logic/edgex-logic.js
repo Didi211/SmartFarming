@@ -96,11 +96,15 @@ const getStream = async (name) => {
   return streams.find(stream => stream === name)
 }
 
-const addRule = async (rule, actuatorName) => {
+const addRule = async (rule, actuatorName, sensorName) => {
   let coreCommandUrl = `${process.env.EDGEX_CORE_COMMAND_URL}/device/name`;
   let startRule = KuiperRuleBuilder
     .addId(`${rule.id}-START`)
-    .addSqlString(process.env.KUIPER_STREAM_NAME, rule.startExpression, rule.startTriggerLevel)
+    .addSqlString(
+      process.env.KUIPER_STREAM_NAME,
+      rule.startExpression, 
+      rule.startTriggerLevel,
+      sensorName)
     .addAction('mqtt', {
       'server': process.env.EDGE_MQTT_URL,
       'topic': process.env.KUIPER_TOPIC,
@@ -115,7 +119,11 @@ const addRule = async (rule, actuatorName) => {
 
   let stopRule = KuiperRuleBuilder
     .addId(`${rule.id}-STOP`)
-    .addSqlString(process.env.KUIPER_STREAM_NAME, rule.stopExpression, rule.stopTriggerLevel)
+    .addSqlString(
+      process.env.KUIPER_STREAM_NAME, 
+      rule.stopExpression,
+      rule.stopTriggerLevel,
+      sensorName)
     .addAction('mqtt', {
       'server': process.env.EDGE_MQTT_URL,
       'topic': process.env.KUIPER_TOPIC,
@@ -141,7 +149,7 @@ const addRule = async (rule, actuatorName) => {
 }
 
 
-const updateRule = async (rule) => { 
+const updateRule = async (rule, sensorName) => { 
   // rule names cannot be changed
   let [startRuleResponse, stopRuleResponse] = await Promise.all([
     edgexRulesEngineAxios.get(`/rules/${rule.id}-START`),
@@ -161,7 +169,11 @@ const updateRule = async (rule) => {
   
   let newStartRule = KuiperRuleBuilder
     .addId(startRule.id)
-    .addSqlString(stream, rule.startExpression, rule.startTriggerLevel);
+    .addSqlString(
+      stream, 
+      rule.startExpression, 
+      rule.startTriggerLevel,
+      sensorName);
   startRule.actions.forEach(action => { 
     let actionType = Object.keys(action)[0];
     let actionConfig = action[actionType];
@@ -172,7 +184,11 @@ const updateRule = async (rule) => {
 
   let newStopRule = KuiperRuleBuilder
     .addId(stopRule.id)
-    .addSqlString(stream, rule.stopExpression, rule.stopTriggerLevel);
+    .addSqlString(
+      stream,
+      rule.stopExpression, 
+      rule.stopTriggerLevel,
+      sensorName);
   stopRule.actions.forEach(action => { 
     let actionType = Object.keys(action)[0];
     let actionConfig = action[actionType];
