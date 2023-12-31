@@ -4,11 +4,12 @@ import { edgeGatewayAxios } from "../config/axios-config.js";
 
 const saveToDb = async (sensorId, reading) => { 
     try {
+        console.log('Try writing data for sensor:', sensorId, 'Reading:', reading);
         let point = new Point('sensor-data')
             .tag('sensor-id', sensorId)
             .floatField('reading', reading);
-            writeClient.writePoint(point);
-            writeClient.flush();
+        writeClient.writePoint(point);
+        await writeClient.flush();
     } catch (error) {
         throw { 
             status: 500,
@@ -23,7 +24,7 @@ const sendAggregatedData = async () => {
         `from(bucket: "local-sensor-data")
             |> range(start: -10m)
             |> filter(fn: (r) => r["_measurement"] == "sensor-data")
-            |> group(columns: ["host", "sensor-id"], mode: "by")
+            |> group(columns: ["sensor-id"], mode: "by")
             |> mean(column: "_value")`;
     let result = [];
     for await (const {values, tableMeta} of queryClient.iterateRows(query)) { 
