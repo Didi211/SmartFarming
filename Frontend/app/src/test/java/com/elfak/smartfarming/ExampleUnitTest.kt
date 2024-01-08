@@ -1,4 +1,4 @@
-package elfak.smartfarming
+package com.elfak.smartfarming
 
 import org.junit.Test
 

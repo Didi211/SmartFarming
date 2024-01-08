@@ -1,4 +1,4 @@
-package elfak.smartfarming.ui.theme
+package com.elfak.smartfarming.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

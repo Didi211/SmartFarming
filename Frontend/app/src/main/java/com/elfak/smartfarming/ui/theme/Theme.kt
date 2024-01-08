@@ -1,4 +1,4 @@
-package elfak.smartfarming.ui.theme
+package com.elfak.smartfarming.ui.theme
 
 import android.app.Activity
 import android.os.Build
