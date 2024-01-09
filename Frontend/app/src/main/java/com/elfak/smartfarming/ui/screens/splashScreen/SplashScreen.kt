@@ -37,7 +37,7 @@ fun SplashScreen(
             })
         )
 
-        delay(650L)
+        delay(500L)
         if (viewModel.isLoggedIn()) {
             navigateToHome()
         }

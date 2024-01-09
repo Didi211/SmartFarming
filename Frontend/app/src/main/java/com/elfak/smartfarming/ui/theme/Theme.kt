@@ -21,6 +21,13 @@ private val DarkColorScheme = darkColorScheme(
     secondary = Secondary,
     tertiary = Pink40,
     background = Background,
+
+    onBackground = FontColor,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    error = Error,
+    outline = Border,
+    onSecondaryContainer = Disabled
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -50,7 +57,7 @@ private val LightColorScheme = lightColorScheme(
 fun SmartFarmingTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
