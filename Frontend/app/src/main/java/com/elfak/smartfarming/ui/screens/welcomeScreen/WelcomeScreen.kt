@@ -45,12 +45,12 @@ fun WelcomeScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun WelcomeScreenPreview() {
-    SmartFarmingTheme {
-        WelcomeScreen(navigateToLogin = { /*TODO*/ }) {
-
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun WelcomeScreenPreview() {
+//    SmartFarmingTheme {
+//        WelcomeScreen(navigateToLogin = { /*TODO*/ }) {
+//
+//        }
+//    }
+//}

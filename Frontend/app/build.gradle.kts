@@ -54,6 +54,8 @@ android {
 }
 
 dependencies {
+    // Toasty
+    implementation("com.github.GrenderG:Toasty:1.5.2")
 
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")

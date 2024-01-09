@@ -2,7 +2,9 @@ package com.elfak.smartfarming.di
 
 import android.content.Context
 import com.elfak.smartfarming.data.repositories.LocalAuthRepository
+import com.elfak.smartfarming.data.repositories.RemoteAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +17,13 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideAuthRepository(
+    fun provideLocalAuthRepository(
         @ApplicationContext context: Context,
     ): ILocalAuthRepository = LocalAuthRepository(context)
+
+    @Singleton
+    @Provides
+    fun provideRemoteAuthRepository(
+        @ApplicationContext context: Context,
+    ): IRemoteAuthRepository = RemoteAuthRepository()
 }
