@@ -30,29 +30,19 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             HomeScreen(
                 viewModel = viewModel,
                 navigateToGraphReadings = { sensorId ->
-                    navController.navigate(Screen.GraphScreen.withOptionalArgs(
-                        NavigationArgument("sensorId",sensorId)
-                    ))
+                    navController.navigate(Screen.GraphScreen.withArgs(sensorId))
                 }
             )
         }
-        composable(Screen.GraphScreen.route) {
+        composable(Screen.GraphScreen.route + "/{sensorId}") {
             val viewModel = hiltViewModel<GraphScreenViewModel>()
             GraphScreen(
                 viewModel = viewModel,
                 navigateToDeviceDetails = { deviceId ->
-                    navController.navigate(Screen.DeviceDetailsScreen.withOptionalArgs(
-                        NavigationArgument("deviceId", deviceId)
-                    )) {
-                        popUpTo(Screen.Main.route)
-                    }
+                    navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
                 },
                 navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withOptionalArgs(
-                        NavigationArgument("ruleId", ruleId)
-                    )) {
-                        popUpTo(Screen.Main.route)
-                    }
+                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
                 }
             )
         }
@@ -61,18 +51,10 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             ListScreen(
                 viewModel = viewModel,
                  navigateToDeviceDetails = { deviceId ->
-                     navController.navigate(Screen.DeviceDetailsScreen.withOptionalArgs(
-                         NavigationArgument("deviceId", deviceId)
-                     )) {
-                         popUpTo(Screen.Main.route)
-                     }
+                     navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
                  },
                  navigateToRuleDetails = { ruleId ->
-                     navController.navigate(Screen.RuleDetailsScreen.withOptionalArgs(
-                         NavigationArgument("ruleId", ruleId)
-                     )) {
-                         popUpTo(Screen.Main.route)
-                     }
+                     navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
                  }
             )
         }
@@ -90,38 +72,36 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 viewModel = viewModel,
                 navigateBack = { navController.popBackStack() },
                 navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withOptionalArgs(
-                        NavigationArgument("ruleId", ruleId)
-                    )) {
-                        popUpTo(Screen.Main.route)
+                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId)) {
+                        popUpTo(Screen.HomeScreen.route)
                     }
                 }
             )
         }
-        composable(Screen.DeviceDetailsScreen.route) {
+        composable(Screen.DeviceDetailsScreen.route + "/{deviceId}") {
             val viewModel = hiltViewModel<DeviceDetailsScreenViewModel>()
             DeviceDetailsScreen(
                 viewModel = viewModel,
                 navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withOptionalArgs(
-                        NavigationArgument("ruleId", ruleId)
-                    )) {
-//                        launchSingleTop = true
-//                        popUpTo(Screen.Main.route)
+                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId)) {
+                        launchSingleTop = true
+                        popUpTo(Screen.DeviceDetailsScreen.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )
         }
-        composable(Screen.RuleDetailsScreen.route) {
+        composable(Screen.RuleDetailsScreen.route + "/{ruleId}") {
             val viewModel = hiltViewModel<RuleDetailsScreenViewModel>()
             RuleDetailsScreen(
                 viewModel = viewModel,
                 navigateToDeviceDetails = { deviceId ->
-                    navController.navigate(Screen.DeviceDetailsScreen.withOptionalArgs(
-                        NavigationArgument("deviceId", deviceId)
-                    )) {
-//                        launchSingleTop = true
-//                        popUpTo(Screen.Main.route)
+                    navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId)) {
+                        launchSingleTop = true
+                        popUpTo(Screen.RuleDetailsScreen.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )

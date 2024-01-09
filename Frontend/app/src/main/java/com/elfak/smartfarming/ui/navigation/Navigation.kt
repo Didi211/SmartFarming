@@ -1,5 +1,8 @@
 package com.elfak.smartfarming.ui.navigation
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,6 +68,7 @@ fun Navigation() {
         val scope = rememberCoroutineScope()
         val items = prepareMenuList(navController)
         val selectedItem = remember { mutableStateOf(items[0]) }
+
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
@@ -73,7 +78,8 @@ fun Navigation() {
                         NavigationDrawerItem(
                             icon = { Icon(item.icon, contentDescription = item.name) },
                             label = { Text(item.name) },
-                            selected = item.name == selectedItem.value.name,
+//                            selected = item.name == selectedItem.value.name,
+                            selected = item.name == currentScreen?.displayName,
                             onClick = {
                                 item.action()
                                 scope.launch { drawerState.close() }
@@ -102,7 +108,9 @@ fun Navigation() {
                                     }
                                     Spacer(Modifier.width(3.dp))
                                     Button(onClick = {
-                                        navController.navigate(Screen.AddRuleScreen.route)
+                                        navController.navigate(Screen.AddRuleScreen.route) {
+                                            popUpTo(Screen.HomeScreen.route)
+                                        }
                                     }) {
                                         Text ("Add rule")
                                     }
@@ -235,7 +243,7 @@ fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
             icon = Icons.Rounded.Home,
             action = {
                 navController.navigate(Screen.HomeScreen.route) {
-                    popUpTo(Screen.Main.route) { inclusive = true }
+                    popUpTo(Screen.HomeScreen.route) { inclusive = true }
                 }
             }
         ),
@@ -244,7 +252,7 @@ fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
             icon = Icons.Rounded.Sensors,
             action = {
                 navController.navigate(Screen.ListScreen.route) {
-                    popUpTo(Screen.Main.route)
+                    popUpTo(Screen.HomeScreen.route)
                 }
             }
         ),
@@ -253,7 +261,7 @@ fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
             icon = Icons.Rounded.Settings,
             action = {
                 navController.navigate(Screen.SettingScreen.route) {
-                    popUpTo(Screen.Main.route)
+                    popUpTo(Screen.HomeScreen.route)
                 }
             }
         ),
@@ -262,7 +270,7 @@ fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
             icon = Icons.Rounded.Home,
             action = {
                 navController.navigate(Screen.NotificationScreen.route) {
-                    popUpTo(Screen.Main.route)
+                    popUpTo(Screen.HomeScreen.route)
                 }
             }
         ),

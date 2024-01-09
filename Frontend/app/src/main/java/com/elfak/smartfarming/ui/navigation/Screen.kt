@@ -37,7 +37,8 @@ sealed class Screen(val route: String, val displayName: String = "")  {
         )
 
         fun fromRoute(route: String): Screen? {
-            return routeMap[route]
+            val screenName = route.split('/')[0]
+            return routeMap[screenName]
         }
     }
 
@@ -46,6 +47,14 @@ sealed class Screen(val route: String, val displayName: String = "")  {
             append("$route?")
             args.forEach { arg ->
                 append("${arg.key}=${arg.value}")
+            }
+        }
+    }
+    fun withArgs(vararg args: String): String  {
+        return buildString {
+            append("$route")
+            args.forEach { arg ->
+                append("/${arg}")
             }
         }
     }
