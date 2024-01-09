@@ -1,6 +1,6 @@
 buildscript {
     val compose_ui_version by extra("1.4.3")
-    val hilt_version by extra("2.46.1")
+    val hilt_version by extra("2.50")
     val nav_version by extra("2.7.6")
     val coroutine_version by extra("1.7.1")
 }
@@ -8,5 +8,5 @@ buildscript {
 plugins {
     id("com.android.application") version "8.2.1" apply false
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
-    id("com.google.dagger.hilt.android") version "2.44" apply false
+    id("com.google.dagger.hilt.android") version "2.50" apply false
 }
