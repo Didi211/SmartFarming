@@ -55,12 +55,15 @@ android {
 
 dependencies {
 
+    // DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Hilt - DI
     implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:${rootProject.extra["hilt_version"]}")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Navigation

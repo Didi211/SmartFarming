@@ -1,8 +1,5 @@
 package com.elfak.smartfarming.ui.navigation
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.rounded.Cable
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Sensors
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.BottomAppBar
@@ -35,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SmartFarming</string>
+    <string name="logo_description">App\'s logo</string>
+    <string name="hand_plant_description">Plant in hand image</string>
 </resources>
