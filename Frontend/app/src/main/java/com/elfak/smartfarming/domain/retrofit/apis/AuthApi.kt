@@ -2,6 +2,7 @@ package com.elfak.smartfarming.domain.retrofit.apis
 
 import com.elfak.smartfarming.data.models.api.LoginRequest
 import com.elfak.smartfarming.data.models.api.ApiResponse
+import com.elfak.smartfarming.data.models.api.RegisterRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,9 +16,9 @@ interface AuthApi {
     suspend fun isUserExisting(@Path("id") id: String): Call<ApiResponse>
 
     @POST("api/users/login")
-    suspend fun login(@Body loginRequest: LoginRequest): ApiResponse
+    suspend fun login(@Body request: LoginRequest): ApiResponse
 
-    @POST("api/users/fetch-mqtt")
-    suspend fun fetchMqttToken(@Body email: String): ApiResponse
+    @POST("api/users/register")
+    suspend fun register(@Body request: RegisterRequest): ApiResponse
 
 }

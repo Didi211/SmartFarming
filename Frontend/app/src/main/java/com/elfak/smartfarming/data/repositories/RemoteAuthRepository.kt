@@ -1,12 +1,9 @@
 package com.elfak.smartfarming.data.repositories
 
-import android.util.Log
-import com.elfak.smartfarming.data.models.RegisterUser
 import com.elfak.smartfarming.data.models.User
-import com.elfak.smartfarming.data.models.api.LoginRequest
+import com.elfak.smartfarming.data.models.api.RegisterRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.AuthApiWrapper
-import com.elfak.smartfarming.domain.retrofit.apis.AuthApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,8 +22,15 @@ class RemoteAuthRepository @Inject constructor(
         return User.fromApiResponse(response.details!!)
     }
 
-    override suspend fun register(user: RegisterUser) {
-        TODO("Not yet implemented")
+    override suspend fun register(request: RegisterRequest): User {
+        val response = authApiWrapper.register(request)
+        if (response.status != 200) {
+            if (response.status == 500) {
+                throw Exception(response.message)
+            }
+            throw Exception("${response.message} - ${response.details}")
+        }
+        return User.fromApiResponse(response.details!!)
     }
 
 }

@@ -1,13 +1,12 @@
 package com.elfak.smartfarming.data.repositories
 
 import android.content.Context
-import android.credentials.Credential
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.elfak.smartfarming.data.models.UserCredentials
+import com.elfak.smartfarming.data.models.User
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -27,19 +26,29 @@ class LocalAuthRepository @Inject constructor(
         const val USER_ID = "ID"
         const val USER_EMAIL = "EMAIL"
         const val USER_MQTT_TOKEN = "MQTT_TOKEN"
+        const val USER_NAME = "USER_NAME"
     }
-    override suspend fun getCredentials(): UserCredentials {
-        return UserCredentials(
+    override suspend fun getCredentials(): User {
+        return User(
             getLocal(USER_ID) ?: "",
             getLocal(USER_EMAIL) ?: "",
-            getLocal(USER_MQTT_TOKEN) ?: ""
+            getLocal(USER_MQTT_TOKEN) ?: "",
+            getLocal(USER_NAME) ?: ""
         )
     }
 
-    override suspend fun setCredentials(credentials: UserCredentials) {
+    override suspend fun setCredentials(credentials: User) {
         saveLocal(USER_ID, credentials.id)
         saveLocal(USER_EMAIL, credentials.email)
         saveLocal(USER_MQTT_TOKEN, credentials.mqttToken)
+        saveLocal(USER_NAME, credentials.name)
+    }
+
+    override suspend fun removeCredentials() {
+        removeLocal(USER_ID)
+        removeLocal(USER_EMAIL)
+        removeLocal(USER_MQTT_TOKEN)
+        removeLocal(USER_NAME)
     }
 
     private suspend fun saveLocal(key: String, value: String) {

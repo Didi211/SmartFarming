@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Navigation() {
+    val viewModel = hiltViewModel<NavigationViewModel>()
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -57,7 +58,7 @@ fun Navigation() {
     if (showScaffold) {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
-        val items = prepareMenuList(navController)
+        val items = prepareMenuList(navController, viewModel::signOut)
         val selectedItem = remember { mutableStateOf(items[0]) }
 
         ModalNavigationDrawer(
@@ -116,9 +117,9 @@ fun Navigation() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.SplashScreen.route) {
-                            val viewModel = hiltViewModel<SplashScreenViewModel>()
+                            val splashScreenViewModel = hiltViewModel<SplashScreenViewModel>()
                             SplashScreen(
-                                viewModel = viewModel,
+                                viewModel = splashScreenViewModel,
                                 navigateToHome = {
                                     navController.navigate(Screen.Main.route) {
                                         popUpTo(Screen.SplashScreen.route) { inclusive = true }
@@ -227,7 +228,7 @@ fun Navigation() {
 
 }
 
-fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
+fun prepareMenuList(navController: NavController, signOutAction: () -> Unit): List<DrawerMenuItem> {
     val items = listOf(
         DrawerMenuItem(
             name = Screen.HomeScreen.displayName,
@@ -269,6 +270,7 @@ fun prepareMenuList(navController: NavController): List<DrawerMenuItem> {
             name = "Sign out",
             icon = Icons.Rounded.ExitToApp,
             action = {
+                signOutAction()
                 navController.navigate(Screen.WelcomeScreen.route) {
                     popUpTo(Screen.Main.route) { inclusive = true }
                 }
