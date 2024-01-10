@@ -25,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = FontColor,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    error = Error,
+    error = ErrorColor,
     outline = Border,
     onSecondaryContainer = Disabled
 )
@@ -39,7 +39,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = FontColor,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    error = Error,
+    error = ErrorColor,
     outline = Border,
     onSecondaryContainer = Disabled
 

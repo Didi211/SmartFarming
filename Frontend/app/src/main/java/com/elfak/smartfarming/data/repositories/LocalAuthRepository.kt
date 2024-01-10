@@ -31,9 +31,9 @@ class LocalAuthRepository @Inject constructor(
     override suspend fun getCredentials(): User {
         return User(
             getLocal(USER_ID) ?: "",
+            getLocal(USER_NAME) ?: "",
             getLocal(USER_EMAIL) ?: "",
-            getLocal(USER_MQTT_TOKEN) ?: "",
-            getLocal(USER_NAME) ?: ""
+            getLocal(USER_MQTT_TOKEN) ?: ""
         )
     }
 

@@ -38,7 +38,7 @@ fun BasicButton(
     }
 }
 
-/*
+
 @Preview(showBackground = true)
 @Composable
 fun BasicButtonPreview() {
@@ -48,4 +48,4 @@ fun BasicButtonPreview() {
         }
 
     }
-}*/
+}
