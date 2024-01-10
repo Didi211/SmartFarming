@@ -9,6 +9,6 @@ router.post('/login', controller.login);
 // this api calls edge for MQTT connection
 router.post('/fetch-token', controller.fetchMqttToken);
 
-router.get('/id:/exists', controller.isUserExisting)
+router.get('/:id/exists', controller.isUserExisting)
 
 export default router

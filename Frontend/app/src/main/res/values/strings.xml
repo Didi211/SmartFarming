@@ -2,4 +2,7 @@
     <string name="app_name">SmartFarming</string>
     <string name="logo_description">App\'s logo</string>
     <string name="hand_plant_description">Plant in hand image</string>
+    <string name="back_arrow_button">Back button from Login screen</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
