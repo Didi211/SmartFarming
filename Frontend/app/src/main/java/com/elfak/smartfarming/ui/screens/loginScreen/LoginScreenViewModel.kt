@@ -5,12 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.elfak.smartfarming.data.models.UserCredentials
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,11 +29,7 @@ class LoginScreenViewModel @Inject constructor(
     suspend fun login(onSuccess: () -> Unit) {
         try {
             val user = remoteAuthRepository.login(uiState.email, uiState.password)
-            localAuthRepository.setCredentials(UserCredentials(
-                id = user.id,
-                email = user.email,
-                mqttToken = user.mqttToken
-            ))
+            localAuthRepository.setCredentials(user)
             onSuccess()
         }
         catch (ex: Exception) {
