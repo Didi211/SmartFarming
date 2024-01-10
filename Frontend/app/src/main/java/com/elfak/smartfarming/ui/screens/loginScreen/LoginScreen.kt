@@ -54,7 +54,10 @@ fun LoginScreen(
     // error handler
     ToastHandler(
         toastData = viewModel.uiState.toastData,
-        clearErrorMessage = viewModel::clearErrorMessage,
+        clearErrorMessage = {
+            viewModel.clearErrorMessage()
+            inProgress = false
+        },
         clearSuccessMessage = viewModel::clearSuccessMessage
     )
     

@@ -3,7 +3,8 @@ const toUserDto = (id, user) => {
         id: id,
         authId: user.authId,
         email: user.email,
-        name: user.name
+        name: user.name,
+        mqttToken: user.mqttToken
     }
 }
 

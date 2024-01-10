@@ -1,12 +1,16 @@
 package com.elfak.smartfarming.ui.screens.loginScreen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.elfak.smartfarming.data.models.UserCredentials
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,10 +31,17 @@ class LoginScreenViewModel @Inject constructor(
 
     suspend fun login(onSuccess: () -> Unit) {
         try {
-            // call login api 
+            val user = remoteAuthRepository.login(uiState.email, uiState.password)
+            localAuthRepository.setCredentials(UserCredentials(
+                id = user.id,
+                email = user.email,
+                mqttToken = user.mqttToken
+            ))
+            onSuccess()
         }
         catch (ex: Exception) {
             handleError(ex)
+            Log.e("Login-Error", ex.message!!, ex)
         }
     }
 

@@ -37,7 +37,9 @@ class LocalAuthRepository @Inject constructor(
     }
 
     override suspend fun setCredentials(credentials: UserCredentials) {
-        TODO("Not yet implemented")
+        saveLocal(USER_ID, credentials.id)
+        saveLocal(USER_EMAIL, credentials.email)
+        saveLocal(USER_MQTT_TOKEN, credentials.mqttToken)
     }
 
     private suspend fun saveLocal(key: String, value: String) {
