@@ -26,7 +26,8 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = Color.White,
     onSecondary = Color.White,
     error = ErrorColor,
-    outline = Border,
+    onError = Color.White,
+    outline = BorderColor,
     onSecondaryContainer = Disabled
 )
 
@@ -40,7 +41,9 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     onSecondary = Color.White,
     error = ErrorColor,
-    outline = Border,
+    onError = Color.White,
+
+    outline = BorderColor,
     onSecondaryContainer = Disabled
 
     /* Other default colors to override
