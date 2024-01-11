@@ -14,7 +14,7 @@ fun ToastHandler(
     clearSuccessMessage: () -> Unit,
 ) {
     if (toastData.hasErrors) {
-        Toasty.error(LocalContext.current, toastData.errorMessage, Toast.LENGTH_LONG, true).show()
+        Toasty.error(LocalContext.current, toastData.errorMessage, Toast.LENGTH_LONG, false).show()
         clearErrorMessage()
     }
     if (toastData.hasSuccessMessage) {
