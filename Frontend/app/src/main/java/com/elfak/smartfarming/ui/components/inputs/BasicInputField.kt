@@ -74,18 +74,19 @@ fun getColors(): TextFieldColors {
         // label
         focusedLabelColor = FontColor,
         unfocusedLabelColor = FontColor,
-        disabledLabelColor = FontColor,
+        disabledLabelColor = Color.White,
         // text
         focusedTextColor = FontColor,
         unfocusedTextColor = FontColor,
-        disabledTextColor = FontColor,
+        disabledTextColor = Color.White,
         // border
         focusedBorderColor = Border,
         unfocusedBorderColor = Border,
         disabledBorderColor = Border,
         // placeholder
         focusedPlaceholderColor = Placeholder,
-        unfocusedPlaceholderColor = Placeholder
+        unfocusedPlaceholderColor = Placeholder,
+
 
 
     )

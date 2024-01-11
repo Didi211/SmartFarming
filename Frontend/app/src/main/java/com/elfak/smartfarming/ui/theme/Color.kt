@@ -12,7 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val Background = Color(0xFFE4FDF9)
 val BackgroundVariant = Color(0xFFF4F4F4)
-val Disabled = Color(0xFFC0C0C0)
+val Disabled = Color(0xFFD1D1D1)
 val Placeholder = Color(0xFFA5A5A5)
 val Primary = Color(0xFF5B9ED9)
 val Secondary = Color(0xFE52AEBD)

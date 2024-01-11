@@ -32,7 +32,7 @@ fun ButtonWithIcon(text: String, onClick: () -> Unit, icon: ImageVector) {
         Icon(
             imageVector = icon,
             stringResource(id = R.string.bottom_bar_action),
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(25.dp),
         )
         Text(
             text = text,

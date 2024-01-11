@@ -2,6 +2,7 @@ package com.elfak.smartfarming.ui.components.scaffold
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,9 @@ fun SmartFarmingBottomAppBar(
     buttons: List<DrawerMenuItem>
 ) {
     BottomAppBar(
-        modifier = Modifier.clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
+        modifier = Modifier
+            .height(60.dp)
+            .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
 
@@ -36,17 +39,6 @@ fun SmartFarmingBottomAppBar(
                 )
 
             }
-//            Button(onClick = { /*TODO*/ }) {
-//                Text ("Add device")
-//            }
-//            Spacer(Modifier.width(3.dp))
-//            Button(onClick = {
-//                navController.navigate(Screen.AddRuleScreen.route) {
-//                    popUpTo(Screen.HomeScreen.route)
-//                }
-//            }) {
-//                Text ("Add rule")
-//            }
         }
     }
 }

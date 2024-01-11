@@ -17,13 +17,6 @@ class HomeScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(HomeUiState())
         private set
 
-    init {
-        viewModelScope.launch {
-            val user = localAuthRepository.getCredentials()
-            setSuccessMessage("Welcome ${user.name}")
-        }
-    }
-
     // region TOAST HANDLER
     private fun handleError(ex: Exception) {
         if (ex.message != null) {
