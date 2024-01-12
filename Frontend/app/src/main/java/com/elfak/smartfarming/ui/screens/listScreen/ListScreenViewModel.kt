@@ -97,7 +97,7 @@ class ListScreenViewModel @Inject constructor(
         val rules = mutableListOf<Rule>()
         for (i in 1..7) {
             rules.add(Rule(
-                id = "id-$i",
+                id = "65a14221ff9338aea8b707fe",
                 name = "Rule - $i",
                 description = "Rule description"
             ))
@@ -117,14 +117,13 @@ class ListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = localAuthRepository.getCredentials()
-
                 deviceRepository.removeDevice(id, user.email)
                 removeDevice(id)
                 setSuccessMessage("Device removed")
             }
             catch (ex: Exception) {
                 handleError(ex)
-                Log.e("Devices-GET", ex.message!!, ex)
+                Log.e("Devices-DELETE", ex.message!!, ex)
             }
         }
     }
@@ -154,7 +153,22 @@ class ListScreenViewModel @Inject constructor(
         return updatedDevice
     }
     fun onRuleDelete(id: String) {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            try {
+                val user = localAuthRepository.getCredentials()
+                deviceRepository.removeRule(id, user.email)
+                removeRule(id)
+                setSuccessMessage("Rule removed")
+            }
+            catch (ex: Exception) {
+                handleError(ex)
+                Log.e("Rules-DELETE", ex.message!!, ex)
+            }
+        }
+    }
+
+    private fun removeRule(id: String) {
+        uiState = uiState.copy(rules = uiState.rules.filter { it.id != id })
     }
 
     // region TOAST HANDLER

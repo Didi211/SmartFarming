@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 @Composable
 fun GraphScreen(
     viewModel: GraphScreenViewModel,
-    navigateToDeviceDetails: (deviceId: String) -> Unit,
+    navigateToDeviceDetails: (deviceId: String, editMode: Boolean?) -> Unit,
     navigateToRuleDetails: (ruleId: String) -> Unit,
 ) {
     Column {
-        Button(onClick = { navigateToDeviceDetails("deviceId") }) {
+        Button(onClick = { navigateToDeviceDetails("deviceId", true) }) {
             Text(text = "Go to device details")
         }
         Button(onClick = { navigateToRuleDetails("ruleId") }) {

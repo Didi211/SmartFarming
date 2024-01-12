@@ -124,7 +124,6 @@ fun DeviceCard(
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Box {
-
                                 ButtonWithIcon(
                                     icon = Icons.Rounded.MoreVert,
                                     backgroundColor = Color.Transparent,

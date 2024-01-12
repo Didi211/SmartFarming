@@ -18,23 +18,29 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
+import com.elfak.smartfarming.ui.components.menu.Menu
 import com.elfak.smartfarming.ui.theme.FontColor
 
 @Composable
 fun RuleCard(
     rule: Rule,
-    onDelete: (id: String) -> Unit,
-    onEdit: (id: String) -> Unit,
+    menuItems: List<MenuItem> = emptyList(),
     onCardClick: (id: String) -> Unit,
 ) {
+    var isMenuExpanded by remember { mutableStateOf(false) }
     Box {
         CurvedBottomBorderCard (
             modifier = Modifier
@@ -77,21 +83,26 @@ fun RuleCard(
                     }
 
                     // buttons
-                    Box {
-                        Column(
-                            Modifier.fillMaxHeight(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
+                    Column(
+                        Modifier.fillMaxHeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Box {
                             ButtonWithIcon(
                                 icon = Icons.Rounded.MoreVert,
                                 backgroundColor = Color.Transparent,
                                 iconColor = FontColor,
                                 size = 35.dp
                             ) {
-                                // show menu
+                                isMenuExpanded = true
                             }
-
+                            Menu(
+                                expanded = isMenuExpanded,
+                                menuItems = menuItems,
+                                onDismissRequest = { isMenuExpanded = false },
+                                onIconClick = { isMenuExpanded = false }
+                            )
                         }
                     }
                 }

@@ -29,9 +29,9 @@ fun DeviceCardContainer(
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
     onBellIconClick: (id: String) -> Unit = { },
-    onCardClick: (id: String) -> Unit = { },
+    onCardClick: (deviceId: String, editMode: Boolean?) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String) -> Unit = { },
+    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
 ) {
     Box(modifier = Modifier.pullRefresh(refreshState)) {
         LazyColumn(
@@ -44,7 +44,7 @@ fun DeviceCardContainer(
                     device = device,
                     menuItems = prepareMenuItems(device.id, onEdit, onDelete),
                     onBellIconClick = { onBellIconClick(device.id) },
-                    onCardClick = { onCardClick(device.id) },
+                    onCardClick = { onCardClick(device.id, null) },
                 )
             }
         }
@@ -54,11 +54,11 @@ fun DeviceCardContainer(
 
 private fun prepareMenuItems(
     deviceId: String,
-    onEdit: (id: String) -> Unit,
+    onEdit: (id: String, editMode: Boolean) -> Unit,
     onDelete: (id: String) -> Unit
 ): List<MenuItem> {
     return listOf(
-        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(deviceId) }),
+        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(deviceId, true) }),
         MenuItem("Delete", Icons.Rounded.Delete, action = { onDelete(deviceId) })
     )
 }

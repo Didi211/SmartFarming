@@ -23,8 +23,8 @@ import com.elfak.smartfarming.ui.components.containers.RuleTab
 @Composable
 fun ListScreen(
     viewModel: ListScreenViewModel,
-    navigateToDeviceDetails: (deviceId: String) -> Unit,
-    navigateToRuleDetails: (ruleId: String) -> Unit,
+    navigateToDeviceDetails: (deviceId: String, editMode: Boolean?) -> Unit,
+    navigateToRuleDetails: (ruleId: String) -> Unit
 ) {
     val refreshState = rememberPullRefreshState(
         refreshing = viewModel.uiState.isRefreshing,

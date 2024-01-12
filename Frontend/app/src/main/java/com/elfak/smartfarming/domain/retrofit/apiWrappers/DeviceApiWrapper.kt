@@ -18,9 +18,16 @@ class DeviceApiWrapper @Inject constructor(
         }
     }
 
-    suspend fun remove(id: String, userEmail: String): ApiResponse {
+    suspend fun removeDevice(id: String, userEmail: String): ApiResponse {
         return try {
             api.removeDevice(id, userEmail)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+    suspend fun removeRule(id: String, userEmail: String): ApiResponse {
+        return try {
+            api.removeRule(id, userEmail)
         } catch (ex: Exception) {
             ExceptionHandler.handleApiCallException(ex)
         }

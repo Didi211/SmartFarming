@@ -38,8 +38,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<GraphScreenViewModel>()
             GraphScreen(
                 viewModel = viewModel,
-                navigateToDeviceDetails = { deviceId ->
-                    navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
+                navigateToDeviceDetails = { deviceId, editMode ->
+                    var path = Screen.DeviceDetailsScreen.withArgs(deviceId)
+                    if (editMode != null) {
+                        path += "?editMode=${editMode}"
+                    }
+                    navController.navigate(path)
                 },
                 navigateToRuleDetails = { ruleId ->
                     navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
@@ -50,8 +54,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<ListScreenViewModel>()
             ListScreen(
                 viewModel = viewModel,
-                 navigateToDeviceDetails = { deviceId ->
-                     navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
+                 navigateToDeviceDetails = { deviceId, editMode ->
+                     var path = Screen.DeviceDetailsScreen.withArgs(deviceId)
+                     if (editMode != null) {
+                         path += "?editMode=${editMode}"
+                     }
+                     navController.navigate(path)
                  },
                  navigateToRuleDetails = { ruleId ->
                      navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
@@ -78,7 +86,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 }
             )
         }
-        composable(Screen.DeviceDetailsScreen.route + "/{deviceId}") {
+        composable(Screen.DeviceDetailsScreen.route + "/{deviceId}?editMode={editMode}") {
             val viewModel = hiltViewModel<DeviceDetailsScreenViewModel>()
             DeviceDetailsScreen(
                 viewModel = viewModel,

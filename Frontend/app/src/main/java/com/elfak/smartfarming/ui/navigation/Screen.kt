@@ -52,12 +52,13 @@ sealed class Screen(val route: String, val displayName: String = "")  {
     }
     fun withArgs(vararg args: String): String  {
         return buildString {
-            append("$route")
+            append(route)
             args.forEach { arg ->
                 append("/${arg}")
             }
         }
     }
+
 }
 
 data class NavigationArgument(

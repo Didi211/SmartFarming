@@ -19,5 +19,12 @@ class ExceptionHandler {
                 else -> throw ex
             }
         }
+
+        fun throwApiResponseException(ex: ApiResponse) {
+            if (ex.details == null) {
+                throw Exception(ex.message)
+            }
+            throw Exception("${ex.message} - ${ex.details}")
+        }
     }
 }

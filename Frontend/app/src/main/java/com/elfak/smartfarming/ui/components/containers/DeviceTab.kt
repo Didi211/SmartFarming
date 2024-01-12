@@ -17,9 +17,9 @@ fun DeviceTab(
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
     onBellIconClick: (id: String) -> Unit = { },
-    onCardClick: (id: String) -> Unit = { },
+    onCardClick: (deviceId: String, editMode: Boolean?) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String) -> Unit = { },
+    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
 ) {
     AnimatedContent(devices.isEmpty(), label = "") { empty ->
         when (empty) {
