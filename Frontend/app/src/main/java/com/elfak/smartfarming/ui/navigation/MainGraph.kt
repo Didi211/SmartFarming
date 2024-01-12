@@ -45,8 +45,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                     }
                     navController.navigate(path)
                 },
-                navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
+                navigateToRuleDetails = { ruleId, editMode ->
+                    var path = Screen.RuleDetailsScreen.withArgs(ruleId)
+                    if (editMode != null) {
+                        path += "?editMode=${editMode}"
+                    }
+                    navController.navigate(path)
                 }
             )
         }
@@ -61,8 +65,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                      }
                      navController.navigate(path)
                  },
-                 navigateToRuleDetails = { ruleId ->
-                     navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
+                 navigateToRuleDetails = { ruleId, editMode ->
+                     var path = Screen.RuleDetailsScreen.withArgs(ruleId)
+                     if (editMode != null) {
+                         path += "?editMode=${editMode}"
+                     }
+                     navController.navigate(path)
                  }
             )
         }
@@ -100,7 +108,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 }
             )
         }
-        composable(Screen.RuleDetailsScreen.route + "/{ruleId}") {
+        composable(Screen.RuleDetailsScreen.route + "/{ruleId}?editMode={editMode}") {
             val viewModel = hiltViewModel<RuleDetailsScreenViewModel>()
             RuleDetailsScreen(
                 viewModel = viewModel,

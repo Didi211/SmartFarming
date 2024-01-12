@@ -28,9 +28,9 @@ fun RulesCardContainer(
     rules: List<Rule>,
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
-    onDelete: (id: String) -> Unit,
-    onEdit: (id: String) -> Unit,
-    onCardClick: (id: String) -> Unit
+    onDelete: (id: String) -> Unit = { },
+    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onCardClick: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
 ) {
     Box(modifier = Modifier.pullRefresh(refreshState)) {
         LazyColumn(
@@ -42,7 +42,7 @@ fun RulesCardContainer(
                 RuleCard(
                     rule = rule,
                     menuItems = prepareMenuItems(rule.id, onEdit, onDelete),
-                    onCardClick = { onCardClick(rule.id) },
+                    onCardClick = { onCardClick(rule.id, null) },
                 )
             }
         }
@@ -52,11 +52,11 @@ fun RulesCardContainer(
 
 private fun prepareMenuItems(
     ruleId: String,
-    onEdit: (id: String) -> Unit,
+    onEdit: (id: String, editMode: Boolean) -> Unit,
     onDelete: (id: String) -> Unit
 ): List<MenuItem> {
     return listOf(
-        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(ruleId) }),
+        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(ruleId, true) }),
         MenuItem("Delete", Icons.Rounded.Delete, action = { onDelete(ruleId) })
     )
 }

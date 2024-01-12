@@ -15,6 +15,5 @@ fun DeviceDetailsScreen(
         Button(onClick = { navigateToRuleDetails("ruleId") }) {
             Text(text = "Go to rule details")
         }
-
     }
 }

@@ -16,9 +16,9 @@ fun RuleTab(
     rules: List<Rule>,
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
-    onCardClick: (id: String) -> Unit = { },
+    onCardClick: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String) -> Unit = { },
+    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
 ) {
     AnimatedContent(rules.isEmpty(), label = "") { empty ->
         when (empty) {
