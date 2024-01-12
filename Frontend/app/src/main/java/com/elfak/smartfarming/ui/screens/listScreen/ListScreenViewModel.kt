@@ -12,7 +12,6 @@ import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.domain.utils.Tabs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,14 +25,7 @@ class ListScreenViewModel @Inject constructor(
         private set
 
     init {
-        viewModelScope.launch {
-            if (uiState.tabSelected == Tabs.Devices) {
-                refreshDevices()
-            }
-            else {
-                refreshRules()
-            }
-        }
+        refreshList()
     }
     private fun setSelectedTab(tab: Tabs) {
         uiState = uiState.copy(tabSelected = tab)
@@ -45,47 +37,31 @@ class ListScreenViewModel @Inject constructor(
             Tabs.Rules -> Tabs.Devices
         }
         setSelectedTab(tab)
-        if (uiState.tabSelected == Tabs.Devices) {
-            refreshDevices()
-        }
-        else {
-            refreshRules()
-        }
+        refreshList()
     }
 
     fun refreshList() {
         when (uiState.tabSelected) { 
-            Tabs.Devices -> refreshDevices()
-            Tabs.Rules -> refreshRules()
+            Tabs.Devices -> getDevices()
+            Tabs.Rules -> getRules()
         }
     }
 
-    private fun refreshRules() {
+    private fun getDevices() {
         viewModelScope.launch {
             setRefreshingFlag(true)
-            delay(500)
-            getRules()
-            setRefreshingFlag(false)
-        }
-    }
-    private fun refreshDevices() {
-        viewModelScope.launch {
-            setRefreshingFlag(true)
-            delay(500)
-            getDevices()
-            setRefreshingFlag(false)
-        }
-    }
-
-    private suspend fun getDevices() {
-        try {
-            val userId = localAuthRepository.getCredentials().id
-            val devices = deviceRepository.getAllDevices(userId)
-            setDevices(devices)
-        }
-        catch (ex: Exception) {
-            handleError(ex)
-            Log.e("Devices-GET", ex.message!!, ex)
+            try {
+                val userId = localAuthRepository.getCredentials().id
+                val devices = deviceRepository.getAllDevices(userId)
+                setDevices(devices)
+            }
+            catch (ex: Exception) {
+                handleError(ex)
+                Log.e("Devices-GET", ex.message!!, ex)
+            }
+            finally {
+                setRefreshingFlag(false)
+            }
         }
     }
 
@@ -93,16 +69,28 @@ class ListScreenViewModel @Inject constructor(
         uiState = uiState.copy(devices = devices)
     }
 
-    private suspend fun getRules() {
-        val rules = mutableListOf<Rule>()
-        for (i in 1..7) {
-            rules.add(Rule(
-                id = "65a14221ff9338aea8b707fe",
-                name = "Rule - $i",
-                description = "Rule description"
-            ))
+    private fun getRules() {
+        viewModelScope.launch {
+            setRefreshingFlag(true)
+            try {
+                val rules = mutableListOf<Rule>()
+                for (i in 1..7) {
+                    rules.add(Rule(
+                        id = "65a14221ff9338aea8b707fe",
+                        name = "Rule - $i",
+                        description = "Rule description"
+                    ))
+                }
+                setRules(rules)
+            }
+            catch (ex: Exception) {
+                handleError(ex)
+                Log.e("Rules-GET", ex.message!!, ex)
+            }
+            finally {
+                setRefreshingFlag(false)
+            }
         }
-        setRules(rules)
     }
 
     private fun setRules(rules: List<Rule>) {
