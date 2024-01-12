@@ -9,13 +9,13 @@ import com.elfak.smartfarming.domain.enums.toDeviceType
 
 
 data class Device(
-    val id: String = "",
-    val name: String = "",
-    val type: DeviceTypes = DeviceTypes.Sensor,
-    val status: DeviceStatus = DeviceStatus.Online,
-    val unit: String? = null,
-    val state: DeviceState? = null,
-    val isMuted: Boolean = false,
+    var id: String = "",
+    var name: String = "",
+    var type: DeviceTypes = DeviceTypes.Sensor,
+    var status: DeviceStatus = DeviceStatus.Online,
+    var unit: String? = null,
+    var state: DeviceState? = null,
+    var isMuted: Boolean = false,
 ) {
     companion object {
         fun fromApiResponse(data: Any): Device {

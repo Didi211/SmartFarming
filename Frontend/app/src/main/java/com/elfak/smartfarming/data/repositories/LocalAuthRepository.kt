@@ -14,14 +14,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth")
+val Context.authDataStore: DataStore<Preferences> by preferencesDataStore(name = "auth")
 
 @Singleton
 class LocalAuthRepository @Inject constructor(
     context: Context
 ): ILocalAuthRepository {
 
-    private val dataStore = context.dataStore
+    private val dataStore = context.authDataStore
     companion object {
         const val USER_ID = "ID"
         const val USER_EMAIL = "EMAIL"

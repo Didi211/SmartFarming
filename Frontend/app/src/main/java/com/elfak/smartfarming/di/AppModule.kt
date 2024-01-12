@@ -3,10 +3,12 @@ package com.elfak.smartfarming.di
 import android.content.Context
 import com.elfak.smartfarming.data.repositories.DeviceRepository
 import com.elfak.smartfarming.data.repositories.LocalAuthRepository
+import com.elfak.smartfarming.data.repositories.LocalDeviceRepository
 import com.elfak.smartfarming.data.repositories.NotificationRepository
 import com.elfak.smartfarming.data.repositories.RemoteAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.INotificationRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
 import com.elfak.smartfarming.domain.retrofit.RetrofitClient
@@ -32,6 +34,12 @@ object AppModule {
     fun provideLocalAuthRepository(
         @ApplicationContext context: Context,
     ): ILocalAuthRepository = LocalAuthRepository(context)
+
+    @Singleton
+    @Provides
+    fun provideLocalDeviceRepository(
+        @ApplicationContext context: Context,
+    ): ILocalDeviceRepository = LocalDeviceRepository(context)
 
     @Singleton
     @Provides

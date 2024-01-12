@@ -10,6 +10,7 @@ import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.domain.utils.Tabs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ListScreenViewModel @Inject constructor(
     private val deviceRepository: IDeviceRepository,
-    private val localAuthRepository: ILocalAuthRepository
+    private val localAuthRepository: ILocalAuthRepository,
+    private val localDeviceRepository: ILocalDeviceRepository
 ): ViewModel() {
 
     var uiState by mutableStateOf(ListScreenUiState())
@@ -53,7 +55,7 @@ class ListScreenViewModel @Inject constructor(
             try {
                 val userId = localAuthRepository.getCredentials().id
                 val devices = deviceRepository.getAllDevices(userId)
-                setDevices(devices)
+                setDevices(localDeviceRepository.updateDevicesLocal(devices))
             }
             catch (ex: Exception) {
                 handleError(ex)
@@ -125,6 +127,9 @@ class ListScreenViewModel @Inject constructor(
         val message = if (device.isMuted) "muted" else "not muted"
         setSuccessMessage("Notifications for ${device.name} are $message.")
         // save setting in local
+        viewModelScope.launch {
+            localDeviceRepository.setIsMuted(device.id, device.isMuted)
+        }
 
     }
 
