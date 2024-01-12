@@ -1,10 +1,183 @@
 package com.elfak.smartfarming.ui.screens.listScreen
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
+import com.elfak.smartfarming.domain.utils.Tabs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListScreenViewModel @Inject constructor(): ViewModel() {
+class ListScreenViewModel @Inject constructor(
+    private val deviceRepository: IDeviceRepository,
+    private val localAuthRepository: ILocalAuthRepository
+): ViewModel() {
+
+    var uiState by mutableStateOf(ListScreenUiState())
+        private set
+
+    init {
+        viewModelScope.launch {
+            if (uiState.tabSelected == Tabs.Devices) {
+                refreshDevices()
+            }
+            else {
+                refreshRules()
+            }
+        }
+    }
+    private fun setSelectedTab(tab: Tabs) {
+        uiState = uiState.copy(tabSelected = tab)
+    }
+
+    fun toggleTab() {
+        val tab = when(uiState.tabSelected) {
+            Tabs.Devices -> Tabs.Rules
+            Tabs.Rules -> Tabs.Devices
+        }
+        setSelectedTab(tab)
+        if (uiState.tabSelected == Tabs.Devices) {
+            refreshDevices()
+        }
+        else {
+            refreshRules()
+        }
+    }
+
+    fun refreshList() {
+        when (uiState.tabSelected) { 
+            Tabs.Devices -> refreshDevices()
+            Tabs.Rules -> refreshRules()
+        }
+    }
+
+    private fun refreshRules() {
+        viewModelScope.launch {
+            setRefreshingFlag(true)
+            delay(500)
+            getRules()
+            setRefreshingFlag(false)
+        }
+    }
+    private fun refreshDevices() {
+        viewModelScope.launch {
+            setRefreshingFlag(true)
+            delay(500)
+            getDevices()
+            setRefreshingFlag(false)
+        }
+    }
+
+    private suspend fun getDevices() {
+        try {
+            val userId = localAuthRepository.getCredentials().id
+            val devices = deviceRepository.getAllDevices(userId)
+            setDevices(devices)
+        }
+        catch (ex: Exception) {
+            handleError(ex)
+            Log.e("Devices-GET", ex.message!!, ex)
+        }
+    }
+
+    private fun setDevices(devices: List<Device>) {
+        uiState = uiState.copy(devices = devices)
+    }
+
+    private suspend fun getRules() {
+        val rules = mutableListOf<Rule>()
+        for (i in 1..7) {
+            rules.add(Rule(
+                id = "id-$i",
+                name = "Rule - $i",
+                description = "Rule description"
+            ))
+        }
+        setRules(rules)
+    }
+
+    private fun setRules(rules: List<Rule>) {
+        uiState = uiState.copy(rules = rules)
+    }
+
+    private fun setRefreshingFlag(value: Boolean) {
+        uiState = uiState.copy(isRefreshing = value)
+    }
+
+    fun onDeviceDelete(id: String) {
+        viewModelScope.launch {
+            try {
+                val user = localAuthRepository.getCredentials()
+
+                deviceRepository.removeDevice(id, user.email)
+                removeDevice(id)
+                setSuccessMessage("Device removed")
+            }
+            catch (ex: Exception) {
+                handleError(ex)
+                Log.e("Devices-GET", ex.message!!, ex)
+            }
+        }
+    }
+
+    private fun removeDevice(id: String) {
+        uiState = uiState.copy(devices = uiState.devices.filter { it.id != id })
+    }
+
+    fun onDeviceBellIconClick(id: String) {
+        val device = toggleIsMutedDevice(id)
+        val message = if (device.isMuted) "muted" else "not muted"
+        setSuccessMessage("Notifications for ${device.name} are $message.")
+        // save setting in local
+
+    }
+
+    private fun toggleIsMutedDevice(id: String): Device {
+        var updatedDevice = Device()
+        val devices = uiState.devices.map {
+            if (it.id == id) {
+                updatedDevice = it.copy(isMuted = !it.isMuted)
+                updatedDevice
+            }
+            else it
+        }
+        uiState = uiState.copy(devices = devices)
+        return updatedDevice
+    }
+    fun onRuleDelete(id: String) {
+        TODO("Not yet implemented")
+    }
+
+    // region TOAST HANDLER
+    private fun handleError(ex: Exception) {
+        if (ex.message != null) {
+            setErrorMessage(ex.message!!)
+            return
+        }
+        setErrorMessage("Error has occurred")
+    }
+
+    fun clearErrorMessage() {
+        uiState = uiState.copy(toastData = uiState.toastData.copy(hasErrors = false))
+    }
+    fun setErrorMessage(message: String) {
+        uiState = uiState.copy(toastData = uiState.toastData.copy(errorMessage = message, hasErrors = true))
+    }
+    fun setSuccessMessage(message: String) {
+        uiState = uiState.copy(toastData = uiState.toastData.copy(successMessage = message, hasSuccessMessage = true))
+    }
+    fun clearSuccessMessage() {
+        uiState = uiState.copy(toastData = uiState.toastData.copy(hasSuccessMessage = false))
+    }
+    // endregion
 
 }

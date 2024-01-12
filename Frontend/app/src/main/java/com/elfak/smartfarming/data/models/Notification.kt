@@ -4,14 +4,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-
 data class Notification(
     val id: String = "",
     val message: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
     val isRead: Boolean = false,
-    val deviceStatus: String = "",
+    val deviceStatus: String
 ) {
     fun title(): String? {
         val startIndex = this.message.indexOf('[')
@@ -33,10 +32,7 @@ data class Notification(
                 createdAt = notification["createdAt"].toString(),
                 updatedAt = notification["updatedAt"].toString(),
                 isRead = notification["isRead"] as Boolean,
-                deviceStatus = notification["deviceStatus"].toString(),
-
-
-
+                deviceStatus = notification["deviceStatus"].toString()
             )
         }
     }

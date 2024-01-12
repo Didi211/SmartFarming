@@ -3,6 +3,20 @@ import { Rule } from '../models/rule-model.js';
 import dtoMapper from '../utils/dto-mapper.js';
 
 const getAll = async (type, userId) => {
+    if (type === undefined || type === null || type.toLowerCase() === 'undefined') {
+        // get all 
+        try { 
+            let result = await Device.find({userId: userId});
+            return dtoMapper.toDevicesDto(result);
+        }
+        catch(error) { 
+            throw { 
+                status: 500,
+                message: 'MongoDB error',
+                details: error
+            };
+        }
+    }
     type = type.toUpperCase(); 
     if (type != 'SENSOR' && type != 'ACTUATOR') { 
         throw { 

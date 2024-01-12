@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.DrawerMenuItem
-import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
+import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 
 @Composable
 fun SmartFarmingBottomAppBar(
@@ -32,7 +32,7 @@ fun SmartFarmingBottomAppBar(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(buttons) { item ->
-                ButtonWithIcon(
+                ButtonWithIconAndText(
                     text = item.name,
                     onClick = item.action,
                     icon = item.icon

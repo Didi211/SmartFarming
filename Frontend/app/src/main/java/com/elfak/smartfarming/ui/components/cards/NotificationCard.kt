@@ -29,6 +29,8 @@ import com.elfak.smartfarming.data.models.Notification
 import com.elfak.smartfarming.data.models.formatDate
 import com.elfak.smartfarming.ui.components.buttons.DeleteIconButton
 import com.elfak.smartfarming.ui.theme.BorderColor
+import com.elfak.smartfarming.ui.theme.ErrorColor
+import com.elfak.smartfarming.ui.theme.FontColor
 
 @Composable
 fun NotificationCard(
@@ -56,11 +58,24 @@ fun NotificationCard(
                             horizontalAlignment = Alignment.Start,
                         ) {
                             // title
-                            Text(
-                                text = "${notification.title() ?: "No_title"} - ${notification.deviceStatus}" ,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row {
+                                Text(
+                                    text = "${notification.title() ?: "No_title"} - " ,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                val color = when (notification.deviceStatus) {
+                                    "OFFLINE" -> ErrorColor
+                                    else -> FontColor
+                                }
+                                Text(
+                                    text = notification.deviceStatus,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = color
+                                )
+                            }
+
                             Spacer(Modifier.height(10.dp))
                             // message
                             Text(
@@ -88,12 +103,12 @@ fun NotificationCard(
     }
 }
 @Composable
-fun CurvedBottomBorderCard(content: @Composable ColumnScope.() -> Unit) {
+fun CurvedBottomBorderCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val shape = RoundedCornerShape(30.dp)
     val elevation = CardDefaults.cardElevation(
         defaultElevation = 5.dp
     )
-    val height = 150.dp
+    val height = 130.dp
 
     Card(
         shape = shape,
@@ -110,7 +125,7 @@ fun CurvedBottomBorderCard(content: @Composable ColumnScope.() -> Unit) {
     Card(
         shape = shape,
         elevation = elevation,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height),
         colors = CardDefaults.cardColors(
