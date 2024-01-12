@@ -16,4 +16,6 @@ interface DeviceApi {
     suspend fun removeDevice(@Path("id") id: String, @Header("user-email") userEmail: String): ApiResponse
     @DELETE("api/devices/{id}/rule")
     suspend fun removeRule(@Path("id") id: String, @Header("user-email") userEmail: String): ApiResponse
+    @GET("api/devices/rule/user/{id}")
+    suspend fun getAllRules(@Path("id") userId: String): ApiResponse
 }

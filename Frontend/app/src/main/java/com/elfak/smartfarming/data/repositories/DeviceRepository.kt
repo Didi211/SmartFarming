@@ -1,6 +1,7 @@
 package com.elfak.smartfarming.data.repositories
 
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
@@ -34,6 +35,17 @@ class DeviceRepository @Inject constructor(
         val response = deviceApiWrapper.removeRule(id, userEmail)
         if (response.status != 200) {
             ExceptionHandler.throwApiResponseException(response)
+        }
+    }
+
+    override suspend fun getAllRules(userId: String): List<Rule> {
+        val response = deviceApiWrapper.getAllRules(userId)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        val list = response.details as List<Any?>
+        return list.map { item ->
+            Rule.fromApiResponse(item!!)
         }
     }
 

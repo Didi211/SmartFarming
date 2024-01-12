@@ -32,4 +32,12 @@ class DeviceApiWrapper @Inject constructor(
             ExceptionHandler.handleApiCallException(ex)
         }
     }
+
+    suspend fun getAllRules(userId: String): ApiResponse {
+        return try {
+            api.getAllRules(userId)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
 }

@@ -102,38 +102,6 @@ fun NotificationCard(
         }
     }
 }
-@Composable
-fun CurvedBottomBorderCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    val shape = RoundedCornerShape(30.dp)
-    val elevation = CardDefaults.cardElevation(
-        defaultElevation = 5.dp
-    )
-    val height = 130.dp
 
-    Card(
-        shape = shape,
-        elevation = elevation,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height)
-            .offset(y = 3.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = BorderColor,
-        ),
-    ) { }
-
-    Card(
-        shape = shape,
-        elevation = elevation,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-    ) {
-        content()
-    }
-}
 
 

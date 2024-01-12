@@ -15,7 +15,7 @@ fun String.toDeviceState(): DeviceState? {
     if (this == null) return null
     return when (this.uppercase()) {
         "OFF" -> DeviceState.Off
-        "OFFLINE" -> DeviceState.On
+        "ON" -> DeviceState.On
         "NULL" -> null
         else -> { throw Exception("Device State not valid.")}
     }

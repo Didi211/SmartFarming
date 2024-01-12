@@ -18,6 +18,7 @@ router.put('/actuator/:id/state', deviceController.updateState);
 
 // rules
 router.get('/:id/rule', ruleController.getByDeviceId);
+router.get('/rule/user/:id', ruleController.getByUserId);
 router.post('/rule', headerMiddleware.checkEmail, ruleController.add)
 router.put('/:id/rule', headerMiddleware.checkEmail, ruleController.update);
 router.delete('/:id/rule',headerMiddleware.checkEmail, ruleController.remove);

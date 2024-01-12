@@ -75,14 +75,8 @@ class ListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             setRefreshingFlag(true)
             try {
-                val rules = mutableListOf<Rule>()
-                for (i in 1..7) {
-                    rules.add(Rule(
-                        id = "65a14221ff9338aea8b707fe",
-                        name = "Rule - $i",
-                        description = "Rule description"
-                    ))
-                }
+                val userId = localAuthRepository.getCredentials().id
+                val rules = deviceRepository.getAllRules(userId)
                 setRules(rules)
             }
             catch (ex: Exception) {
