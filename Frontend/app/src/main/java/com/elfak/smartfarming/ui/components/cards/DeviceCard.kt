@@ -20,31 +20,33 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Device
-import com.elfak.smartfarming.domain.enums.DeviceState
+import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.domain.enums.DeviceStatus
-import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.uppercase
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
+import com.elfak.smartfarming.ui.components.menu.Menu
 import com.elfak.smartfarming.ui.theme.ErrorColor
 import com.elfak.smartfarming.ui.theme.FontColor
-import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
 
 @Composable
 fun DeviceCard(
     device: Device,
-    onBellIconClick: (id: String) -> Unit,
-    onDelete: (id: String) -> Unit,
-    onCardClick: (id: String) -> Unit,
-    onEdit: (id: String) -> Unit,
+    menuItems: List<MenuItem> = emptyList(),
+    onBellIconClick: (id: String) -> Unit = { },
+    onCardClick: (id: String) -> Unit = { },
 ) {
+    var isMenuExpanded by remember { mutableStateOf(false) }
     Box {
         CurvedBottomBorderCard(modifier = Modifier
                 .clip(RoundedCornerShape(30.dp))
@@ -121,13 +123,22 @@ fun DeviceCard(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            ButtonWithIcon(
-                                icon = Icons.Rounded.MoreVert,
-                                backgroundColor = Color.Transparent,
-                                iconColor = FontColor,
-                                size = 35.dp
-                            ) {
-                                // show menu 
+                            Box {
+
+                                ButtonWithIcon(
+                                    icon = Icons.Rounded.MoreVert,
+                                    backgroundColor = Color.Transparent,
+                                    iconColor = FontColor,
+                                    size = 35.dp
+                                ) {
+                                     isMenuExpanded = true
+                                }
+                                Menu(
+                                    expanded = isMenuExpanded,
+                                    menuItems = menuItems,
+                                    onDismissRequest = { isMenuExpanded = false },
+                                    onIconClick = { isMenuExpanded = false }
+                                )
                             }
                             val notifyIcon = when (device.isMuted) {
                                 true -> Icons.Outlined.NotificationsOff
@@ -146,19 +157,5 @@ fun DeviceCard(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DeviceCardPreview() {
-    SmartFarmingTheme {
-        DeviceCard(device = Device(
-            id = "65a0467e326ca03fd48b0a5d",
-            name = "test-1",
-            type = DeviceTypes.Actuator,
-            status = DeviceStatus.Online,
-            state = DeviceState.Off
-        ), onDelete = { }, onCardClick = { }, onEdit = { }, onBellIconClick = { } )
     }
 }

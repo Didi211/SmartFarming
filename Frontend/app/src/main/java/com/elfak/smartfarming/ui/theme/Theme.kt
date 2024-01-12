@@ -44,7 +44,8 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White,
 
     outline = BorderColor,
-    onSecondaryContainer = Disabled
+    onSecondaryContainer = Disabled,
+//    surface = ErrorColor
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),

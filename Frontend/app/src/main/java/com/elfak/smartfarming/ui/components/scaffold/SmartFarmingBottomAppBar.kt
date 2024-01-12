@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.elfak.smartfarming.data.models.DrawerMenuItem
+import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 
 @Composable
 fun SmartFarmingBottomAppBar(
-    buttons: List<DrawerMenuItem>
+    buttons: List<MenuItem>
 ) {
     BottomAppBar(
         modifier = Modifier
