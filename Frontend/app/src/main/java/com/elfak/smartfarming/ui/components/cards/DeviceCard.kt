@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.domain.enums.DeviceStatus
+import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.uppercase
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
 import com.elfak.smartfarming.ui.components.menu.Menu
@@ -96,14 +97,19 @@ fun DeviceCard(
                             fontWeight = FontWeight.Bold,
                             color = FontColor
                         )
-                        if (device.unit != null) {
+                        if (device.type == DeviceTypes.Sensor) {
                             Text(
                                 text = "Unit: ${device.unit}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = FontColor
                             )
-                            // TODO - add last reading from real time data
+                            Text(
+                                text = "Last reading: ${device.lastReading}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = FontColor
+                            )
                         }
                         else {
                             Text(

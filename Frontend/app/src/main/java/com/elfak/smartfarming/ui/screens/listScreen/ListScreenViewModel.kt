@@ -124,7 +124,6 @@ class ListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             localDeviceRepository.setIsMuted(device.id, device.isMuted)
         }
-
     }
 
     private fun toggleIsMutedDevice(id: String): Device {
@@ -170,10 +169,10 @@ class ListScreenViewModel @Inject constructor(
     fun clearErrorMessage() {
         uiState = uiState.copy(toastData = uiState.toastData.copy(hasErrors = false))
     }
-    fun setErrorMessage(message: String) {
+    private fun setErrorMessage(message: String) {
         uiState = uiState.copy(toastData = uiState.toastData.copy(errorMessage = message, hasErrors = true))
     }
-    fun setSuccessMessage(message: String) {
+    private fun setSuccessMessage(message: String) {
         uiState = uiState.copy(toastData = uiState.toastData.copy(successMessage = message, hasSuccessMessage = true))
     }
     fun clearSuccessMessage() {

@@ -16,6 +16,7 @@ data class Device(
     var unit: String? = null,
     var state: DeviceState? = null,
     var isMuted: Boolean = false,
+    var lastReading: Double = 0.0,
 ) {
     companion object {
         fun fromApiResponse(data: Any): Device {

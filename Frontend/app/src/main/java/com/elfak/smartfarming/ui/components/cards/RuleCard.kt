@@ -62,7 +62,7 @@ fun RuleCard(
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .fillMaxWidth(0.9f)
+                            .fillMaxWidth(0.8f)
                             .padding(10.dp),
                         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
                         horizontalAlignment = Alignment.Start,
