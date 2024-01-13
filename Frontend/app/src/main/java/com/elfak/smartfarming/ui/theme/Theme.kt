@@ -26,7 +26,8 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = Color.White,
     onSecondary = Color.White,
     error = ErrorColor,
-    outline = Border,
+    onError = Color.White,
+    outline = BorderColor,
     onSecondaryContainer = Disabled
 )
 
@@ -40,8 +41,11 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     onSecondary = Color.White,
     error = ErrorColor,
-    outline = Border,
-    onSecondaryContainer = Disabled
+    onError = Color.White,
+
+    outline = BorderColor,
+    onSecondaryContainer = Disabled,
+//    surface = ErrorColor
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),

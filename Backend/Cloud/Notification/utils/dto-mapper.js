@@ -5,6 +5,7 @@ const toNotificationDto = (notification) => {
         userId: notification.userId,
         createdAt: notification.createdAt,
         updatedAt: notification.updatedAt,
+        deviceStatus: notification.deviceStatus,
         isRead: notification.isRead
     }
 }

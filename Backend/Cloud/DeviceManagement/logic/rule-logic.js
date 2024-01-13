@@ -20,6 +20,21 @@ const getByDeviceId = async (deviceId) => {
     return dtoMapper.toRuleDto(result);
 }
 
+
+const getByUserId = async (userId) => { 
+    let result = await Rule.find({
+       userId: userId
+    });
+    if (!result) { 
+        throw { 
+            status: 400,
+            message: "MongoDB error",
+            details: `Rules for user with ID [${userId}] not found in database.`
+        };
+    }
+    return dtoMapper.toRulesDto(result);
+}
+
 const addRule = async (rule) => { 
     let sensor, actuator;
     // check if device ids are from existing devices 
@@ -110,6 +125,7 @@ const removeRule = async (id) => {
 
 export default { 
     getByDeviceId,
+    getByUserId,
     addRule,
     updateRule,
     removeRule

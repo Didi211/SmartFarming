@@ -13,6 +13,17 @@ const getByDeviceId = async (req, res) => {
 
 }
 
+const getByUserId = async (req, res) => { 
+    try { 
+        let result = await logic.getRulesForUser(req.params.id);
+        res.status(result.status).send(result);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+
+}
+
 const add = async (req, res) => { 
     // add rule
     try { 
@@ -49,6 +60,7 @@ const remove = async (req, res) => {
 
 export default { 
     getByDeviceId,
+    getByUserId,
     add,
     update,
     remove

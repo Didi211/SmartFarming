@@ -5,8 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.elfak.smartfarming.ui.screens.addRuleScreen.AddRuleScreen
-import com.elfak.smartfarming.ui.screens.addRuleScreen.AddRuleScreenViewModel
 import com.elfak.smartfarming.ui.screens.deviceDetailsScreen.DeviceDetailsScreen
 import com.elfak.smartfarming.ui.screens.deviceDetailsScreen.DeviceDetailsScreenViewModel
 import com.elfak.smartfarming.ui.screens.graphScreen.GraphScreen
@@ -38,11 +36,24 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<GraphScreenViewModel>()
             GraphScreen(
                 viewModel = viewModel,
-                navigateToDeviceDetails = { deviceId ->
-                    navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
+                navigateBack = { navController.popBackStack() },
+                navigateToDeviceDetails = { deviceId, screenState ->
+                    var path = Screen.DeviceDetailsScreen
+                        .builder()
+                        .addArg(screenState.name)
+                        .addOptionalArg("deviceId", deviceId)
+                        .build()
+                    navController.navigate(path)
                 },
-                navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
+                navigateToRuleDetails = { ruleId, screenState ->
+                    var path = Screen.RuleDetailsScreen
+                        .builder()
+                        .addArg(screenState.name)
+                    if (ruleId != null) {
+                        path.addOptionalArg("ruleId", ruleId)
+                    }
+                    // NOTE - Would be good to add validation for id and screenState
+                    navController.navigate(path.build())
                 }
             )
         }
@@ -50,11 +61,21 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<ListScreenViewModel>()
             ListScreen(
                 viewModel = viewModel,
-                 navigateToDeviceDetails = { deviceId ->
-                     navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId))
+                 navigateToDeviceDetails = { deviceId, screenState ->
+                     var path = Screen.DeviceDetailsScreen
+                         .builder()
+                         .addArg(screenState.name)
+                         .addOptionalArg("deviceId", deviceId)
+                         .build()
+                     navController.navigate(path)
                  },
-                 navigateToRuleDetails = { ruleId ->
-                     navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId))
+                 navigateToRuleDetails = { ruleId, screenState ->
+                     var path = Screen.RuleDetailsScreen
+                         .builder()
+                         .addArg(screenState.name)
+                         .addOptionalArg("ruleId", ruleId)
+                         .build()
+                     navController.navigate(path)
                  }
             )
         }
@@ -66,44 +87,40 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<NotificationScreenViewModel>()
             NotificationScreen(viewModel = viewModel)
         }
-        composable(Screen.AddRuleScreen.route) {
-            val viewModel = hiltViewModel<AddRuleScreenViewModel>()
-            AddRuleScreen(
-                viewModel = viewModel,
-                navigateBack = { navController.popBackStack() },
-                navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId)) {
-                        popUpTo(Screen.HomeScreen.route)
-                    }
-                }
-            )
-        }
-        composable(Screen.DeviceDetailsScreen.route + "/{deviceId}") {
+        composable(Screen.DeviceDetailsScreen.route + "/{screenState}?deviceId={deviceId}") {
             val viewModel = hiltViewModel<DeviceDetailsScreenViewModel>()
             DeviceDetailsScreen(
                 viewModel = viewModel,
-                navigateToRuleDetails = { ruleId ->
-                    navController.navigate(Screen.RuleDetailsScreen.withArgs(ruleId)) {
-                        launchSingleTop = true
-                        popUpTo(Screen.DeviceDetailsScreen.route) {
-                            inclusive = true
-                        }
+                navigateBack = {
+                    navController.popBackStack()
+                },
+                navigateToRuleDetails = { ruleId, screenState ->
+                    var path = Screen.RuleDetailsScreen
+                        .builder()
+                        .addArg(screenState.name)
+                    if (ruleId != null) {
+                        path.addOptionalArg("ruleId", ruleId)
                     }
+                    // NOTE - Would be good to add validation for id and screenState
+                    navController.navigate(path.build())
                 }
             )
         }
-        composable(Screen.RuleDetailsScreen.route + "/{ruleId}") {
+        composable(Screen.RuleDetailsScreen.route + "/{screenState}?ruleId={ruleId}") {
             val viewModel = hiltViewModel<RuleDetailsScreenViewModel>()
             RuleDetailsScreen(
                 viewModel = viewModel,
-                navigateToDeviceDetails = { deviceId ->
-                    navController.navigate(Screen.DeviceDetailsScreen.withArgs(deviceId)) {
-                        launchSingleTop = true
-                        popUpTo(Screen.RuleDetailsScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
+                navigateBack = {
+                    navController.popBackStack()
+                },
+                navigateToDeviceDetails = { deviceId, screenState ->
+                    var path = Screen.DeviceDetailsScreen
+                        .builder()
+                        .addArg(screenState.name)
+                        .addOptionalArg("deviceId", deviceId)
+                        .build()
+                    navController.navigate(path)
+                },
             )
         }
     }

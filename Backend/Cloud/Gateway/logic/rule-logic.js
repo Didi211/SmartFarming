@@ -13,6 +13,16 @@ const getRuleFromDeviceId = async (id) => {
     }
 }
 
+const getRulesForUser = async (id) => { 
+    let response = await deviceManagementAxios.get(`/rule/user/${id}`);
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
+}
+
 const add = async (rule, email) => { 
     let  validationResult = ruleValidator.validateForAdd(rule);
     if (validationResult != "") { 
@@ -71,6 +81,7 @@ const remove = async (id, email) => {
 
 export default { 
     getRuleFromDeviceId,
+    getRulesForUser,
     add,
     update,
     remove

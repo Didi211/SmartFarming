@@ -2,6 +2,9 @@
 const validateForAdd = (rule) => { 
     let result = "";
     try { 
+        if (rule.userId == undefined || rule.userId == "") { 
+            throw "Rule must have user ID."
+        }
         if (rule.sensorId == undefined || rule.sensorId == "") { 
             throw "Rule must have sensor ID."
         }

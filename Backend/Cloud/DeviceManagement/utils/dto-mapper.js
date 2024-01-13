@@ -18,6 +18,7 @@ const toRuleDto = (rule) => {
     return { 
         id: rule._id,
         name: rule.name,
+        userId: rule.userId,
         sensorId: rule.sensorId, 
         actuatorId: rule.actuatorId,
         startExpression: rule.startExpression,
@@ -28,8 +29,13 @@ const toRuleDto = (rule) => {
     };
 }
 
+const toRulesDto = (rules) => { 
+    return rules.map(rule => toRuleDto(rule));
+}
+
 export default { 
     toDevicesDto,
     toDeviceDto,
-    toRuleDto
+    toRuleDto,
+    toRulesDto
 }

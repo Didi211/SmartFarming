@@ -13,6 +13,7 @@ router.delete('/:id', deviceController.remove);
 
 // rules
 router.get('/:id/rule', ruleController.getByDeviceId);
+router.get('/rule/user/:id', ruleController.getByUserId)
 router.post('/rule', ruleController.add)
 router.put('/:id/rule', ruleController.update);
 router.delete('/:id/rule',ruleController.remove);

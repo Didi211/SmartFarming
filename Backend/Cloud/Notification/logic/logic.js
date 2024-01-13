@@ -34,8 +34,21 @@ const addNotification = async (notification) => {
 
 const getAll = async (userId) => { 
     try { 
-        let result = await Notification.find({userId: userId});
-        return notificationMapper.toNotificationsDto(result);
+        // let result = await Notification
+        // .find({ userId: userId })
+        // .group({ deviceId: deviceId })
+        // .sort({ updatedAt: -1 });
+        let result = await Notification.aggregate([
+            { $match: { userId: userId } },
+            { $group: { _id: "$deviceId", notifications: { $push: "$$ROOT" } } }
+        ]);
+        
+        let notifications = []
+        result.forEach(device => {
+            device.notifications.sort((a, b) => b.updatedAt - a.updatedAt);
+            notifications = notifications.concat(device.notifications)
+        });
+        return notificationMapper.toNotificationsDto(notifications);
     }
     catch(error) { 
         throw { 

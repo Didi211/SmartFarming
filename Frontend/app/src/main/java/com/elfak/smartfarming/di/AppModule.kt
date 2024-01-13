@@ -1,13 +1,23 @@
 package com.elfak.smartfarming.di
 
 import android.content.Context
+import com.elfak.smartfarming.data.repositories.DeviceRepository
 import com.elfak.smartfarming.data.repositories.LocalAuthRepository
+import com.elfak.smartfarming.data.repositories.LocalDeviceRepository
+import com.elfak.smartfarming.data.repositories.NotificationRepository
 import com.elfak.smartfarming.data.repositories.RemoteAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
+import com.elfak.smartfarming.data.repositories.interfaces.INotificationRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
-import com.elfak.smartfarming.domain.retrofit.apis.AuthApi
 import com.elfak.smartfarming.domain.retrofit.RetrofitClient
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.AuthApiWrapper
+import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
+import com.elfak.smartfarming.domain.retrofit.apiWrappers.NotificationApiWrapper
+import com.elfak.smartfarming.domain.retrofit.apis.AuthApi
+import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
+import com.elfak.smartfarming.domain.retrofit.apis.NotificationApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,10 +37,27 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideLocalDeviceRepository(
+        @ApplicationContext context: Context,
+    ): ILocalDeviceRepository = LocalDeviceRepository(context)
+
+    @Singleton
+    @Provides
     fun provideRemoteAuthRepository(
-//        @ApplicationContext context: Context,
         authApiWrapper: AuthApiWrapper
     ): IRemoteAuthRepository = RemoteAuthRepository(authApiWrapper)
+
+    @Singleton
+    @Provides
+    fun provideNotificationRepository(
+        notificationApiWrapper: NotificationApiWrapper
+    ): INotificationRepository = NotificationRepository(notificationApiWrapper)
+
+    @Singleton
+    @Provides
+    fun provideDeviceRepository(
+        deviceApiWrapper: DeviceApiWrapper
+    ): IDeviceRepository = DeviceRepository(deviceApiWrapper)
 
     @Provides
     @Singleton
@@ -42,7 +69,28 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideNotificationApi(retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideDeviceApi(retrofit: Retrofit): DeviceApi = retrofit.create(DeviceApi::class.java)
+
+
+    @Provides
+    @Singleton
     fun provideAuthApiWrapper(
         api: AuthApi
     ): AuthApiWrapper = AuthApiWrapper(api)
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiWrapper(
+        api: NotificationApi
+    ): NotificationApiWrapper = NotificationApiWrapper(api)
+
+    @Provides
+    @Singleton
+    fun provideDeviceApiWrapper(
+        api: DeviceApi
+    ): DeviceApiWrapper = DeviceApiWrapper(api)
 }

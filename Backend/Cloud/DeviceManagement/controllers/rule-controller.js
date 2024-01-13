@@ -18,6 +18,22 @@ const getByDeviceId = async (req, res) => {
     }
 }
 
+const getByUserId = async (req, res) => {
+    let id = req.params.id;
+    try { 
+        let result = await logic.getByUserId(id);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Fetching rules successfull.",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+}
+
 const add = async (req, res) => { 
     let rule = req.body;
     try { 
@@ -67,6 +83,7 @@ const remove = async (req, res) => {
 
 export default { 
     getByDeviceId,
+    getByUserId,
     add,
     update,
     remove

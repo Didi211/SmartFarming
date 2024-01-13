@@ -6,6 +6,10 @@ const ruleSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    userId: { 
+        type: String,
+        required: true,
+    },
     sensorId: { 
         type: String,
         required: true,
@@ -44,7 +48,8 @@ const ruleSchema = new mongoose.Schema({
     virtuals: { 
         text: { 
             get: function() { 
-                return `Start the actuator when start trigger level is ${this.startExpression} than ${this.startTriggerLevel}. Stop the actuator when stop trigger level is ${this.stopExpression} than ${this.stopTriggerLevel}`;
+                // return `Start the actuator when start trigger level is ${this.startExpression} than ${this.startTriggerLevel}. Stop the actuator when stop trigger level is ${this.stopExpression} than ${this.stopTriggerLevel}.`;
+                return `Start when start trigger level is ${this.startExpression} ${this.startTriggerLevel}. Stop when stop trigger level is ${this.stopExpression} ${this.stopTriggerLevel}.`;
             }
         }
     },
