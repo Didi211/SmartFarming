@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.utils.Tabs
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.buttons.TabSwitch
@@ -23,8 +24,8 @@ import com.elfak.smartfarming.ui.components.containers.RuleTab
 @Composable
 fun ListScreen(
     viewModel: ListScreenViewModel,
-    navigateToDeviceDetails: (deviceId: String, editMode: Boolean?) -> Unit,
-    navigateToRuleDetails: (ruleId: String, editMode: Boolean?) -> Unit
+    navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
+    navigateToRuleDetails: (ruleId: String, screenState: ScreenState) -> Unit
 ) {
     val refreshState = rememberPullRefreshState(
         refreshing = viewModel.uiState.isRefreshing,

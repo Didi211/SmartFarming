@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.ui.theme.FontColor
 
 @Composable
@@ -17,9 +18,9 @@ fun DeviceTab(
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
     onBellIconClick: (id: String) -> Unit = { },
-    onCardClick: (deviceId: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onCardClick: (deviceId: String, screenState: ScreenState) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onEdit: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
 ) {
     AnimatedContent(devices.isEmpty(), label = "") { empty ->
         when (empty) {

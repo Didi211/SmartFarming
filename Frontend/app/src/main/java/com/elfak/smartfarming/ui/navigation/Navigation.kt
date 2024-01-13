@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.elfak.smartfarming.data.models.MenuItem
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.ui.components.scaffold.SmartFarmingBottomAppBar
 import com.elfak.smartfarming.ui.components.scaffold.SmartFarmingTopAppBar
 import com.elfak.smartfarming.ui.screens.loginScreen.LoginScreen
@@ -174,9 +175,9 @@ fun Navigation() {
             startDestination = Screen.SplashScreen.route,
         ) {
             composable(Screen.SplashScreen.route) {
-                val viewModel = hiltViewModel<SplashScreenViewModel>()
+                val splashScreenViewModel = hiltViewModel<SplashScreenViewModel>()
                 SplashScreen(
-                    viewModel = viewModel,
+                    viewModel = splashScreenViewModel,
                     navigateToHome = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo(Screen.SplashScreen.route) { inclusive = true }
@@ -274,7 +275,6 @@ fun prepareMenuList(navController: NavController, signOutAction: () -> Unit): Li
                 }
             }
         ),
-
     )
     return items
 }
@@ -284,15 +284,17 @@ fun prepareBottomBarButtons(navController: NavController): List<MenuItem> {
         MenuItem(
             name = "Add device",
             icon = Icons.Rounded.Sensors,
-            action = { }
+            action = {
+                navController.navigate(Screen.DeviceDetailsScreen
+                    .withArgs(ScreenState.Create.name))
+            }
         ),
         MenuItem(
             name = "Add rule",
             icon = Icons.Rounded.Cable,
             action = {
-                navController.navigate(Screen.AddRuleScreen.route) {
-                    popUpTo(Screen.HomeScreen.route)
-                }
+                navController.navigate(Screen.RuleDetailsScreen
+                    .withArgs(ScreenState.Create.name))
             }
         )
     )

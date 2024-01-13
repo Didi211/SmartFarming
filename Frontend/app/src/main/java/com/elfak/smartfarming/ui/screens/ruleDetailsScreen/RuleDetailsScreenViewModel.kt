@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.elfak.smartfarming.domain.enums.ScreenState
+import com.elfak.smartfarming.domain.enums.toScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,12 +18,8 @@ class RuleDetailsScreenViewModel @Inject constructor(
         private set
 
     init {
-        if (savedStateHandle.contains("editMode")) {
-            val editModeString: String = savedStateHandle["editMode"]!!
-            val editMode = editModeString.toBoolean()
-            setScreenState(if (editMode) ScreenState.Edit else ScreenState.View)
-        }
-        val ruleId: String = savedStateHandle["ruleId"]!!
+        val state: String = savedStateHandle["screenState"]!!
+        setScreenState(state.toScreenState())
         // fetch rule
     }
 

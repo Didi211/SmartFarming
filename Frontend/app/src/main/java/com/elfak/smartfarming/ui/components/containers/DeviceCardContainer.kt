@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.MenuItem
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
 
 @Composable
@@ -28,9 +29,9 @@ fun DeviceCardContainer(
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
     onBellIconClick: (id: String) -> Unit = { },
-    onCardClick: (deviceId: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onCardClick: (deviceId: String, screenState: ScreenState) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onEdit: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
 ) {
     Box(modifier = Modifier.pullRefresh(refreshState)) {
         LazyColumn(
@@ -43,7 +44,7 @@ fun DeviceCardContainer(
                     device = device,
                     menuItems = prepareMenuItems(device.id, onEdit, onDelete),
                     onBellIconClick = { onBellIconClick(device.id) },
-                    onCardClick = { onCardClick(device.id, null) },
+                    onCardClick = { onCardClick(device.id, ScreenState.View) },
                 )
             }
         }
@@ -53,11 +54,11 @@ fun DeviceCardContainer(
 
 private fun prepareMenuItems(
     deviceId: String,
-    onEdit: (id: String, editMode: Boolean) -> Unit,
+    onEdit: (id: String, screenState: ScreenState) -> Unit,
     onDelete: (id: String) -> Unit
 ): List<MenuItem> {
     return listOf(
-        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(deviceId, true) }),
+        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(deviceId, ScreenState.Edit) }),
         MenuItem("Delete", Icons.Rounded.Delete, action = { onDelete(deviceId) })
     )
 }

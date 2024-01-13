@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.ui.theme.FontColor
 
 @Composable
@@ -16,9 +17,9 @@ fun RuleTab(
     rules: List<Rule>,
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
-    onCardClick: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onCardClick: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onEdit: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
 ) {
     AnimatedContent(rules.isEmpty(), label = "") { empty ->
         when (empty) {

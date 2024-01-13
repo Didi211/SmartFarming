@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.ui.components.cards.RuleCard
 
 @Composable
@@ -28,8 +29,8 @@ fun RulesCardContainer(
     refreshState: PullRefreshState,
     isRefreshing: Boolean,
     onDelete: (id: String) -> Unit = { },
-    onEdit: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
-    onCardClick: (id: String, editMode: Boolean?) -> Unit = { _, _ -> },
+    onEdit: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
+    onCardClick: (id: String, screenState: ScreenState) -> Unit = { _, _ -> },
 ) {
     Box(modifier = Modifier.pullRefresh(refreshState)) {
         LazyColumn(
@@ -41,7 +42,7 @@ fun RulesCardContainer(
                 RuleCard(
                     rule = rule,
                     menuItems = prepareMenuItems(rule.id, onEdit, onDelete),
-                    onCardClick = { onCardClick(rule.id, null) },
+                    onCardClick = { onCardClick(rule.id, ScreenState.View) },
                 )
             }
         }
@@ -51,11 +52,11 @@ fun RulesCardContainer(
 
 private fun prepareMenuItems(
     ruleId: String,
-    onEdit: (id: String, editMode: Boolean) -> Unit,
+    onEdit: (id: String, screenState: ScreenState) -> Unit,
     onDelete: (id: String) -> Unit
 ): List<MenuItem> {
     return listOf(
-        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(ruleId, true) }),
+        MenuItem("Edit", Icons.Rounded.Edit, action = { onEdit(ruleId, ScreenState.Edit) }),
         MenuItem("Delete", Icons.Rounded.Delete, action = { onDelete(ruleId) })
     )
 }
