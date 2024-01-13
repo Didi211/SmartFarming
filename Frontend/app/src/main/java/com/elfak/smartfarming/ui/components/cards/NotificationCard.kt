@@ -4,7 +4,6 @@ package com.elfak.smartfarming.ui.components.cards
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,25 +11,23 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Notification
 import com.elfak.smartfarming.data.models.formatDate
+import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.ui.components.buttons.DeleteIconButton
-import com.elfak.smartfarming.ui.theme.BorderColor
 import com.elfak.smartfarming.ui.theme.ErrorColor
 import com.elfak.smartfarming.ui.theme.FontColor
+import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
 
 @Composable
 fun NotificationCard(
@@ -40,8 +37,8 @@ fun NotificationCard(
     Box {
         CurvedBottomBorderCard {
             Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)) {
+                .fillMaxSize()
+                .padding(10.dp)) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
@@ -65,11 +62,11 @@ fun NotificationCard(
                                     fontWeight = FontWeight.Bold
                                 )
                                 val color = when (notification.deviceStatus) {
-                                    "OFFLINE" -> ErrorColor
-                                    else -> FontColor
+                                    DeviceStatus.Offline -> ErrorColor
+                                    DeviceStatus.Online -> FontColor
                                 }
                                 Text(
-                                    text = notification.deviceStatus,
+                                    text = notification.deviceStatus.name.uppercase(),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = color
@@ -82,14 +79,30 @@ fun NotificationCard(
                                 text = notification.message,
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                            Text(
-                                text = "From: ${notification.createdAt.formatDate()}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "To: ${notification.updatedAt.formatDate()}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            //
+                            Row {
+                                Column {
+                                    Text(
+                                        text = "From:",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "To:",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
+                                Spacer(Modifier.width(5.dp))
+                                Column {
+                                    Text(
+                                        text = notification.createdAt.formatDate(),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = notification.updatedAt.formatDate(),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
+                            }
                         }
                         Box {
                             Column(
@@ -103,5 +116,19 @@ fun NotificationCard(
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun NotificationCardPreview() {
+    val notif = Notification(
+        id = "65a1e1447f0f3b9d576f0d8d",
+        message = "Device [test-4] stopped working.",
+        createdAt = "2024-01-13T01:03:00.920+00:00",
+        updatedAt = "2024-01-13T01:12:00.608+00:00"
+    )
+    Column {
+        SmartFarmingTheme {
+            NotificationCard(notification = notif, onDelete = { })
+        }
+    }
+}
 

@@ -2,7 +2,9 @@ import cron from 'node-cron'
 import logic from '../logic/logic.js';
 
 export const startChangeStatusScheduler = () => { 
-    cron.schedule('*/5 * * * *', async () => { 
+    // '*/5 * * * *' every 5 minutes 
+    // '* */2 * * *' every 2 hours 
+    cron.schedule('* */2 * * *', async () => { 
         try {
             let [sensors, actuators] = await Promise.all([
                 logic.fetchAllDevices(process.env.SENSOR_PROFILE_NAME),

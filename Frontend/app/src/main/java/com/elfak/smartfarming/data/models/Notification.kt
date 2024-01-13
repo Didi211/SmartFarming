@@ -1,5 +1,7 @@
 package com.elfak.smartfarming.data.models
 
+import com.elfak.smartfarming.domain.enums.DeviceStatus
+import com.elfak.smartfarming.domain.enums.toDeviceStatus
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -10,7 +12,7 @@ data class Notification(
     val createdAt: String = "",
     val updatedAt: String = "",
     val isRead: Boolean = false,
-    val deviceStatus: String
+    val deviceStatus: DeviceStatus = DeviceStatus.Offline,
 ) {
     fun title(): String? {
         val startIndex = this.message.indexOf('[')
@@ -32,7 +34,7 @@ data class Notification(
                 createdAt = notification["createdAt"].toString(),
                 updatedAt = notification["updatedAt"].toString(),
                 isRead = notification["isRead"] as Boolean,
-                deviceStatus = notification["deviceStatus"].toString()
+                deviceStatus = notification["deviceStatus"].toString().toDeviceStatus()
             )
         }
     }
@@ -40,8 +42,9 @@ data class Notification(
 
 
 fun String.formatDate(): String {
+    if (this.isBlank()) return ""
     val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
     val outputFormatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy")
-    val dateTime = LocalDateTime.parse(this.toString(), inputFormatter)
+    val dateTime = LocalDateTime.parse(this, inputFormatter)
     return dateTime.format(outputFormatter)
 }
