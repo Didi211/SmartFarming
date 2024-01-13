@@ -45,8 +45,6 @@ fun GraphScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
-
-
     ToastHandler(
         toastData = viewModel.uiState.toastData,
         clearErrorMessage = viewModel::clearErrorMessage,
@@ -81,7 +79,7 @@ fun GraphScreen(
                 val ruleId = viewModel.uiState.rule!!.id
                 RuleCard(
                     viewModel.uiState.rule!!,
-                    prepareMenuItems(
+                    menuItems = prepareMenuItems(
                         ruleId,
                         onEdit = navigateToRuleDetails,
                         onDelete = { viewModel.deleteRule(ruleId) }

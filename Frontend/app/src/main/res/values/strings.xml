@@ -16,4 +16,7 @@
     <string name="related_devices">Related devices:</string>
     <string name="no_existing_rule_for_this_sensor">No existing rule for this sensor.</string>
     <string name="add_rule">Add rule</string>
+    <string name="delete_rule">Delete rule</string>
+    <string name="delete_device">Delete device</string>
+    <string name="save_changes">Save changes</string>
 </resources>

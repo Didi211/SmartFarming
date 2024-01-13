@@ -37,6 +37,7 @@ import com.elfak.smartfarming.ui.theme.FontColor
 @Composable
 fun RuleCard(
     rule: Rule,
+    showMenu: Boolean = true,
     menuItems: List<MenuItem> = emptyList(),
     onCardClick: (id: String) -> Unit,
 ) {
@@ -89,20 +90,22 @@ fun RuleCard(
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Box {
-                            ButtonWithIcon(
-                                icon = Icons.Rounded.MoreVert,
-                                backgroundColor = Color.Transparent,
-                                iconColor = FontColor,
-                                size = 35.dp
-                            ) {
-                                isMenuExpanded = true
+                            if (showMenu) {
+                                ButtonWithIcon(
+                                    icon = Icons.Rounded.MoreVert,
+                                    backgroundColor = Color.Transparent,
+                                    iconColor = FontColor,
+                                    size = 35.dp
+                                ) {
+                                    isMenuExpanded = true
+                                }
+                                Menu(
+                                    expanded = isMenuExpanded,
+                                    menuItems = menuItems,
+                                    onDismissRequest = { isMenuExpanded = false },
+                                    onIconClick = { isMenuExpanded = false }
+                                )
                             }
-                            Menu(
-                                expanded = isMenuExpanded,
-                                menuItems = menuItems,
-                                onDismissRequest = { isMenuExpanded = false },
-                                onIconClick = { isMenuExpanded = false }
-                            )
                         }
                     }
                 }
