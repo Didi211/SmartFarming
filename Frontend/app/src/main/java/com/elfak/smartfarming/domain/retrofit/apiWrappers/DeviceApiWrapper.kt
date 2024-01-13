@@ -1,6 +1,7 @@
 package com.elfak.smartfarming.domain.retrofit.apiWrappers
 
 import com.elfak.smartfarming.data.models.api.ApiResponse
+import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
 import javax.inject.Inject
@@ -10,9 +11,16 @@ import javax.inject.Singleton
 class DeviceApiWrapper @Inject constructor(
     private val api: DeviceApi
 ) {
-    suspend fun getAllDevices(userId: String): ApiResponse {
+    suspend fun getAllDevices(userId: String, type: DeviceTypes?): ApiResponse {
         return try {
-            api.getAllDevices(userId)
+            api.getAllDevices(userId, type?.name)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+    suspend fun getDeviceById(id: String): ApiResponse {
+        return try {
+            api.getDeviceById(id)
         } catch (ex: Exception) {
             ExceptionHandler.handleApiCallException(ex)
         }
@@ -28,6 +36,14 @@ class DeviceApiWrapper @Inject constructor(
     suspend fun removeRule(id: String, userEmail: String): ApiResponse {
         return try {
             api.removeRule(id, userEmail)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+
+    suspend fun getRuleByDeviceId(id: String): ApiResponse {
+        return try {
+            api.getRuleByDeviceId(id)
         } catch (ex: Exception) {
             ExceptionHandler.handleApiCallException(ex)
         }

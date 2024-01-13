@@ -36,7 +36,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<GraphScreenViewModel>()
             GraphScreen(
                 viewModel = viewModel,
-                navigateBack = { navController.popBackStack() },
+                navigateBack = { navController.navigate(Screen.HomeScreen.route) },
+//                navigateBack = { navController.popBackStack() },
                 navigateToDeviceDetails = { deviceId, screenState ->
                     var path = Screen.DeviceDetailsScreen
                         .builder()

@@ -1,6 +1,7 @@
 package com.elfak.smartfarming.ui.components.scaffold
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
@@ -33,6 +34,7 @@ fun SmartFarmingBottomAppBar(
         ) {
             items(buttons) { item ->
                 ButtonWithIconAndText(
+                    modifier = Modifier.fillMaxSize(),
                     text = item.name,
                     onClick = item.action,
                     icon = item.icon

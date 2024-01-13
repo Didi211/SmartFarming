@@ -12,4 +12,8 @@
     <string name="enable_sound_notification">Emit sound when new notification arrives.</string>
     <string name="disable_sound_notification">Turn off notification sound.</string>
     <string name="delete_button">Delete button</string>
+    <string name="related_rule">Related rule:</string>
+    <string name="related_devices">Related devices:</string>
+    <string name="no_existing_rule_for_this_sensor">No existing rule for this sensor.</string>
+    <string name="add_rule">Add rule</string>
 </resources>

@@ -4,6 +4,7 @@ package com.elfak.smartfarming.ui.components.containers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,7 +37,7 @@ fun RulesCardContainer(
         LazyColumn(
             Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-//            contentPadding = PaddingValues(15.dp)
+            contentPadding = PaddingValues(bottom = 10.dp)
         ) {
             items (rules) { rule ->
                 RuleCard(

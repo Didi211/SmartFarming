@@ -41,7 +41,8 @@ fun ListScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 15.dp, vertical = 10.dp),
+//            .padding(horizontal = 15.dp, vertical = 10.dp),
+            .padding(start = 15.dp, end = 15.dp, top = 10.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

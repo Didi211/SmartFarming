@@ -21,6 +21,7 @@ import com.elfak.smartfarming.ui.theme.Disabled
 import com.elfak.smartfarming.ui.theme.FontColor
 import com.elfak.smartfarming.ui.theme.Placeholder
 
+// TODO - add bottom border
 @Composable
 fun BasicInputField(
     modifier: Modifier = Modifier,

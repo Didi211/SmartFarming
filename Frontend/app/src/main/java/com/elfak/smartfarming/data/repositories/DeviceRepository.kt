@@ -3,6 +3,7 @@ package com.elfak.smartfarming.data.repositories
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
+import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
 import javax.inject.Inject
@@ -13,8 +14,8 @@ class DeviceRepository @Inject constructor(
     private val deviceApiWrapper: DeviceApiWrapper
 
 ): IDeviceRepository {
-    override suspend fun getAllDevices(userId: String): List<Device> {
-        val response = deviceApiWrapper.getAllDevices(userId)
+    override suspend fun getAllDevices(userId: String, type: DeviceTypes?): List<Device> {
+        val response = deviceApiWrapper.getAllDevices(userId, type)
         if (response.status != 200) {
             ExceptionHandler.throwApiResponseException(response)
         }
@@ -22,6 +23,14 @@ class DeviceRepository @Inject constructor(
         return list.map { item ->
             Device.fromApiResponse(item!!)
         }
+    }
+
+    override suspend fun getDeviceById(id: String): Device {
+        val response = deviceApiWrapper.getDeviceById(id)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Device.fromApiResponse(response.details!!)
     }
 
     override suspend fun removeDevice(id: String, userEmail: String) {
@@ -47,6 +56,15 @@ class DeviceRepository @Inject constructor(
         return list.map { item ->
             Rule.fromApiResponse(item!!)
         }
+    }
+
+    override suspend fun getRuleByDeviceId(id: String): Rule? {
+        val response = deviceApiWrapper.getRuleByDeviceId(id)
+        if (response.status == 400) return null
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Rule.fromApiResponse(response.details!!)
     }
 
 }
