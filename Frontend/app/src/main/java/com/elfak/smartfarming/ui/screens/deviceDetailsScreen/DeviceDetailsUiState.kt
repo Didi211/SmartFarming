@@ -9,7 +9,9 @@ data class DeviceDetailsUiState(
     val screenState: ScreenState = ScreenState.View,
     val toastData: ToastData = ToastData(),
     val userEmail: String = "",
+    val userId: String = "",
     val rule: Rule? = null,
-    val device: Device? = null,
+    val device: Device = Device(),
     val deviceId: String? = null,
+    val deviceActions: Map<String, (Any?) -> Unit> = emptyMap()
 )

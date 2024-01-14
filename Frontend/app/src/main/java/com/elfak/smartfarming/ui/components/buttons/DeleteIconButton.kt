@@ -23,12 +23,10 @@ import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
 fun DeleteIconButton(onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .clip(
-                CircleShape,
-            )
+            .clip(CircleShape)
+            .clickable { onClick() }
             .background(MaterialTheme.colorScheme.error)
-            .padding(5.dp)
-            .clickable { onClick() },
+            .padding(5.dp),
     ) {
         Icon(
             imageVector = Icons.Filled.Close,

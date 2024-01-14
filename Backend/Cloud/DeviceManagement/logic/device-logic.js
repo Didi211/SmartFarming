@@ -105,6 +105,7 @@ const updateDevice = async (id, device) => {
     // deviceDb.state = deviceDb.type == 'ACTUATOR' ? device.state : null
     deviceDb.markModified();
     await deviceDb.save();
+    return dtoMapper.toDeviceDto(deviceDb)
 }
 
 const updateDeviceState = async (id, state) => { 

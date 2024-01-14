@@ -65,10 +65,11 @@ const update = async (req, res) => {
     let device = req.body;
     let id = req.params.id;
     try { 
-        await logic.updateDevice(id, device);
+        let result = await logic.updateDevice(id, device);
         let responseDto = responseDtoMapper.succesfullResponseDto(
             200,
             "Updating device successfull.",
+            result
         )
         res.status(responseDto.status).send(responseDto);
     }

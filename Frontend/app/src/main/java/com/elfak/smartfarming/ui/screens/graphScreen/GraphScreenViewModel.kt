@@ -43,14 +43,22 @@ class GraphScreenViewModel @Inject constructor(
                 val ruleResult = async { deviceRepository.getRuleByDeviceId(sensorId)}
                 val authResult = async { localAuthRepository.getCredentials().email }
                 val results = awaitAll(sensorResult,ruleResult, authResult)
-                val sensor = localDeviceRepository.getDevice((results[0] as Device).id)
+                var sensor = localDeviceRepository.getDevice((results[0] as Device).id)
+                if (sensor == null) {
+                    sensor = results[0] as Device
+                    localDeviceRepository.addDevice(sensor)
+                }
                 setSensor(sensor)
                 setRule(results[1] as Rule?)
                 setUserEmail(results[2] as String)
 
                 if (uiState.rule != null) {
                     val actuator = deviceRepository.getDeviceById(uiState.rule!!.actuatorId)
-                    val localActuator = localDeviceRepository.getDevice(actuator.id)
+                    var localActuator = localDeviceRepository.getDevice(actuator.id)
+                    if (localActuator == null) {
+                        localDeviceRepository.addDevice(actuator)
+                        localActuator = actuator
+                    }
                     setActuator(localActuator)
                 }
                 // fetch graph readings
@@ -103,6 +111,7 @@ class GraphScreenViewModel @Inject constructor(
             try {
                 deviceRepository.removeDevice(id, uiState.userEmail)
                 if (type == DeviceTypes.Sensor) {
+                    setSuccessMessage("Device removed")
                     onSuccess()
                 }
                 else {

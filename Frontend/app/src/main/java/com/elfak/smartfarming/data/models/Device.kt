@@ -13,8 +13,8 @@ data class Device(
     var name: String = "",
     var type: DeviceTypes = DeviceTypes.Sensor,
     var status: DeviceStatus = DeviceStatus.Online,
-    var unit: String? = null,
-    var state: DeviceState? = null,
+    var unit: String? = "",
+    var state: DeviceState? = DeviceState.On,
     var isMuted: Boolean = false,
     var lastReading: Double = 0.0,
 ) {

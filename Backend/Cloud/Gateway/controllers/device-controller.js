@@ -27,7 +27,8 @@ const getById = async (req, res) => {
 const add = async (req, res) => {
     try { 
         let email = req.headers['user-email'];
-        let result = await logic.add(req.body, email)
+        let userId = req.headers['user-id'];
+        let result = await logic.add(req.body, email, userId)
         res.status(result.status).send(result);
     }
     catch(error) { 

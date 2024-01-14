@@ -1,6 +1,5 @@
 package com.elfak.smartfarming.ui.components.inputs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,19 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.domain.enums.InputTypes
 import com.elfak.smartfarming.ui.theme.BorderColor
 import com.elfak.smartfarming.ui.theme.Disabled
 import com.elfak.smartfarming.ui.theme.FontColor
 import com.elfak.smartfarming.ui.theme.Placeholder
+import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
 
 // TODO - add bottom border
 @Composable
 fun BasicInputField(
     modifier: Modifier = Modifier,
     text: String,
-    onTextChanged: (String) -> Unit,
+    onTextChanged: (String) -> Unit = { },
     label: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     inputType: InputTypes = InputTypes.Text,
@@ -34,13 +35,13 @@ fun BasicInputField(
     enabled: Boolean = true,
     placeholder: String = "",
     trailingIcon: @Composable (() -> Unit)? = null,
-    ) {
+) {
     OutlinedTextField(
         modifier = modifier,
         value = text,
         label = {
             Text(
-                modifier = Modifier.background(color = Color.Transparent),
+                modifier = Modifier,
                 text = label,
                 style = MaterialTheme.typography.labelLarge,
             )
@@ -62,23 +63,23 @@ fun BasicInputField(
 
 @Composable
 fun getColors(): TextFieldColors {
-    return OutlinedTextFieldDefaults.colors(
+    return  OutlinedTextFieldDefaults.colors(
         // container
         focusedContainerColor = Color.White,
         unfocusedContainerColor = Color.White,
-        disabledContainerColor = Disabled,
+        disabledContainerColor = Color.Transparent,
         // label
         focusedLabelColor = FontColor,
         unfocusedLabelColor = FontColor,
-        disabledLabelColor = Color.White,
+        disabledLabelColor = FontColor,
         // text
         focusedTextColor = FontColor,
         unfocusedTextColor = FontColor,
-        disabledTextColor = Color.White,
+        disabledTextColor = Placeholder,
         // border
         focusedBorderColor = BorderColor,
         unfocusedBorderColor = BorderColor,
-        disabledBorderColor = BorderColor,
+        disabledBorderColor = Disabled,
         // placeholder
         focusedPlaceholderColor = Placeholder,
         unfocusedPlaceholderColor = Placeholder,
@@ -88,15 +89,16 @@ fun getColors(): TextFieldColors {
     )
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun BasicInputFieldPreview() {
-//    SmartFarmingTheme {
-//        BasicInputField(
-//            text = "Text",
-//            onTextChanged = { },
-//            label = "Label",
-//            placeholder = "placeholder"
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun BasicInputFieldPreview() {
+    SmartFarmingTheme {
+        BasicInputField(
+            text = "Text",
+            onTextChanged = { },
+            label = "Label",
+            placeholder = "placeholder",
+            enabled = false
+        )
+    }
+}

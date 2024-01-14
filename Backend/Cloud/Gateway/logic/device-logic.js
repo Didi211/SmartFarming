@@ -28,7 +28,7 @@ const get = async (id) => {
     }
 }
 
-const add = async (device, email) => { 
+const add = async (device, email, userId) => { 
     let validationResult = deviceValidator.validate(device);
     if (validationResult != "") { 
         throw { 
@@ -37,6 +37,13 @@ const add = async (device, email) => {
             details: validationResult
         };
     }
+if (userId !== device.userId) { 
+    throw { 
+        code: 400,
+        message: 'Validation failed.',
+        details: "User ID in device body and user ID from headers do not match."
+    };
+}
     await userValidator.isUserExisting(device.userId);
 
     let response = await deviceManagementAxios.post(`/`, JSON.stringify(device));

@@ -3,7 +3,6 @@ package com.elfak.smartfarming.domain.enums
 enum class DeviceTypes {
     Sensor,
     Actuator,
-
 }
 fun DeviceTypes.uppercase(): String {
     return this.name.uppercase()
@@ -20,3 +19,4 @@ fun String.toDeviceType(): DeviceTypes {
         else -> { throw Exception("Device Type not valid.")}
     }
 }
+

@@ -1,6 +1,7 @@
 package com.elfak.smartfarming.domain.retrofit.apiWrappers
 
 import com.elfak.smartfarming.data.models.api.ApiResponse
+import com.elfak.smartfarming.data.models.api.DeviceRequest
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
@@ -11,6 +12,20 @@ import javax.inject.Singleton
 class DeviceApiWrapper @Inject constructor(
     private val api: DeviceApi
 ) {
+    suspend fun addDevice(device: DeviceRequest, userEmail: String, userId: String): ApiResponse {
+        return try {
+            api.addDevice(device, userEmail, userId)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+    suspend fun updateDevice(device: DeviceRequest, userEmail: String): ApiResponse {
+        return try {
+            api.updateDevice(device.id, device, userEmail)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
     suspend fun getAllDevices(userId: String, type: DeviceTypes?): ApiResponse {
         return try {
             api.getAllDevices(userId, type?.name)

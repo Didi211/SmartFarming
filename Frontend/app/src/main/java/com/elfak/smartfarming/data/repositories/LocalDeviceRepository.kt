@@ -11,6 +11,7 @@ import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepositor
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,6 +27,7 @@ class LocalDeviceRepository @Inject constructor(
 
     override suspend fun setIsMuted(id: String, isMuted: Boolean) {
         var device = getDevice(id)
+            ?: throw Exception("Device with ID [${id}] not found in local storage.")
         device.isMuted = isMuted
         updateDevice(device)
     }
@@ -49,7 +51,7 @@ class LocalDeviceRepository @Inject constructor(
         }
         return devices.map {
             val localDevice = getDevice(it.id)
-            it.isMuted = localDevice.isMuted
+            it.isMuted = localDevice!!.isMuted
             it.lastReading = localDevice.lastReading
             it
         }
@@ -73,6 +75,7 @@ class LocalDeviceRepository @Inject constructor(
 
     override suspend fun setRealTimeData(id: String, lastReading: Double) {
         var device = getDevice(id)
+            ?: throw Exception("Device with ID [${id}] not found in local storage.")
         if (device.type != DeviceTypes.Sensor) {
             throw Exception("Device ${device.name} is not ${DeviceTypes.Sensor}. Can't set ${Device::lastReading.name} value")
         }
@@ -88,13 +91,16 @@ class LocalDeviceRepository @Inject constructor(
         }
     }
 
-    override suspend fun getDevice(id: String): Device {
+    override suspend fun getDevice(id: String): Device? {
         val key = stringPreferencesKey(id)
         val value = dataStore.data.map { preferences ->
             preferences[key]
         }
-        val result = value.first()!!
-        return Gson().fromJson(result, Device::class.java)
+        val result = value.firstOrNull()
+        if (result != null) {
+            return Gson().fromJson(result, Device::class.java)
+        }
+        return null
     }
 
 

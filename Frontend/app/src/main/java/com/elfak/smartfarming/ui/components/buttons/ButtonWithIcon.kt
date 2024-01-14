@@ -26,9 +26,7 @@ fun ButtonWithIcon(
 ) {
     Column(
         modifier = Modifier
-            .clip(
-                CircleShape,
-            )
+            .clip(CircleShape)
             .background(backgroundColor)
             .padding(5.dp)
             .clickable { onClick() },

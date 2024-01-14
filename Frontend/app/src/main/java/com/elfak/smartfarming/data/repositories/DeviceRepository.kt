@@ -2,6 +2,7 @@ package com.elfak.smartfarming.data.repositories
 
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.data.models.api.DeviceRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
@@ -14,6 +15,21 @@ class DeviceRepository @Inject constructor(
     private val deviceApiWrapper: DeviceApiWrapper
 
 ): IDeviceRepository {
+    override suspend fun addDevice(device: DeviceRequest, userEmail: String, userId: String): Device {
+        val response = deviceApiWrapper.addDevice(device, userEmail, userId)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Device.fromApiResponse(response.details!!)
+    }
+    override suspend fun updateDevice(device: DeviceRequest, userEmail: String): Device {
+        val response = deviceApiWrapper.updateDevice(device, userEmail)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Device.fromApiResponse(response.details!!)
+    }
+
     override suspend fun getAllDevices(userId: String, type: DeviceTypes?): List<Device> {
         val response = deviceApiWrapper.getAllDevices(userId, type)
         if (response.status != 200) {
@@ -66,5 +82,6 @@ class DeviceRepository @Inject constructor(
         }
         return Rule.fromApiResponse(response.details!!)
     }
+
 
 }
