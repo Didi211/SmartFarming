@@ -14,8 +14,6 @@ import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,46 +26,62 @@ class GraphScreenViewModel @Inject constructor(
 ): ViewModel() {
     var uiState by mutableStateOf(GraphUiState())
         private set
+    init {
+        val sensorId: String = savedStateHandle["sensorId"]!!
+        uiState = uiState.copy(sensorId = sensorId)
+    }
+
 
     private fun setUserEmail(email: String) {
         uiState = uiState.copy(userEmail = email)
     }
 
-    init {
-        val sensorId: String = savedStateHandle["sensorId"]!!
-        uiState = uiState.copy(sensorId = sensorId)
-        // fetch devices
-        viewModelScope.launch {
-            try {
-                val sensorResult = async { deviceRepository.getDeviceById(sensorId) }
-                val ruleResult = async { deviceRepository.getRuleByDeviceId(sensorId)}
-                val authResult = async { localAuthRepository.getCredentials().email }
-                val results = awaitAll(sensorResult,ruleResult, authResult)
-                var sensor = localDeviceRepository.getDevice((results[0] as Device).id)
-                if (sensor == null) {
-                    sensor = results[0] as Device
-                    localDeviceRepository.addDevice(sensor)
-                }
-                setSensor(sensor)
-                setRule(results[1] as Rule?)
-                setUserEmail(results[2] as String)
 
+    fun loadData() {
+        try {
+            viewModelScope.launch {
+                loadUser()
+                if (uiState.sensorId.isBlank()) {
+                    throw Exception("Cannot load data. Sensor ID is not found.")
+                }
+                loadSensor(uiState.sensorId)
+                loadRule(uiState.sensorId)
                 if (uiState.rule != null) {
-                    val actuator = deviceRepository.getDeviceById(uiState.rule!!.actuatorId)
-                    var localActuator = localDeviceRepository.getDevice(actuator.id)
-                    if (localActuator == null) {
-                        localDeviceRepository.addDevice(actuator)
-                        localActuator = actuator
-                    }
-                    setActuator(localActuator)
+                    loadActuator(uiState.rule!!.actuatorId)
                 }
                 // fetch graph readings
             }
-            catch (ex: Exception) {
-                handleError(ex)
-                Log.e("Init", ex.message!!, ex)
-            }
         }
+        catch (ex: Exception) {
+            handleError(ex)
+            Log.e("Init", ex.message!!, ex)
+        }
+    }
+    private suspend fun loadRule(sensorId: String) {
+        val rule = deviceRepository.getRuleByDeviceId(sensorId)
+        setRule(rule)
+    }
+    private suspend fun loadSensor(id: String) {
+        val sensor = deviceRepository.getDeviceById(id)
+        var localSensor = localDeviceRepository.getDevice(id)
+        if (localSensor == null) {
+            localSensor = sensor
+            localDeviceRepository.addDevice(localSensor)
+        }
+        setSensor(localSensor)
+    }
+    private suspend fun loadUser() {
+        val user = localAuthRepository.getCredentials()
+        setUserEmail(user.email)
+    }
+    private suspend fun loadActuator(id: String) {
+        val actuator = deviceRepository.getDeviceById(id)
+        var localActuator = localDeviceRepository.getDevice(actuator.id)
+        if (localActuator == null) {
+            localDeviceRepository.addDevice(actuator)
+            localActuator = actuator
+        }
+        setActuator(localActuator)
     }
 
     private fun setActuator(actuator: Device?) {

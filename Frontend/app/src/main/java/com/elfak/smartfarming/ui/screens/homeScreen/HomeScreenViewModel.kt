@@ -23,9 +23,6 @@ class HomeScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(HomeUiState())
         private set
 
-    init {
-        getSensors()
-    }
 
     fun getSensors(){
         viewModelScope.launch {

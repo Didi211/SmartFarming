@@ -1,10 +1,9 @@
 package com.elfak.smartfarming.ui.screens.ruleDetailsScreen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.domain.enums.ScreenState
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 
 @Composable
 fun RuleDetailsScreen(
@@ -12,10 +11,12 @@ fun RuleDetailsScreen(
     navigateBack: () -> Unit = { },
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
 ) {
-    Column {
-        Text(text = viewModel.uiState.screenState.toString())
-        Button(onClick = { navigateToDeviceDetails("deviceId", ScreenState.View) }) {
-            Text(text = "Go to device details")
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.loadData()
+            }
+            else -> {}
         }
     }
 }

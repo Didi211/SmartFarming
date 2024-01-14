@@ -19,7 +19,6 @@ import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.enums.toScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,30 +41,42 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             val deviceId: String = savedStateHandle["deviceId"]!!
             setDeviceId(deviceId)
         }
-        viewModelScope.launch {
-            try {
+        setDeviceActions()
+    }
+
+    private suspend fun loadRule(deviceId: String) {
+        setRule(deviceRepository.getRuleByDeviceId(deviceId))
+    }
+    private suspend fun loadUser() {
+        val user = localAuthRepository.getCredentials()
+        setUserEmail(user.email)
+        setUserId(user.id)
+    }
+    private suspend fun loadDevice(id: String) {
+        val device = deviceRepository.getDeviceById(uiState.deviceId!!)
+        var localDevice =localDeviceRepository.getDevice(uiState.deviceId!!)
+        if (localDevice == null) {
+            localDevice = device
+            localDeviceRepository.addDevice(localDevice)
+        }
+        setDevice(localDevice)
+    }
+
+    fun loadData() {
+        try {
+            viewModelScope.launch {
+                loadUser()
                 if (uiState.deviceId != null) {
-                    val deviceResult = async { deviceRepository.getDeviceById(uiState.deviceId!!) }
-                    val localDeviceResult = async { localDeviceRepository.getDevice(uiState.deviceId!!) }
-                    val ruleResult = async { deviceRepository.getRuleByDeviceId(uiState.deviceId!!)}
-                    var localDevice = localDeviceResult.await()
-                    if (localDevice == null) {
-                        localDevice = deviceResult.await()
-                        localDeviceRepository.addDevice(localDevice)
-                    }
-                    setDevice(localDevice)
-                    setRule(ruleResult.await())
+                    loadDevice(uiState.deviceId!!)
+                    loadRule(uiState.deviceId!!)
                 }
-                val authResult = async { localAuthRepository.getCredentials() }
-                setUserEmail(authResult.await().email)
-                setUserId(authResult.await().id)
-            }
-            catch (ex: Exception) {
-                handleError(ex)
-                Log.e("Init", ex.message!!, ex)
+
             }
         }
-        setDeviceActions()
+        catch (ex: Exception) {
+            handleError(ex)
+            Log.e("Load Data", ex.message!!, ex)
+        }
     }
 
     private fun setUserId(id: String) {

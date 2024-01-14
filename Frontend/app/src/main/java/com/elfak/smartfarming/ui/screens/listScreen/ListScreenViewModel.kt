@@ -26,9 +26,6 @@ class ListScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(ListScreenUiState())
         private set
 
-    init {
-        refreshList()
-    }
     private fun setSelectedTab(tab: Tabs) {
         uiState = uiState.copy(tabSelected = tab)
     }

@@ -105,7 +105,9 @@ fun Navigation() {
                         }
                     },
                     bottomBar = {
-                        AnimatedVisibility(visible = currentScreen?.route == Screen.HomeScreen.route) {
+                        val screens = listOf(Screen.HomeScreen.route, Screen.ListScreen.route)
+                        val showBottomBar = screens.contains(currentScreen?.route)
+                        AnimatedVisibility(visible = showBottomBar) {
                             SmartFarmingBottomAppBar(buttons = prepareBottomBarButtons(navController))
                         }
                     },

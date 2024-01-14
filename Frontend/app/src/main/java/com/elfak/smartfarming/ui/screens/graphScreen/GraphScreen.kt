@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,10 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
 import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.ScreenState
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
@@ -45,6 +48,18 @@ fun GraphScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    rememberCoroutineScope()
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.loadData()
+            }
+            else -> {}
+        }
+    }
+
+
+
     ToastHandler(
         toastData = viewModel.uiState.toastData,
         clearErrorMessage = viewModel::clearErrorMessage,
