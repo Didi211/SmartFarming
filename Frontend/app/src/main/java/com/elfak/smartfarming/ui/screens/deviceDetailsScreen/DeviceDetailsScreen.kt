@@ -104,61 +104,63 @@ fun DeviceDetailsScreen(
         }
         Spacer(modifier = Modifier.height(40.dp))
         // related rule
-        CardContainerWithTitle(title = stringResource(R.string.related_rule)) {
-            if (viewModel.uiState.rule != null) {
-                // rule card
-                val ruleId = viewModel.uiState.rule!!.id
-                RuleCard(
-                    viewModel.uiState.rule!!,
-                    showMenu = false,
-                    onCardClick = { navigateToRuleDetails(ruleId, ScreenState.View) }
-                )
-                // Delete rule button
-                Column(
-                    Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ButtonWithIconAndText(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(30.dp))
-                            .width(180.dp)
-                            .height(60.dp)
-                            .background(MaterialTheme.colorScheme.error),
-                        text = stringResource(R.string.delete_rule),
-                        onClick = { viewModel.deleteRule(ruleId) },
-                        icon = Icons.Rounded.Delete
+        if (viewModel.uiState.screenState != ScreenState.Create) {
+            CardContainerWithTitle(title = stringResource(R.string.related_rule)) {
+                if (viewModel.uiState.rule != null) {
+                    // rule card
+                    val ruleId = viewModel.uiState.rule!!.id
+                    RuleCard(
+                        viewModel.uiState.rule!!,
+                        showMenu = false,
+                        onCardClick = { navigateToRuleDetails(ruleId, ScreenState.View) }
                     )
+                    // Delete rule button
+                    Column(
+                        Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        ButtonWithIconAndText(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(30.dp))
+                                .width(180.dp)
+                                .height(60.dp)
+                                .background(MaterialTheme.colorScheme.error),
+                            text = stringResource(R.string.delete_rule),
+                            onClick = { viewModel.deleteRule(ruleId) },
+                            icon = Icons.Rounded.Delete
+                        )
+                    }
                 }
-            }
-            else {
-                // Add Rule button
-                Column(
-                    Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_existing_rule_for_this_sensor),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ButtonWithIconAndText(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(30.dp))
-                            .width(180.dp)
-                            .height(60.dp)
-                            .background(MaterialTheme.colorScheme.secondary),
-                        text = stringResource(R.string.add_rule),
-                        onClick = { navigateToRuleDetails(null, ScreenState.Create) },
-                        icon = Icons.Rounded.Cable
-                    )
+                else {
+                    // Add Rule button
+                    Column(
+                        Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_existing_rule_for_this_sensor),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        ButtonWithIconAndText(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(30.dp))
+                                .width(180.dp)
+                                .height(60.dp)
+                                .background(MaterialTheme.colorScheme.secondary),
+                            text = stringResource(R.string.add_rule),
+                            onClick = { navigateToRuleDetails(null, ScreenState.Create) },
+                            icon = Icons.Rounded.Cable
+                        )
+                    }
                 }
             }
         }
