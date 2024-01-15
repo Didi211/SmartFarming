@@ -3,6 +3,16 @@ import ruleValidator from "../utils/rule-validator.js";
 import ruleMqtt from "../messaging/rule-mqtt.js";
 import userManagementLogic from "./user-management-logic.js";
 
+const getRuleById = async (id) => { 
+    let response = await deviceManagementAxios.get(`/rule/${id}`);
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
+}
+
 const getRuleFromDeviceId = async (id) => { 
     let response = await deviceManagementAxios.get(`/${id}/rule`);
     if (response.status == 200) { 
@@ -54,7 +64,7 @@ const update = async (id, rule, email) => {
             details: result
         };
     }
-    let response = await deviceManagementAxios.put(`/${id}/rule`, JSON.stringify(rule));
+    let response = await deviceManagementAxios.put(`/rule/${id}`, JSON.stringify(rule));
     if (response.status == 200) { 
         // propagate to the edge 
         let token = (await userManagementLogic.fetchMqttToken(email)).details;
@@ -67,7 +77,7 @@ const update = async (id, rule, email) => {
 }
 
 const remove = async (id, email) => { 
-    let response = await deviceManagementAxios.delete(`/${id}/rule`);
+    let response = await deviceManagementAxios.delete(`/rule/${id}`);
     if (response.status == 200) { 
         // propagate the call to the edge 
         let token = (await userManagementLogic.fetchMqttToken(email)).details;
@@ -80,6 +90,7 @@ const remove = async (id, email) => {
 }
 
 export default { 
+    getRuleById,
     getRuleFromDeviceId,
     getRulesForUser,
     add,

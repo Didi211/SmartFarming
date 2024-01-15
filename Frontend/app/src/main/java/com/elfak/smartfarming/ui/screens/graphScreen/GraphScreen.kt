@@ -69,7 +69,7 @@ fun GraphScreen(
         Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .fillMaxSize()
-            .verticalScroll(rememberScrollState(1000), true, null, true),
+            .verticalScroll(rememberScrollState(0)),
     ) {
         // graph
         Column(
@@ -135,8 +135,8 @@ fun GraphScreen(
         CardContainerWithTitle(title = stringResource(R.string.related_devices)) {
             val sensorId = viewModel.uiState.sensor.id
             DeviceCard(
-                viewModel.uiState.sensor,
-                prepareMenuItems(
+                device = viewModel.uiState.sensor,
+                menuItems = prepareMenuItems(
                     sensorId,
                     onEdit = navigateToDeviceDetails,
                     onDelete = {
@@ -153,8 +153,8 @@ fun GraphScreen(
                 val actuatorId = viewModel.uiState.actuator!!.id
 
                 DeviceCard(
-                    viewModel.uiState.actuator!!,
-                    prepareMenuItems(
+                    device = viewModel.uiState.actuator!!,
+                    menuItems = prepareMenuItems(
                         actuatorId,
                         onEdit = navigateToDeviceDetails,
                         onDelete = {

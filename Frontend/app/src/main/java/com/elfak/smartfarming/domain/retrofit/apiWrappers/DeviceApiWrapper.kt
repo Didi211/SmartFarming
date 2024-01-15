@@ -2,6 +2,7 @@ package com.elfak.smartfarming.domain.retrofit.apiWrappers
 
 import com.elfak.smartfarming.data.models.api.ApiResponse
 import com.elfak.smartfarming.data.models.api.DeviceRequest
+import com.elfak.smartfarming.data.models.api.RuleRequest
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
@@ -12,6 +13,7 @@ import javax.inject.Singleton
 class DeviceApiWrapper @Inject constructor(
     private val api: DeviceApi
 ) {
+    // devices
     suspend fun addDevice(device: DeviceRequest, userEmail: String, userId: String): ApiResponse {
         return try {
             api.addDevice(device, userEmail, userId)
@@ -33,6 +35,13 @@ class DeviceApiWrapper @Inject constructor(
             ExceptionHandler.handleApiCallException(ex)
         }
     }
+    suspend fun getAvailableDevices(userId: String, type: DeviceTypes): ApiResponse {
+        return try {
+            api.getAvailableDevices(userId, type.name)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
     suspend fun getDeviceById(id: String): ApiResponse {
         return try {
             api.getDeviceById(id)
@@ -44,6 +53,15 @@ class DeviceApiWrapper @Inject constructor(
     suspend fun removeDevice(id: String, userEmail: String): ApiResponse {
         return try {
             api.removeDevice(id, userEmail)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+
+    // rules
+    suspend fun getRuleById(id: String): ApiResponse {
+        return try {
+            api.getRuleById(id)
         } catch (ex: Exception) {
             ExceptionHandler.handleApiCallException(ex)
         }
@@ -71,4 +89,22 @@ class DeviceApiWrapper @Inject constructor(
             ExceptionHandler.handleApiCallException(ex)
         }
     }
+
+    suspend fun addRule(rule: RuleRequest, email: String): ApiResponse {
+        return try {
+            api.addRule(rule, email)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+
+    suspend fun updateRule(id: String, rule: RuleRequest, email: String): ApiResponse {
+        return try {
+            api.updateRule(id, rule, email)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+
+
 }

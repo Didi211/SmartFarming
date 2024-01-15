@@ -53,8 +53,8 @@ class DeviceDetailsScreenViewModel @Inject constructor(
         setUserId(user.id)
     }
     private suspend fun loadDevice(id: String) {
-        val device = deviceRepository.getDeviceById(uiState.deviceId!!)
-        var localDevice =localDeviceRepository.getDevice(uiState.deviceId!!)
+        val device = deviceRepository.getDeviceById(id)
+        var localDevice =localDeviceRepository.getDevice(id)
         if (localDevice == null) {
             localDevice = device
             localDeviceRepository.addDevice(localDevice)
@@ -118,7 +118,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     private fun setDeviceIsMuted(value: Boolean) {
         uiState = uiState.copy(device = uiState.device.copy(isMuted = value))
     }
-    // end region
+    // endregion
 
     private fun setDevice(device: Device) {
         uiState = uiState.copy(device = device)
@@ -225,16 +225,15 @@ class DeviceDetailsScreenViewModel @Inject constructor(
                     state = uiState.device.state?.name,
                     unit = uiState.device.unit
                 )
-                val device: Device
-                if (uiState.screenState == ScreenState.Create) {
-                    device = deviceRepository.addDevice(deviceRequest, uiState.userEmail, uiState.userId)
-                }
-                else { // else can only be Edit
-                    device = deviceRepository.updateDevice(deviceRequest, uiState.userEmail)
+                val device: Device = if (uiState.screenState == ScreenState.Create) {
+                    deviceRepository.addDevice(deviceRequest, uiState.userEmail, uiState.userId)
+                } else { // else can only be Edit
+                    deviceRepository.updateDevice(deviceRequest, uiState.userEmail)
                 }
                 device.isMuted = uiState.device.isMuted
                 device.lastReading = uiState.device.lastReading
                 setDevice(device)
+                setDeviceId(device.id)
                 localDeviceRepository.addDevice(device)
                 val action = if (uiState.screenState == ScreenState.Create) "created" else "edited"
                 setSuccessMessage("Device ${action}.")
@@ -242,7 +241,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             }
             catch (ex: Exception) {
                 handleError(ex)
-                Log.e("Add Device", ex.message?: ex.toString(), ex)
+                Log.e("${uiState.screenState.name} Device", ex.message?: ex.toString(), ex)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.elfak.smartfarming.data.repositories
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.models.api.DeviceRequest
+import com.elfak.smartfarming.data.models.api.RuleRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
@@ -32,6 +33,17 @@ class DeviceRepository @Inject constructor(
 
     override suspend fun getAllDevices(userId: String, type: DeviceTypes?): List<Device> {
         val response = deviceApiWrapper.getAllDevices(userId, type)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        val list = response.details as List<Any?>
+        return list.map { item ->
+            Device.fromApiResponse(item!!)
+        }
+    }
+
+    override suspend fun getAvailableDevices(userId: String, type: DeviceTypes): List<Device> {
+        val response = deviceApiWrapper.getAvailableDevices(userId, type)
         if (response.status != 200) {
             ExceptionHandler.throwApiResponseException(response)
         }
@@ -83,5 +95,27 @@ class DeviceRepository @Inject constructor(
         return Rule.fromApiResponse(response.details!!)
     }
 
+    override suspend fun getRuleById(id: String): Rule {
+        val response = deviceApiWrapper.getRuleById(id)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Rule.fromApiResponse(response.details!!)
+    }
 
+    override suspend fun addRule(ruleRequest: RuleRequest, email: String): Rule {
+        val response = deviceApiWrapper.addRule(ruleRequest, email)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Rule.fromApiResponse(response.details!!)
+    }
+
+    override suspend fun updateRule(id: String, ruleRequest: RuleRequest, email: String): Rule {
+        val response = deviceApiWrapper.updateRule(id, ruleRequest, email)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        return Rule.fromApiResponse(response.details!!)
+    }
 }

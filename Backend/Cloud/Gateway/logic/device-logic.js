@@ -18,6 +18,17 @@ const getAllDevices = async (userId, type) => {
     }
 }
 
+const getAvailableDevices = async (userId, type) => { 
+    await userValidator.isUserExisting(userId);
+    let response = await deviceManagementAxios.get(`/user/${userId}/type/${type}/available`);
+    if (response.status == 200) { 
+        return JSON.parse(response.data);
+    }
+    else { 
+        throw response.data;
+    }
+}
+
 const get = async (id) => { 
     let response = await deviceManagementAxios.get(`/${id}`);
     if (response.status == 200) { 
@@ -117,6 +128,7 @@ const remove = async (id, email) => {
 
 export default { 
     getAllDevices,
+    getAvailableDevices,
     get,
     add,
     update,

@@ -3,7 +3,6 @@ package com.elfak.smartfarming.ui.components.inputs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -48,7 +47,7 @@ fun DropdownInputField(
     ) {
         Text(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .weight(0.7f)
                 .padding(start = 15.dp),
             text = if (isSelected) value else  defaultText,
             color = if (enabled) FontColor else Placeholder
@@ -57,7 +56,7 @@ fun DropdownInputField(
             imageVector = Icons.Rounded.ArrowDropDown,
             contentDescription = stringResource(id = R.string.choose_dropdown_item),
             tint = if (enabled) BorderColor else Disabled,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.weight(0.3f)
         )
         DropdownMenu(
             modifier = Modifier

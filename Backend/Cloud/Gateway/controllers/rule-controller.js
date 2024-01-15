@@ -1,6 +1,17 @@
 import logic from '../logic/rule-logic.js';
 import { handleApiError } from '../utils/error-handler.js'
 
+const getById = async (req, res) => { 
+    try { 
+        let result = await logic.getRuleById(req.params.id);
+        res.status(result.status).send(result);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+
+}
+
 const getByDeviceId = async (req, res) => { 
     // get rule for specific device
     try { 
@@ -59,6 +70,7 @@ const remove = async (req, res) => {
 }
 
 export default { 
+    getById,
     getByDeviceId,
     getByUserId,
     add,

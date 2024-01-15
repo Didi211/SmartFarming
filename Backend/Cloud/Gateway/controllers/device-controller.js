@@ -13,6 +13,19 @@ const getAll = async (req, res) => {
     }
 }
 
+const getAvailableDevices = async (req, res) => {
+    try { 
+        let userId = req.params.userId;
+        let type = req.params.type
+        let result = await logic.getAvailableDevices(userId, type);
+        res.status(result.status).send(result);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+
+    }
+}
+
 const getById = async (req, res) => {
     try { 
         let result = await logic.get(req.params.id);
@@ -70,8 +83,12 @@ const remove = async (req, res) => {
     }
 }
 
+
+
+
 export default { 
     getAll,
+    getAvailableDevices,
     getById,
     add,
     update,

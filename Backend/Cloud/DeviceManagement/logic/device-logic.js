@@ -1,6 +1,7 @@
 import { Device } from '../models/device-model.js';
 import { Rule } from '../models/rule-model.js';
 import dtoMapper from '../utils/dto-mapper.js';
+import ruleLogic from './rule-logic.js';
 
 const getAll = async (type, userId) => {
     if (type === undefined || type === null || type.toLowerCase() === 'undefined') {
@@ -29,6 +30,29 @@ const getAll = async (type, userId) => {
     try { 
         let result = await Device.find({userId: userId, type: type});
         return dtoMapper.toDevicesDto(result);
+    }
+    catch(error) { 
+        throw { 
+            status: 500,
+            message: 'MongoDB error',
+            details: error
+        };
+    }
+}
+
+const getAvailableDevices = async (userId, type) => { 
+    try { 
+        let devices = await getAll(type, userId);
+        let rules = await ruleLogic.getByUserId(userId);
+        rules.forEach(rule => {
+            if (type.toUpperCase() == 'SENSOR') { 
+                devices = devices.filter(device => device.id != rule.sensorId)
+            }
+            else { 
+                devices = devices.filter(device => device.id != rule.actuatorId)
+            }
+        });
+        return devices;
     }
     catch(error) { 
         throw { 
@@ -143,6 +167,7 @@ const removeDevice = async (id) => {
     }
 }
 export default { 
+    getAvailableDevices,
     addDevice,
     getAll,
     updateDevice,

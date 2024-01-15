@@ -3,6 +3,18 @@ import dtoMapper from '../utils/dto-mapper.js';
 import deviceLogic from './device-logic.js';
 
 
+const getById = async (ruleId) => { 
+    let result = await Rule.findById(ruleId);
+    if (!result) { 
+        throw { 
+            status: 400,
+            message: "MongoDB error",
+            details: `Rule with ID [${ruleId}] not found in database.`
+        };
+    }
+    return dtoMapper.toRuleDto(result);
+}
+
 const getByDeviceId = async (deviceId) => { 
     let result = await Rule.findOne({
         $or: [
@@ -51,6 +63,9 @@ const addRule = async (rule) => {
             details: `One or both devices are not created. Internal error: ${error.details}`
         }
     }
+    if (sensor.type != 'SENSOR' || actuator.type != 'ACTUATOR') { 
+        throw "Sensor and actuator ids do not match with their corresponding types.";
+    }
 
     if (rule.startTriggerLevel === rule.stopTriggerLevel) { 
         throw "START and STOP trigger level cannot have the same value.";
@@ -97,6 +112,8 @@ const updateRule = async (id, rule) => {
         stopExpression: rule.stopExpression,
         startTriggerLevel: rule.startTriggerLevel,
         stopTriggerLevel: rule.stopTriggerLevel,
+    }, { 
+        new: true
     });
     if (!result) { 
         throw { 
@@ -105,6 +122,7 @@ const updateRule = async (id, rule) => {
             details: `Rule with ID [${id}] not found in database.`
         }
     }
+    return dtoMapper.toRuleDto(result);
 }
 
 const removeRule = async (id) => { 
@@ -124,6 +142,7 @@ const removeRule = async (id) => {
 }
 
 export default { 
+    getById,
     getByDeviceId,
     getByUserId,
     addRule,
