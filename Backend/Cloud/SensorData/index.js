@@ -1,9 +1,9 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
-import dotenv from 'dotenv';
 import routes from './routes/routes.js'
+// import dotenv from 'dotenv';
 
-dotenv.config({path: 'sensor-data.env'});
+// dotenv.config({path: 'sensor-data.env'});
 import { influxDbConfig } from './influxdb-config.js';
 
 const app = express();

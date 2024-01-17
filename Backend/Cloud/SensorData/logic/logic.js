@@ -69,11 +69,13 @@ const performCall = async (userId, sensorId, startDate, endDate, pointsPeriod) =
 
     }
     try { 
+        let startDateIso = new Date(startDate).toISOString();
+        let endDateIso = new Date(endDate).toISOString();
         let query = 
         `from (bucket: "sensor-data")
-            |> range(start: ${startDate}, stop: ${endDate})
+            |> range(start: ${startDateIso}, stop: ${endDateIso})
             |> filter(fn: (r) => r._measurement == "${userId}" and r["sensor-id"] == "${sensorId}")
-            |> aggregateWindow(every: ${window}, fn: mean)`;
+            |> aggregateWindow(every: ${window}, fn: mean, createEmpty: false)`;
         let result = [];
         for await (const {values, tableMeta} of queryClient.iterateRows(query)) { 
             const o = tableMeta.toObject(values);

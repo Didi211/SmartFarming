@@ -27,6 +27,13 @@ const getHistoryData = async (req, res) => {
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
     try { 
+        if (period == undefined) { 
+            throw { 
+                status: 400,
+                message: "Required field 'point period'.",
+                details: "Available periods: [hours, months, years]."
+            }
+        }
         let result;
         switch(period.toUpperCase()) { 
             case pointPeriodsConstants.HOURS: { 
