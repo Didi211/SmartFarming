@@ -1,8 +1,9 @@
-import { writeClient, queryClient } from "../influxdb-config.js";
+import { writeClient, queryClient } from "../config/influxdb-config.js";
 import { Point } from "@influxdata/influxdb-client";
 import timeValidator from "../utils/time-validator.js";
 import pointPeriodsConstants from "../utils/point-periods-constants.js";
 import dtoMapper from "../utils/dto-mapper.js";
+import { influxAxios } from "../config/axios-config.js";
 
 const syncData = async (userId, data) => { 
     // measurement = userId
@@ -92,8 +93,34 @@ const performCall = async (userId, sensorId, startDate, endDate, pointsPeriod) =
     }
 }
 
+const deleteData = async (sensorId, userId) => { 
+    try {
+        let org = process.env.INFLUX_DB_ORGANIZATION;
+        let bucket = process.env.INFLUX_DB_BUCKET;
+        let result = await influxAxios.post(`/api/v2/delete?org=${org}&bucket=${bucket}`, JSON.stringify({
+                "start": new Date("10/10/2023").toISOString(),
+                "stop": new Date().toISOString(),
+                "predicate": `_measurement="${userId}" AND "sensor-id"="${sensorId}"`
+            }
+        ))
+        if (result.status < 300) { 
+            return 
+        }
+        else { 
+            throw result.data
+        }
+    } catch (error) {
+        throw { 
+            status: 500,
+            message: "InfluxDB error",
+            details: error
+        }
+    }
+}
+
 
 export default { 
+    deleteData,
     syncData, 
     getHourlyData,
     getMonthlyData,

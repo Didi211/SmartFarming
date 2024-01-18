@@ -74,7 +74,8 @@ const updateState = async (req, res) => {
 const remove = async (req, res) => {
     try { 
         let email = req.headers['user-email'];
-        let result = await logic.remove(req.params.id, email);
+        let userId = req.headers['user-id'];
+        let result = await logic.remove(req.params.id, email, userId);
         res.status(result.status).send(result);
     }
     catch(error) { 

@@ -1,5 +1,5 @@
 import deviceValidator from "../utils/device-validator.js";
-import { deviceManagementAxios } from "../config/axios-config.js";
+import { deviceManagementAxios, sensorDataAxios } from "../config/axios-config.js";
 import userValidator from "../utils/user-validator.js";
 import deviceMqtt from "../messaging/device-mqtt.js";
 import userManagementLogic from "./user-management-logic.js";
@@ -111,11 +111,14 @@ const updateState = async (id, state) => {
 }
 
 
-const remove = async (id, email) => { 
+const remove = async (id, email, userId) => { 
     let response = await deviceManagementAxios.delete(`/${id}`);
     if (response.status == 200) { 
+        // remove sensor data
+        await sensorDataAxios.delete(`/${userId}/${id}`);
         // propagate the call to the edge 
         let token = (await userManagementLogic.fetchMqttToken(email)).details;
+        await sensorDataAxios.delete(`/:userId/:sensorId`)
         deviceMqtt.publishRemoveDevice(token, id);
         return JSON.parse(response.data);
     }

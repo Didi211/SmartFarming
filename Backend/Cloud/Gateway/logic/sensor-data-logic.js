@@ -21,10 +21,10 @@ const saveSensorData = async (userId, data) => {
 }
 
 const getHistoryData = async (data) => { 
-    let response = await sensorDataAxios.post(`/${data.sensorId}?period=${data.period}`, {
+    let response = await sensorDataAxios.post(`/${data.sensorId}?period=${data.period}`, JSON.stringify({
         startDate: data.startDate,
         endDate: data.endDate
-    }, { 
+    }), { 
         headers: { 
             'user-id': data.userId
         } 

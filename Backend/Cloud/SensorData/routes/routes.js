@@ -7,6 +7,7 @@ router.post('/sync', controller.syncData);
 
 // api called from frontend
 router.post('/:id', controller.getHistoryData); // /id?period=HOURS || MONTHS || YEARS
+router.delete('/:userId/:sensorId', controller.removeSensorData)
 
 export default router;
 

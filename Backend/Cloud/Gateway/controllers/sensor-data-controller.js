@@ -42,7 +42,6 @@ const getHistoryData = async (req, res) => {
 }
 
 
-
 export default { 
     saveData,
     getHistoryData
