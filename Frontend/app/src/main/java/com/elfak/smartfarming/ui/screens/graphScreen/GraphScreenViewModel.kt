@@ -8,13 +8,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.GraphReading
 import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
+import com.elfak.smartfarming.domain.enums.GraphPeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +50,7 @@ class GraphScreenViewModel @Inject constructor(
                     throw Exception("Cannot load data. Sensor ID is not found.")
                 }
                 loadSensor(uiState.sensorId)
+                loadSensorReadings(uiState.sensorId)
                 loadRule(uiState.sensorId)
                 if (uiState.rule != null) {
                     loadActuator(uiState.rule!!.actuatorId)
@@ -77,7 +83,35 @@ class GraphScreenViewModel @Inject constructor(
             localDeviceRepository.updateDeviceLocal(localSensor)
         }
         setSensor(localSensor)
+
+
     }
+
+    private suspend fun loadSensorReadings(sensorId: String) {
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val startDate = uiState.startDate.format(dateTimeFormatter)
+        val endDate = uiState.endDate.format(dateTimeFormatter)
+        val readings = deviceRepository.getGraphData(
+            sensorId = sensorId,
+            userId = uiState.userId,
+            period = uiState.graphPeriod,
+            graphDataRequest = GraphDataRequest(
+                startDate = startDate,
+                endDate = endDate
+        ))
+        setGraphReadings(readings)
+    }
+    private fun setGraphReadings(readings: List<GraphReading>) {
+        uiState = uiState.copy(readings = readings)
+    }
+
+    private fun setGraphPeriod(period: GraphPeriods) {
+        uiState = uiState.copy(graphPeriod = period)
+    }
+    private fun setDates(startDate: LocalDateTime, endDate: LocalDateTime) {
+        uiState = uiState.copy(startDate = startDate, endDate = endDate)
+    }
+
     private suspend fun loadUser() {
         val user = localAuthRepository.getCredentials()
         setUserEmail(user.email)

@@ -40,6 +40,7 @@ import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
 import com.elfak.smartfarming.ui.components.cards.RuleCard
 import com.elfak.smartfarming.ui.components.containers.CardContainerWithTitle
+import com.elfak.smartfarming.ui.components.graphs.GraphChart
 
 @Composable
 fun GraphScreen(
@@ -75,10 +76,14 @@ fun GraphScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .border(2.dp, Color.Black),
-            verticalArrangement = Arrangement.Bottom
+                .height(250.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            GraphChart(
+                readings = viewModel.uiState.readings,
+                graphPeriods = viewModel.uiState.graphPeriod, // todo needs to be dynamic
+            )
             // calendar
             Column(
                 Modifier

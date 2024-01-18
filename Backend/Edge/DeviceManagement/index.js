@@ -18,6 +18,6 @@ import { startChangeStatusScheduler } from './scheduler/change-status-simulator.
 const port = process.env.PORT;
 app.listen(port, async () => { 
     startStatusScheduler();
-    startChangeStatusScheduler();
+    // startChangeStatusScheduler();
     console.log(`Edge Device Management Service is listening on port ${port}`);
 });
