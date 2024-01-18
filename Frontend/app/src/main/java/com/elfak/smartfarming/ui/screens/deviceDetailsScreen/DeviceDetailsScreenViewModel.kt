@@ -54,10 +54,17 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     }
     private suspend fun loadDevice(id: String) {
         val device = deviceRepository.getDeviceById(id)
-        var localDevice =localDeviceRepository.getDevice(id)
+        var localDevice = localDeviceRepository.getDevice(id)
         if (localDevice == null) {
             localDevice = device
             localDeviceRepository.addDevice(localDevice)
+        } else {
+            // update local device
+            localDevice = device.copy(
+                isMuted = localDevice.isMuted,
+                lastReading = localDevice.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localDevice)
         }
         setDevice(localDevice)
     }

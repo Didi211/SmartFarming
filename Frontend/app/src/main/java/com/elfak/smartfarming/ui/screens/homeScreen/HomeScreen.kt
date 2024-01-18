@@ -54,6 +54,7 @@ fun HomeScreen(
             false -> {
                 GraphCardContainer(
                     sensors = viewModel.uiState.sensors,
+                    readings = viewModel.uiState.readings,
                     refreshState = refreshState,
                     isRefreshing = viewModel.uiState.isRefreshing,
                     onCardClick = navigateToGraphReadings

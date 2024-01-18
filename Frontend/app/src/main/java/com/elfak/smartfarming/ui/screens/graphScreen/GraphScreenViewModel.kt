@@ -64,9 +64,17 @@ class GraphScreenViewModel @Inject constructor(
     private suspend fun loadSensor(id: String) {
         val sensor = deviceRepository.getDeviceById(id)
         var localSensor = localDeviceRepository.getDevice(id)
+
         if (localSensor == null) {
             localSensor = sensor
             localDeviceRepository.addDevice(localSensor)
+        } else {
+            // update local device
+            localSensor = sensor.copy(
+                isMuted = localSensor.isMuted,
+                lastReading = localSensor.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localSensor)
         }
         setSensor(localSensor)
     }
@@ -86,6 +94,13 @@ class GraphScreenViewModel @Inject constructor(
         if (localActuator == null) {
             localDeviceRepository.addDevice(actuator)
             localActuator = actuator
+        } else {
+            // update local device
+            localActuator = actuator.copy(
+                isMuted = localActuator.isMuted,
+                lastReading = localActuator.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localActuator)
         }
         setActuator(localActuator)
     }

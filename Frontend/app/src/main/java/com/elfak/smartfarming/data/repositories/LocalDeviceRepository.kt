@@ -29,7 +29,7 @@ class LocalDeviceRepository @Inject constructor(
         var device = getDevice(id)
             ?: throw Exception("Device with ID [${id}] not found in local storage.")
         device.isMuted = isMuted
-        updateDevice(device)
+        updateDeviceLocal(device)
     }
 
     override suspend fun updateDevicesLocal(devices: List<Device>): List<Device> {
@@ -80,10 +80,10 @@ class LocalDeviceRepository @Inject constructor(
             throw Exception("Device ${device.name} is not ${DeviceTypes.Sensor}. Can't set ${Device::lastReading.name} value")
         }
         device.lastReading = lastReading
-        updateDevice(device)
+        updateDeviceLocal(device)
     }
 
-    private suspend fun updateDevice(device: Device) {
+    override suspend fun updateDeviceLocal(device: Device) {
         val deviceId = stringPreferencesKey(device.id)
         dataStore.edit { preferences ->
             val deviceJson = Gson().toJson(device)

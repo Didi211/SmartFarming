@@ -7,11 +7,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
+import com.elfak.smartfarming.domain.enums.GraphPeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +34,22 @@ class HomeScreenViewModel @Inject constructor(
             try {
                 val user = localAuthRepository.getCredentials()
                 setSensors(deviceRepository.getAllDevices(user.id, DeviceTypes.Sensor))
+
+                // fetch devices
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+                val dayBefore = now.minusDays(1).format(dateTimeFormatter)
+                val nowString = now.format(dateTimeFormatter)
+
+                for (sensor in uiState.sensors) {
+                    launch {
+                        val readings = deviceRepository.getGraphData(sensor.id, user.id, GraphPeriods.Hours, GraphDataRequest(
+                            startDate = dayBefore,
+                            endDate = nowString
+                        ))
+                        uiState.readings[sensor.id] = readings
+                    }
+                }
             }
             catch (ex: Exception) {
                 handleError(ex)
