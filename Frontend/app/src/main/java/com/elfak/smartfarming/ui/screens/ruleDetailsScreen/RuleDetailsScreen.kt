@@ -109,7 +109,10 @@ fun RuleDetailsScreen(
         Spacer(modifier = Modifier.height(40.dp))
         // related devices
         CardContainerWithTitle(title = stringResource(R.string.related_devices)) {
-            if (viewModel.uiState.selectActuators.isEmpty() && viewModel.uiState.selectSensors.isEmpty()) {
+            val showNoDevicesMessage = viewModel.uiState.screenState == ScreenState.Create
+                    && viewModel.uiState.selectActuators.isEmpty()
+                    && viewModel.uiState.selectSensors.isEmpty()
+            if (showNoDevicesMessage) {
                 Text(
                     text = stringResource(R.string.no_available_devices),
                     style = MaterialTheme.typography.bodyLarge,

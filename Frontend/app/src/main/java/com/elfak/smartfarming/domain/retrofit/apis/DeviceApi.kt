@@ -2,6 +2,7 @@ package com.elfak.smartfarming.domain.retrofit.apis
 
 import com.elfak.smartfarming.data.models.api.ApiResponse
 import com.elfak.smartfarming.data.models.api.DeviceRequest
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.models.api.RuleRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -24,11 +25,13 @@ interface DeviceApi {
     suspend fun getAllDevices(@Path("userId") userId: String, @Query("type") type: String?): ApiResponse
     @GET("api/devices/user/{userId}/type/{type}/available")
     suspend fun getAvailableDevices(@Path("userId")userId: String, @Path("type") type: String): ApiResponse
+    @POST("api/sensor-data/{id}")
+    suspend fun getGraphData(@Path("id") sensorId: String, @Header("user-id") useId: String, @Body graphRequest: GraphDataRequest, @Query("period") period: String): ApiResponse
 
     @GET("api/devices/{id}")
     suspend fun getDeviceById(@Path("id") id: String): ApiResponse
     @DELETE("api/devices/{id}")
-    suspend fun removeDevice(@Path("id") id: String, @Header("user-email") userEmail: String): ApiResponse
+    suspend fun removeDevice(@Path("id") id: String, @Header("user-email") userEmail: String, @Header("user-id") userId: String): ApiResponse
 
     // rules
     @GET("api/devices/rule/{id}")

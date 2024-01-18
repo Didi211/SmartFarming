@@ -73,7 +73,13 @@ class GraphScreenViewModel @Inject constructor(
     private suspend fun loadUser() {
         val user = localAuthRepository.getCredentials()
         setUserEmail(user.email)
+        setUserId(user.id)
     }
+
+    private fun setUserId(id: String) {
+        uiState = uiState.copy(userId = id)
+    }
+
     private suspend fun loadActuator(id: String) {
         val actuator = deviceRepository.getDeviceById(id)
         var localActuator = localDeviceRepository.getDevice(actuator.id)
@@ -123,7 +129,7 @@ class GraphScreenViewModel @Inject constructor(
     fun deleteDevice(id: String, type: DeviceTypes, onSuccess: () -> Unit = { }) {
         viewModelScope.launch {
             try {
-                deviceRepository.removeDevice(id, uiState.userEmail)
+                deviceRepository.removeDevice(id, uiState.userEmail, uiState.userId)
                 if (type == DeviceTypes.Sensor) {
                     setSuccessMessage("Device removed")
                     onSuccess()

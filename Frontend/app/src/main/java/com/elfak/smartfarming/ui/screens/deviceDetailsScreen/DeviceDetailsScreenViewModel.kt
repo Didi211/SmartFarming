@@ -183,7 +183,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     fun deleteDevice(onSuccess: () -> Unit = { }) {
         viewModelScope.launch {
             try {
-                deviceRepository.removeDevice(uiState.device.id, uiState.userEmail)
+                deviceRepository.removeDevice(uiState.device.id, uiState.userEmail, uiState.userId)
                 localDeviceRepository.removeDevice(uiState.device.id)
                 setSuccessMessage("Device removed")
                 onSuccess()

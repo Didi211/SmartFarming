@@ -2,8 +2,10 @@ package com.elfak.smartfarming.domain.retrofit.apiWrappers
 
 import com.elfak.smartfarming.data.models.api.ApiResponse
 import com.elfak.smartfarming.data.models.api.DeviceRequest
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.models.api.RuleRequest
 import com.elfak.smartfarming.domain.enums.DeviceTypes
+import com.elfak.smartfarming.domain.enums.GraphPeriods
 import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
 import javax.inject.Inject
@@ -50,9 +52,17 @@ class DeviceApiWrapper @Inject constructor(
         }
     }
 
-    suspend fun removeDevice(id: String, userEmail: String): ApiResponse {
+    suspend fun getGraphData(sensorId: String, userId: String, period: GraphPeriods, graphData: GraphDataRequest): ApiResponse {
         return try {
-            api.removeDevice(id, userEmail)
+            api.getGraphData(sensorId, userId, graphData, period.name)
+        } catch (ex: Exception) {
+            ExceptionHandler.handleApiCallException(ex)
+        }
+    }
+
+    suspend fun removeDevice(id: String, userEmail: String, userId: String): ApiResponse {
+        return try {
+            api.removeDevice(id, userEmail, userId)
         } catch (ex: Exception) {
             ExceptionHandler.handleApiCallException(ex)
         }

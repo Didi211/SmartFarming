@@ -98,7 +98,7 @@ class ListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = localAuthRepository.getCredentials()
-                deviceRepository.removeDevice(id, user.email)
+                deviceRepository.removeDevice(id, user.email, user.id)
                 removeDevice(id)
                 setSuccessMessage("Device removed")
             }

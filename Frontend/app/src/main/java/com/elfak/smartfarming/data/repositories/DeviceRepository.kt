@@ -1,11 +1,14 @@
 package com.elfak.smartfarming.data.repositories
 
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.GraphReading
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.models.api.DeviceRequest
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.models.api.RuleRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
+import com.elfak.smartfarming.domain.enums.GraphPeriods
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
 import com.elfak.smartfarming.domain.utils.ExceptionHandler
 import javax.inject.Inject
@@ -61,8 +64,24 @@ class DeviceRepository @Inject constructor(
         return Device.fromApiResponse(response.details!!)
     }
 
-    override suspend fun removeDevice(id: String, userEmail: String) {
-        val response = deviceApiWrapper.removeDevice(id, userEmail)
+    override suspend fun getGraphData(
+        sensorId: String,
+        userId: String,
+        period: GraphPeriods,
+        graphDataRequest: GraphDataRequest
+    ): List<GraphReading> {
+        val response = deviceApiWrapper.getGraphData(sensorId, userId, period, graphDataRequest)
+        if (response.status != 200) {
+            ExceptionHandler.throwApiResponseException(response)
+        }
+        val list = response.details as List<Any?>
+        return list.map { item ->
+            GraphReading.fromApiResponse(item!!)
+        }
+    }
+
+    override suspend fun removeDevice(id: String, userEmail: String, userId: String) {
+        val response = deviceApiWrapper.removeDevice(id, userEmail, userId)
         if (response.status != 200) {
             ExceptionHandler.throwApiResponseException(response)
         }
