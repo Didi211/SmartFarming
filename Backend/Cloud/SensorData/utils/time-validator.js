@@ -7,7 +7,7 @@ const validate = (startDate, endDate, pointsPeriod) => {
         if (startDate == undefined || endDate == undefined) { 
             throw `StartDate and endDate fields are required. Missing fields: [startDate]=${startDate} [endDate]=${endDate}`
         }
-        if (startDate > endDate) { 
+        if (Date(startDate) > Date(endDate)) {
             throw `Start date: [${formatDate(startDate)}] is after end date: [${formatDate(endDate)}]`
         }
         switch(pointsPeriod.toUpperCase()) { 

@@ -7,7 +7,8 @@ const saveToDb = async (sensorId, reading) => {
         console.log('Try writing data for sensor:', sensorId, 'Reading:', reading);
         let point = new Point('sensor-data')
             .tag('sensor-id', sensorId)
-            .floatField('reading', reading);
+            .floatField('reading', reading)
+            .timestamp(new Date());
         writeClient.writePoint(point);
         await writeClient.flush();
     } catch (error) {
