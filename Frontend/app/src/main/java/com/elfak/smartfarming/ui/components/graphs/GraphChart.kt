@@ -83,7 +83,9 @@ fun GraphChart(readings: List<GraphReading> = emptyList()) {
                         backgroundAlpha = 1f,
                         labelColor = FontColor,
                         paddingBetweenPopUpAndPoint = 10.dp,
-                        popUpLabel = { _, y -> "y : ${String.format("%.2f", y)}" }
+                        popUpLabel = { x, y ->
+                            val time = formatToHoursAndMinutes(readings[x.toInt()].timeMeasured)
+                            "${y.formatToSinglePrecision()} at $time" }
                     )
                 )
             ),
