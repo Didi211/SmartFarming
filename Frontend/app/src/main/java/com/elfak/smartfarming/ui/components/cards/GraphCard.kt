@@ -14,11 +14,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.GraphReading
-import com.elfak.smartfarming.domain.enums.GraphPeriods
-import com.elfak.smartfarming.ui.components.graphs.GraphChart
+import com.elfak.smartfarming.ui.components.graphs.LineGraphChart
 
 @Composable
-fun GraphCard(sensor: Device, readings: List<GraphReading> = emptyList(), graphPeriods: GraphPeriods = GraphPeriods.Hours, onCardClick: (deviceId: String) -> Unit) {
+fun GraphCard(
+    sensor: Device,
+    readings: List<GraphReading> = emptyList(),
+    onCardClick: (deviceId: String) -> Unit
+) {
     Column(
         Modifier
             .padding(10.dp)
@@ -32,7 +35,7 @@ fun GraphCard(sensor: Device, readings: List<GraphReading> = emptyList(), graphP
             fontWeight = FontWeight.Bold
         )
         Column(Modifier.fillMaxSize()) {
-            GraphChart(readings)
+            LineGraphChart(readings)
         }
     }
 }

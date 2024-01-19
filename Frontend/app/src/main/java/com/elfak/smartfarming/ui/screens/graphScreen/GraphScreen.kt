@@ -22,7 +22,11 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +44,8 @@ import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
 import com.elfak.smartfarming.ui.components.cards.RuleCard
 import com.elfak.smartfarming.ui.components.containers.CardContainerWithTitle
-import com.elfak.smartfarming.ui.components.graphs.GraphChart
+import com.elfak.smartfarming.ui.components.dialogs.CalendarDialog
+import com.elfak.smartfarming.ui.components.graphs.LineGraphChart
 import com.elfak.smartfarming.ui.components.inputs.GraphReadingInputField
 
 @Composable
@@ -50,6 +55,8 @@ fun GraphScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    var showCalendarDialog by remember { mutableStateOf(false) }
+
     rememberCoroutineScope()
     ComposableLifecycle { _, event ->
         when(event) {
@@ -81,7 +88,7 @@ fun GraphScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            GraphChart(readings = viewModel.uiState.readings)
+            LineGraphChart(readings = viewModel.uiState.readings, period = viewModel.uiState.graphPeriod)
             Spacer(modifier = Modifier.height(10.dp))
             // calendar
             Column(
@@ -95,7 +102,26 @@ fun GraphScreen(
                     startDate = viewModel.uiState.startDate,
                     endDate = viewModel.uiState.endDate,
                     isPeriodChosen = viewModel.uiState.isPeriodChosen
-                )
+                ) {
+                    showCalendarDialog = true
+                }
+                if (showCalendarDialog) {
+                    CalendarDialog(
+                        previousPeriod = viewModel.uiState.graphPeriod,
+                        previousStartDate = viewModel.uiState.startDate,
+                        previousEndDate = viewModel.uiState.endDate,
+                        onDismiss = {
+                            viewModel.setDates(isChosen = false)
+                            showCalendarDialog = false
+                        },
+                        onClick = { startDate, endDate, period ->
+                            viewModel.setDates(startDate, endDate, true)
+                            viewModel.setGraphPeriod(period)
+                            showCalendarDialog = false
+                            viewModel.refreshGraph()
+                        },
+                    )
+                }
 
             }
         }

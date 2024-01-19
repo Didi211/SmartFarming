@@ -12,3 +12,13 @@ fun GraphPeriods.forDisplay(): String {
         GraphPeriods.Years -> "Yearly"
     }
 }
+
+fun String.toGraphPeriod(): GraphPeriods {
+    return when(this.uppercase()) {
+        "HOURS" -> GraphPeriods.Hours
+        "MONTHS" -> GraphPeriods.Months
+        "YEARS" -> GraphPeriods.Years
+        else -> { throw Exception("Graph period not valid.")}
+
+    }
+}

@@ -20,14 +20,14 @@ data class GraphUiState(
     val graphPeriod: GraphPeriods = GraphPeriods.Hours,
     val startDate: LocalDateTime = LocalDateTime.now().minusDays(1),
     val endDate: LocalDateTime =  LocalDateTime.now(),
-    val isPeriodChosen: Boolean = false,
+    val isPeriodChosen: Boolean = true,
 )
 
 fun LocalDateTime.formatBasedOnGraphPeriods(period: GraphPeriods): String {
     return when (period) {
 
-        GraphPeriods.Hours -> this.format(DateTimeFormatter.ofPattern("DD/MM/yy HH:mm"))
-        GraphPeriods.Months -> this.format(DateTimeFormatter.ofPattern("D. MMM"))
+        GraphPeriods.Hours -> this.format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm"))
+        GraphPeriods.Months -> this.format(DateTimeFormatter.ofPattern("d. MMM"))
         GraphPeriods.Years -> this.format(DateTimeFormatter.ofPattern("MM/yyyy"))
     }
 }

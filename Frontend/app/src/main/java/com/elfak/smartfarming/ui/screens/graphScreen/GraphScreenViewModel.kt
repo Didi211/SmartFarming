@@ -19,7 +19,9 @@ import com.elfak.smartfarming.domain.enums.GraphPeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,7 +61,7 @@ class GraphScreenViewModel @Inject constructor(
         }
         catch (ex: Exception) {
             handleError(ex)
-            Log.e("Init", ex.message!!, ex)
+            Log.e("Load Data", ex.message!!, ex)
         }
     }
     private suspend fun loadRule(sensorId: String) {
@@ -86,10 +88,36 @@ class GraphScreenViewModel @Inject constructor(
 
     }
 
+    fun refreshGraph() {
+        viewModelScope.launch {
+            try {
+                loadSensorReadings(uiState.sensorId)
+            }
+            catch (ex: Exception) {
+                handleError(ex)
+                Log.e("Readings-Get", ex.message!!, ex)
+
+            }
+        }
+    }
     private suspend fun loadSensorReadings(sensorId: String) {
         val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val startDate = uiState.startDate.format(dateTimeFormatter)
-        val endDate = uiState.endDate.format(dateTimeFormatter)
+        val startDate: String
+        val endDate: String
+        when(uiState.graphPeriod) {
+            GraphPeriods.Hours -> {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.HOURS).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.HOURS).format(dateTimeFormatter)
+            }
+            GraphPeriods.Months -> {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.DAYS).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.DAYS).format(dateTimeFormatter)
+            }
+            GraphPeriods.Years ->  {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).format(dateTimeFormatter)
+            }
+        }
         val readings = deviceRepository.getGraphData(
             sensorId = sensorId,
             userId = uiState.userId,
@@ -98,16 +126,19 @@ class GraphScreenViewModel @Inject constructor(
                 startDate = startDate,
                 endDate = endDate
         ))
+        if (readings.isEmpty()) {
+            setErrorMessage("No data found for required period.")
+        }
         setGraphReadings(readings)
     }
     private fun setGraphReadings(readings: List<GraphReading>) {
         uiState = uiState.copy(readings = readings)
     }
 
-    private fun setGraphPeriod(period: GraphPeriods) {
+    fun setGraphPeriod(period: GraphPeriods) {
         uiState = uiState.copy(graphPeriod = period)
     }
-    private fun setDates(startDate: LocalDateTime, endDate: LocalDateTime, isChosen: Boolean) {
+    fun setDates(startDate: LocalDateTime = LocalDateTime.now(), endDate: LocalDateTime = LocalDateTime.now(), isChosen: Boolean) {
         uiState = uiState.copy(startDate = startDate, endDate = endDate, isPeriodChosen = isChosen)
     }
 
