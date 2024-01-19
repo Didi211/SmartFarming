@@ -22,7 +22,7 @@ fun GraphCard(sensor: Device, readings: List<GraphReading> = emptyList(), graphP
     Column(
         Modifier
             .padding(10.dp)
-            .height(200.dp)
+            .height(230.dp)
             .fillMaxWidth(0.9f)
             .clickable { onCardClick(sensor.id) },
     ) {
@@ -32,7 +32,7 @@ fun GraphCard(sensor: Device, readings: List<GraphReading> = emptyList(), graphP
             fontWeight = FontWeight.Bold
         )
         Column(Modifier.fillMaxSize()) {
-            GraphChart(readings, graphPeriods)
+            GraphChart(readings)
         }
     }
 }

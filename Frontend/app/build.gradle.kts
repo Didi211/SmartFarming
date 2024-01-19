@@ -59,11 +59,8 @@ android {
 }
 
 dependencies {
-    // Vico Charts
-    implementation("com.patrykandpatrick.vico:compose:1.13.1")
-    implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
-    implementation("com.patrykandpatrick.vico:core:1.13.1")
-
+    // Y Charts
+    implementation("co.yml:ycharts:2.1.0")
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 

@@ -11,7 +11,7 @@ fun DeviceState.uppercase(): String {
 fun DeviceState.lowercase(): String {
     return this.name.lowercase()
 }
-fun String.toDeviceState(): DeviceState? {
+fun String?.toDeviceState(): DeviceState? {
     if (this == null) return null
     return when (this.uppercase()) {
         "OFF" -> DeviceState.Off
