@@ -6,6 +6,7 @@ import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.data.models.ToastData
 import com.elfak.smartfarming.domain.enums.GraphPeriods
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class GraphUiState(
     val sensorId: String = "",
@@ -16,7 +17,17 @@ data class GraphUiState(
     val sensor: Device = Device(),
     val actuator: Device? = null,
     val readings: List<GraphReading> = emptyList(),
-    val graphPeriod: GraphPeriods = GraphPeriods.Months,
+    val graphPeriod: GraphPeriods = GraphPeriods.Hours,
     val startDate: LocalDateTime = LocalDateTime.now().minusDays(1),
     val endDate: LocalDateTime =  LocalDateTime.now(),
+    val isPeriodChosen: Boolean = false,
 )
+
+fun LocalDateTime.formatBasedOnGraphPeriods(period: GraphPeriods): String {
+    return when (period) {
+
+        GraphPeriods.Hours -> this.format(DateTimeFormatter.ofPattern("DD/MM/yy HH:mm"))
+        GraphPeriods.Months -> this.format(DateTimeFormatter.ofPattern("D. MMM"))
+        GraphPeriods.Years -> this.format(DateTimeFormatter.ofPattern("MM/yyyy"))
+    }
+}

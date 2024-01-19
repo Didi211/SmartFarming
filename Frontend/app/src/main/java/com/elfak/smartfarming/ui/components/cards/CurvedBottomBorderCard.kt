@@ -10,16 +10,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.ui.theme.BorderColor
 
 @Composable
-fun CurvedBottomBorderCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+fun CurvedBottomBorderCard( modifier: Modifier = Modifier, height: Dp = 130.dp, content: @Composable ColumnScope.() -> Unit) {
     val shape = RoundedCornerShape(30.dp)
     val elevation = CardDefaults.cardElevation(
         defaultElevation = 5.dp
     )
-    val height = 130.dp
 
     Card(
         shape = shape,

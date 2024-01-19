@@ -55,7 +55,6 @@ class GraphScreenViewModel @Inject constructor(
                 if (uiState.rule != null) {
                     loadActuator(uiState.rule!!.actuatorId)
                 }
-                // fetch graph readings
             }
         }
         catch (ex: Exception) {
@@ -108,8 +107,8 @@ class GraphScreenViewModel @Inject constructor(
     private fun setGraphPeriod(period: GraphPeriods) {
         uiState = uiState.copy(graphPeriod = period)
     }
-    private fun setDates(startDate: LocalDateTime, endDate: LocalDateTime) {
-        uiState = uiState.copy(startDate = startDate, endDate = endDate)
+    private fun setDates(startDate: LocalDateTime, endDate: LocalDateTime, isChosen: Boolean) {
+        uiState = uiState.copy(startDate = startDate, endDate = endDate, isPeriodChosen = isChosen)
     }
 
     private suspend fun loadUser() {

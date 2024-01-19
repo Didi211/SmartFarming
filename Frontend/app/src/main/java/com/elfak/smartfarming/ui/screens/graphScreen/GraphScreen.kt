@@ -2,7 +2,6 @@
 package com.elfak.smartfarming.ui.screens.graphScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,7 +40,7 @@ import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
 import com.elfak.smartfarming.ui.components.cards.RuleCard
 import com.elfak.smartfarming.ui.components.containers.CardContainerWithTitle
-import com.elfak.smartfarming.ui.components.graphs.GraphChart
+import com.elfak.smartfarming.ui.components.inputs.GraphReadingInputField
 
 @Composable
 fun GraphScreen(
@@ -76,21 +76,30 @@ fun GraphScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .height(250.dp),
+                .wrapContentHeight(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            GraphChart(
-                readings = viewModel.uiState.readings,
-                graphPeriods = viewModel.uiState.graphPeriod, // todo needs to be dynamic
-            )
+//            GraphChart(
+//                readings = viewModel.uiState.readings,
+//                graphPeriods = viewModel.uiState.graphPeriod, // todo needs to be dynamic
+//            )
+            Spacer(modifier = Modifier.height(10.dp))
             // calendar
             Column(
                 Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .border(2.dp, Color.Red)
-            ) { }
+                    .wrapContentWidth()
+                    .height(50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GraphReadingInputField(
+                    period = viewModel.uiState.graphPeriod,
+                    startDate = viewModel.uiState.startDate,
+                    endDate = viewModel.uiState.endDate,
+                    isPeriodChosen = viewModel.uiState.isPeriodChosen
+                )
+
+            }
         }
         Spacer(modifier = Modifier.height(15.dp))
         CardContainerWithTitle(title = stringResource(R.string.related_rule)) {
