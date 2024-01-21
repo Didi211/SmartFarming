@@ -30,4 +30,8 @@
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="save">Save</string>
+    <string name="use_background_service_title">Use background service</string>
+    <string name="use_service_description">Background service enables push notifications and real time updates for sensor readings.</string>
+    <string name="real_time_sensor_updates_title">Real time sensor updates</string>
+    <string name="real_time_sensor_updates_description">Track real time updates from sensors. Without this setting, only historical data will be available.</string>
 </resources>
