@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.containers.NotificationCardContainer
 import com.elfak.smartfarming.ui.components.containers.PullRefreshContainer
@@ -22,6 +24,15 @@ import com.elfak.smartfarming.ui.theme.FontColor
 fun NotificationScreen(
     viewModel: NotificationScreenViewModel
 ) {
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.refreshNotifications()
+            }
+            else -> {}
+        }
+    }
+
     val refreshState = rememberPullRefreshState(
         refreshing = viewModel.uiState.isRefreshing,
         onRefresh = { viewModel.refreshNotifications() }

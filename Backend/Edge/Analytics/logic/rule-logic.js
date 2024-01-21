@@ -71,7 +71,7 @@ const updateRule = async (id, rule) => {
     }
 
     let sensor = devices.find(device => device.type === constants.SENSOR);
-    await edgexLogic.updateRule(rule, actuator.name, sensor.name);
+    await edgexLogic.updateRule(rule, sensor.name);
 }
 
 const removeRule = async (id) => { 

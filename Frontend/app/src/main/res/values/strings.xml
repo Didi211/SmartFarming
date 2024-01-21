@@ -23,4 +23,11 @@
     <string name="device_unit">Unit</string>
     <string name="device_last_reading">Last reading</string>
     <string name="choose_dropdown_item">Choose dropdown item</string>
+    <string name="rule_name">Name</string>
+    <string name="start_trigger_level">Start value</string>
+    <string name="stop_trigger_level">Stop value</string>
+    <string name="no_available_devices">No available devices for creating a rule. Create some device first.</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
 </resources>

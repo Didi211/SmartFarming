@@ -20,6 +20,23 @@ const syncData = async (req, res) => {
     }
 }
 
+const removeSensorData = async (req, res) => { 
+    let userId = req.params.userId
+    let sensorId = req.params.sensorId
+    try { 
+        let result = await logic.deleteData(sensorId, userId);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Delete sensor data successfull.",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
+    }
+    catch(error) { 
+        handleApiError(res, error);
+    }
+}
+
 const getHistoryData = async (req, res) => {
     let userId = req.headers['user-id'];
     let sensorId = req.params.id;
@@ -27,6 +44,13 @@ const getHistoryData = async (req, res) => {
     let startDate = req.body.startDate;
     let endDate = req.body.endDate;
     try { 
+        if (period == undefined) { 
+            throw { 
+                status: 400,
+                message: "Required field 'point period'.",
+                details: "Available periods: [hours, months, years]."
+            }
+        }
         let result;
         switch(period.toUpperCase()) { 
             case pointPeriodsConstants.HOURS: { 
@@ -74,5 +98,6 @@ const getHistoryData = async (req, res) => {
 
 export default { 
     syncData,
-    getHistoryData
+    getHistoryData,
+    removeSensorData,
 }

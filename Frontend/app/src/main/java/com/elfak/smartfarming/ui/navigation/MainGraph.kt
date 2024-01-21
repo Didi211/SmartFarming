@@ -36,10 +36,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<GraphScreenViewModel>()
             GraphScreen(
                 viewModel = viewModel,
-                navigateBack = { navController.navigate(Screen.HomeScreen.route) {
-                    popUpTo(Screen.HomeScreen.route) { inclusive = true }
-                } },
-//                navigateBack = { navController.popBackStack() },
+                navigateBack = { navController.popBackStack() },
                 navigateToDeviceDetails = { deviceId, screenState ->
                     var path = Screen.DeviceDetailsScreen
                         .builder()
@@ -94,9 +91,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<DeviceDetailsScreenViewModel>()
             DeviceDetailsScreen(
                 viewModel = viewModel,
-                navigateBack = { navController.navigate(Screen.HomeScreen.route) {
-                    popUpTo(Screen.HomeScreen.route) { inclusive = true }
-                } },
+                navigateBack = { navController.popBackStack() },
                 navigateToRuleDetails = { ruleId, screenState ->
                     var path = Screen.RuleDetailsScreen
                         .builder()
@@ -113,9 +108,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<RuleDetailsScreenViewModel>()
             RuleDetailsScreen(
                 viewModel = viewModel,
-                navigateBack = {
-                    navController.popBackStack()
-                },
+                navigateBack = { navController.popBackStack() },
                 navigateToDeviceDetails = { deviceId, screenState ->
                     var path = Screen.DeviceDetailsScreen
                         .builder()

@@ -1,10 +1,13 @@
 import pointPeriodsConstants from "./point-periods-constants.js";
 
 const validate = (startDate, endDate, pointsPeriod) => { 
+
     let result = "";
     try { 
-        
-        if (startDate > endDate) { 
+        if (startDate == undefined || endDate == undefined) { 
+            throw `StartDate and endDate fields are required. Missing fields: [startDate]=${startDate} [endDate]=${endDate}`
+        }
+        if (Date(startDate) > Date(endDate)) {
             throw `Start date: [${formatDate(startDate)}] is after end date: [${formatDate(endDate)}]`
         }
         switch(pointsPeriod.toUpperCase()) { 
@@ -36,6 +39,7 @@ const validate = (startDate, endDate, pointsPeriod) => {
 const validateHours = (startDate, endDate) => { 
     startDate = new Date(startDate);
     endDate = new Date(endDate); 
+
     const maxDays = 10
     let timeDifference = endDate.getTime() - startDate.getTime();
     let hoursDifference = timeDifference / (1000 * 60 * 60);

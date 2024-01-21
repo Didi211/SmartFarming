@@ -1,3 +1,4 @@
+import deviceLogic from '../logic/device-logic.js';
 import logic from '../logic/device-logic.js';
 import { handleApiError } from '../utils/error-handler.js';
 import responseDtoMapper from '../utils/response-dto-mapper.js';
@@ -60,6 +61,21 @@ const add = async (req, res) => {
         handleApiError(res, error);
     }
 }
+const getAvailableDevices = async (req, res) => {
+    try {
+        let userId = req.params.userId;
+        let type = req.params.type;
+        let result = await deviceLogic.getAvailableDevices(userId, type);
+        let responseDto = responseDtoMapper.succesfullResponseDto(
+            200,
+            "Fetching available devices successfull.",
+            result
+        )
+        res.status(responseDto.status).send(responseDto);
+    } catch (error) {
+        handleApiError(res, error)
+    }
+}
 
 const update = async (req, res) => { 
     let device = req.body;
@@ -113,6 +129,7 @@ const remove = async (req, res) => {
 
 export default {
     getAll,
+    getAvailableDevices,
     getById,
     add,
     update,

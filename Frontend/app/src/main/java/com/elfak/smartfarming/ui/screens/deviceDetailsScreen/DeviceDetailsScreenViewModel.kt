@@ -19,7 +19,6 @@ import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.enums.toScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,30 +41,49 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             val deviceId: String = savedStateHandle["deviceId"]!!
             setDeviceId(deviceId)
         }
-        viewModelScope.launch {
-            try {
+        setDeviceActions()
+    }
+
+    private suspend fun loadRule(deviceId: String) {
+        setRule(deviceRepository.getRuleByDeviceId(deviceId))
+    }
+    private suspend fun loadUser() {
+        val user = localAuthRepository.getCredentials()
+        setUserEmail(user.email)
+        setUserId(user.id)
+    }
+    private suspend fun loadDevice(id: String) {
+        val device = deviceRepository.getDeviceById(id)
+        var localDevice = localDeviceRepository.getDevice(id)
+        if (localDevice == null) {
+            localDevice = device
+            localDeviceRepository.addDevice(localDevice)
+        } else {
+            // update local device
+            localDevice = device.copy(
+                isMuted = localDevice.isMuted,
+                lastReading = localDevice.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localDevice)
+        }
+        setDevice(localDevice)
+    }
+
+    fun loadData() {
+        try {
+            viewModelScope.launch {
+                loadUser()
                 if (uiState.deviceId != null) {
-                    val deviceResult = async { deviceRepository.getDeviceById(uiState.deviceId!!) }
-                    val localDeviceResult = async { localDeviceRepository.getDevice(uiState.deviceId!!) }
-                    val ruleResult = async { deviceRepository.getRuleByDeviceId(uiState.deviceId!!)}
-                    var localDevice = localDeviceResult.await()
-                    if (localDevice == null) {
-                        localDevice = deviceResult.await()
-                        localDeviceRepository.addDevice(localDevice)
-                    }
-                    setDevice(localDevice)
-                    setRule(ruleResult.await())
+                    loadDevice(uiState.deviceId!!)
+                    loadRule(uiState.deviceId!!)
                 }
-                val authResult = async { localAuthRepository.getCredentials() }
-                setUserEmail(authResult.await().email)
-                setUserId(authResult.await().id)
-            }
-            catch (ex: Exception) {
-                handleError(ex)
-                Log.e("Init", ex.message!!, ex)
+
             }
         }
-        setDeviceActions()
+        catch (ex: Exception) {
+            handleError(ex)
+            Log.e("Load Data", ex.message!!, ex)
+        }
     }
 
     private fun setUserId(id: String) {
@@ -107,7 +125,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     private fun setDeviceIsMuted(value: Boolean) {
         uiState = uiState.copy(device = uiState.device.copy(isMuted = value))
     }
-    // end region
+    // endregion
 
     private fun setDevice(device: Device) {
         uiState = uiState.copy(device = device)
@@ -172,7 +190,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     fun deleteDevice(onSuccess: () -> Unit = { }) {
         viewModelScope.launch {
             try {
-                deviceRepository.removeDevice(uiState.device.id, uiState.userEmail)
+                deviceRepository.removeDevice(uiState.device.id, uiState.userEmail, uiState.userId)
                 localDeviceRepository.removeDevice(uiState.device.id)
                 setSuccessMessage("Device removed")
                 onSuccess()
@@ -214,16 +232,15 @@ class DeviceDetailsScreenViewModel @Inject constructor(
                     state = uiState.device.state?.name,
                     unit = uiState.device.unit
                 )
-                val device: Device
-                if (uiState.screenState == ScreenState.Create) {
-                    device = deviceRepository.addDevice(deviceRequest, uiState.userEmail, uiState.userId)
-                }
-                else { // else can only be Edit
-                    device = deviceRepository.updateDevice(deviceRequest, uiState.userEmail)
+                val device: Device = if (uiState.screenState == ScreenState.Create) {
+                    deviceRepository.addDevice(deviceRequest, uiState.userEmail, uiState.userId)
+                } else { // else can only be Edit
+                    deviceRepository.updateDevice(deviceRequest, uiState.userEmail)
                 }
                 device.isMuted = uiState.device.isMuted
                 device.lastReading = uiState.device.lastReading
                 setDevice(device)
+                setDeviceId(device.id)
                 localDeviceRepository.addDevice(device)
                 val action = if (uiState.screenState == ScreenState.Create) "created" else "edited"
                 setSuccessMessage("Device ${action}.")
@@ -231,7 +248,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             }
             catch (ex: Exception) {
                 handleError(ex)
-                Log.e("Add Device", ex.message?: ex.toString(), ex)
+                Log.e("${uiState.screenState.name} Device", ex.message?: ex.toString(), ex)
             }
         }
     }

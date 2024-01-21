@@ -10,8 +10,8 @@ data class Rule(
     val actuatorId: String = "",
     val startExpression: RuleExpressionType = RuleExpressionType.Smaller,
     val stopExpression: RuleExpressionType = RuleExpressionType.Larger,
-    val startTriggerLevel: Double = 0.0,
-    val stopTriggerLevel: Double = 0.0,
+    val startTriggerLevel: String = "",
+    val stopTriggerLevel: String = "",
     val description: String = "",
 ) {
     companion object {
@@ -25,8 +25,8 @@ data class Rule(
                 actuatorId = rule["actuatorId"].toString(),
                 startExpression = rule["startExpression"].toString().toRuleExpressionType(),
                 stopExpression = rule["stopExpression"].toString().toRuleExpressionType(),
-                startTriggerLevel = rule["startTriggerLevel"].toString().toDouble(),
-                stopTriggerLevel = rule["stopTriggerLevel"].toString().toDouble(),
+                startTriggerLevel = rule["startTriggerLevel"].toString().toDouble().toInt().toString(),
+                stopTriggerLevel = rule["stopTriggerLevel"].toString().toDouble().toInt().toString(),
                 description = rule["text"].toString(),
             )
         }

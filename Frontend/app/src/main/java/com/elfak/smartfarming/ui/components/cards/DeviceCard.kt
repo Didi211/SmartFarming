@@ -43,6 +43,7 @@ import com.elfak.smartfarming.ui.theme.FontColor
 @Composable
 fun DeviceCard(
     device: Device,
+    showMenu: Boolean = true,
     menuItems: List<MenuItem> = emptyList(),
     onBellIconClick: (id: String) -> Unit = { },
     onCardClick: (id: String) -> Unit = { },
@@ -129,21 +130,23 @@ fun DeviceCard(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Box {
-                                ButtonWithIcon(
-                                    icon = Icons.Rounded.MoreVert,
-                                    backgroundColor = Color.Transparent,
-                                    iconColor = FontColor,
-                                    size = 35.dp
-                                ) {
-                                     isMenuExpanded = true
+                            if (showMenu) {
+                                Box {
+                                    ButtonWithIcon(
+                                        icon = Icons.Rounded.MoreVert,
+                                        backgroundColor = Color.Transparent,
+                                        iconColor = FontColor,
+                                        size = 35.dp
+                                    ) {
+                                        isMenuExpanded = true
+                                    }
+                                    Menu(
+                                        expanded = isMenuExpanded,
+                                        menuItems = menuItems,
+                                        onDismissRequest = { isMenuExpanded = false },
+                                        onIconClick = { isMenuExpanded = false }
+                                    )
                                 }
-                                Menu(
-                                    expanded = isMenuExpanded,
-                                    menuItems = menuItems,
-                                    onDismissRequest = { isMenuExpanded = false },
-                                    onIconClick = { isMenuExpanded = false }
-                                )
                             }
                             val notifyIcon = when (device.isMuted) {
                                 true -> Icons.Outlined.NotificationsOff

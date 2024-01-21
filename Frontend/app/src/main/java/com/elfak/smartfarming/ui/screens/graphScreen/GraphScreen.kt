@@ -2,7 +2,6 @@
 package com.elfak.smartfarming.ui.screens.graphScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,22 +22,31 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
 import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.ScreenState
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
 import com.elfak.smartfarming.ui.components.cards.DeviceCard
 import com.elfak.smartfarming.ui.components.cards.RuleCard
 import com.elfak.smartfarming.ui.components.containers.CardContainerWithTitle
+import com.elfak.smartfarming.ui.components.dialogs.CalendarDialog
+import com.elfak.smartfarming.ui.components.graphs.LineGraphChart
+import com.elfak.smartfarming.ui.components.inputs.GraphReadingInputField
 
 @Composable
 fun GraphScreen(
@@ -45,6 +55,20 @@ fun GraphScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    var showCalendarDialog by remember { mutableStateOf(false) }
+
+    rememberCoroutineScope()
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.loadData()
+            }
+            else -> {}
+        }
+    }
+
+
+
     ToastHandler(
         toastData = viewModel.uiState.toastData,
         clearErrorMessage = viewModel::clearErrorMessage,
@@ -54,23 +78,52 @@ fun GraphScreen(
         Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .fillMaxSize()
-            .verticalScroll(rememberScrollState(1000), true, null, true),
+            .verticalScroll(rememberScrollState(0)),
     ) {
         // graph
         Column(
             Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .border(2.dp, Color.Black),
-            verticalArrangement = Arrangement.Bottom
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            LineGraphChart(readings = viewModel.uiState.readings, period = viewModel.uiState.graphPeriod)
+            Spacer(modifier = Modifier.height(10.dp))
             // calendar
             Column(
                 Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .border(2.dp, Color.Red)
-            ) { }
+                    .wrapContentWidth()
+                    .height(50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GraphReadingInputField(
+                    period = viewModel.uiState.graphPeriod,
+                    startDate = viewModel.uiState.startDate,
+                    endDate = viewModel.uiState.endDate,
+                    isPeriodChosen = viewModel.uiState.isPeriodChosen
+                ) {
+                    showCalendarDialog = true
+                }
+                if (showCalendarDialog) {
+                    CalendarDialog(
+                        previousPeriod = viewModel.uiState.graphPeriod,
+                        previousStartDate = viewModel.uiState.startDate,
+                        previousEndDate = viewModel.uiState.endDate,
+                        onDismiss = {
+                            viewModel.setDates(isChosen = false)
+                            showCalendarDialog = false
+                        },
+                        onClick = { startDate, endDate, period ->
+                            viewModel.setDates(startDate, endDate, true)
+                            viewModel.setGraphPeriod(period)
+                            showCalendarDialog = false
+                            viewModel.refreshGraph()
+                        },
+                    )
+                }
+
+            }
         }
         Spacer(modifier = Modifier.height(15.dp))
         CardContainerWithTitle(title = stringResource(R.string.related_rule)) {
@@ -120,8 +173,8 @@ fun GraphScreen(
         CardContainerWithTitle(title = stringResource(R.string.related_devices)) {
             val sensorId = viewModel.uiState.sensor.id
             DeviceCard(
-                viewModel.uiState.sensor,
-                prepareMenuItems(
+                device = viewModel.uiState.sensor,
+                menuItems = prepareMenuItems(
                     sensorId,
                     onEdit = navigateToDeviceDetails,
                     onDelete = {
@@ -138,8 +191,8 @@ fun GraphScreen(
                 val actuatorId = viewModel.uiState.actuator!!.id
 
                 DeviceCard(
-                    viewModel.uiState.actuator!!,
-                    prepareMenuItems(
+                    device = viewModel.uiState.actuator!!,
+                    menuItems = prepareMenuItems(
                         actuatorId,
                         onEdit = navigateToDeviceDetails,
                         onDelete = {

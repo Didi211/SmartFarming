@@ -12,15 +12,17 @@ router.get('/:id', deviceController.getById);
 router.post('/', middlewares, deviceController.add);
 router.put('/:id', headerMiddleware.checkEmail ,deviceController.update);
 router.delete('/:id', headerMiddleware.checkEmail, deviceController.remove);
+router.get('/user/:userId/type/:type/available', deviceController.getAvailableDevices);
 
 // calling this from edge
 router.put('/actuator/:id/state', deviceController.updateState);
 
 // rules
+router.get('/rule/:id', ruleController.getById)
 router.get('/:id/rule', ruleController.getByDeviceId);
 router.get('/rule/user/:id', ruleController.getByUserId);
 router.post('/rule', headerMiddleware.checkEmail, ruleController.add)
-router.put('/:id/rule', headerMiddleware.checkEmail, ruleController.update);
-router.delete('/:id/rule',headerMiddleware.checkEmail, ruleController.remove);
+router.put('/rule/:id', headerMiddleware.checkEmail, ruleController.update);
+router.delete('/rule/:id',headerMiddleware.checkEmail, ruleController.remove);
 
 export default router

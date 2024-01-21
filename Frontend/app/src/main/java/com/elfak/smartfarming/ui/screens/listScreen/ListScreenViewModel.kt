@@ -26,9 +26,6 @@ class ListScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(ListScreenUiState())
         private set
 
-    init {
-        refreshList()
-    }
     private fun setSelectedTab(tab: Tabs) {
         uiState = uiState.copy(tabSelected = tab)
     }
@@ -101,7 +98,7 @@ class ListScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = localAuthRepository.getCredentials()
-                deviceRepository.removeDevice(id, user.email)
+                deviceRepository.removeDevice(id, user.email, user.id)
                 removeDevice(id)
                 setSuccessMessage("Device removed")
             }

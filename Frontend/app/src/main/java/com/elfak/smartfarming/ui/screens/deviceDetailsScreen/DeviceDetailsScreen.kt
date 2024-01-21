@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.domain.enums.DeviceState
@@ -46,6 +47,7 @@ import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.enums.toDeviceState
 import com.elfak.smartfarming.domain.enums.toDeviceStatus
 import com.elfak.smartfarming.domain.enums.toDeviceType
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
@@ -64,6 +66,14 @@ fun DeviceDetailsScreen(
     navigateBack: () -> Unit = { },
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.loadData()
+            }
+            else -> {}
+        }
+    }
     ToastHandler(
         toastData = viewModel.uiState.toastData,
         clearErrorMessage = viewModel::clearErrorMessage,
@@ -223,7 +233,7 @@ fun DeviceDetailsCreateTab(
                     width = 1.dp,
                     shape = RoundedCornerShape(30.dp)
                 ),
-            value = device.type?.name ?: "",
+            value = device.type.name,
             defaultText = "Choose device type:",
             items = listOf(DeviceTypes.Sensor.name, DeviceTypes.Actuator.name),
             onSelect = { deviceActions["setType"]?.invoke(it.toDeviceType()) }
@@ -290,7 +300,6 @@ fun DeviceDetailsCreateTab(
                         onSelect = { deviceActions["setState"]?.invoke(it.toDeviceState()) }
                     )
                 }
-                else -> {}
             }
         }
     }
@@ -364,7 +373,7 @@ fun DeviceDetailsViewTab(
                     width = 1.dp,
                     shape = RoundedCornerShape(30.dp)
                 ),
-            value = device.type?.name ?: "",
+            value = device.type.name,
             enabled = false
         )
         // status
@@ -483,7 +492,7 @@ fun DeviceDetailsEditTab(
                     width = 1.dp,
                     shape = RoundedCornerShape(30.dp)
                 ),
-            value = device.type.name ?: "",
+            value = device.type.name,
             enabled = false
         )
         // status

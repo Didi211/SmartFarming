@@ -12,3 +12,9 @@ fun String.toRuleExpressionType(): RuleExpressionType {
         else -> { throw Exception("Rule expression type not valid.")}
     }
 }
+fun RuleExpressionType.toSignString(): String {
+    return when (this) {
+        RuleExpressionType.Larger -> ">"
+        RuleExpressionType.Smaller -> "<"
+    }
+}

@@ -8,6 +8,8 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.Lifecycle
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
 import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.components.containers.GraphCardContainer
 import com.elfak.smartfarming.ui.components.containers.PullRefreshContainer
@@ -18,6 +20,15 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel,
     navigateToGraphReadings: (sensorId: String) -> Unit,
 ) {
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.getSensors()
+            }
+            else -> {}
+        }
+    }
+
     val refreshState = rememberPullRefreshState(
         refreshing = viewModel.uiState.isRefreshing,
         onRefresh = { viewModel.getSensors() }
@@ -43,6 +54,7 @@ fun HomeScreen(
             false -> {
                 GraphCardContainer(
                     sensors = viewModel.uiState.sensors,
+                    readings = viewModel.uiState.readings,
                     refreshState = refreshState,
                     isRefreshing = viewModel.uiState.isRefreshing,
                     onCardClick = navigateToGraphReadings

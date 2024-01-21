@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config({path: 'sensor-data.env'});
+
 import { InfluxDB } from "@influxdata/influxdb-client";
 
 var isConfigured = false;

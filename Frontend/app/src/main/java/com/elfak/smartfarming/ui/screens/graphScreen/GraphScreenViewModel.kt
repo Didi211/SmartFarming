@@ -8,15 +8,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.GraphReading
 import com.elfak.smartfarming.data.models.Rule
+import com.elfak.smartfarming.data.models.api.GraphDataRequest
 import com.elfak.smartfarming.data.repositories.interfaces.IDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.domain.enums.DeviceTypes
+import com.elfak.smartfarming.domain.enums.GraphPeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,46 +33,140 @@ class GraphScreenViewModel @Inject constructor(
 ): ViewModel() {
     var uiState by mutableStateOf(GraphUiState())
         private set
+    init {
+        val sensorId: String = savedStateHandle["sensorId"]!!
+        uiState = uiState.copy(sensorId = sensorId)
+    }
+
 
     private fun setUserEmail(email: String) {
         uiState = uiState.copy(userEmail = email)
     }
 
-    init {
-        val sensorId: String = savedStateHandle["sensorId"]!!
-        uiState = uiState.copy(sensorId = sensorId)
-        // fetch devices
+
+    fun loadData() {
+        try {
+            viewModelScope.launch {
+                loadUser()
+                if (uiState.sensorId.isBlank()) {
+                    throw Exception("Cannot load data. Sensor ID is not found.")
+                }
+                loadSensor(uiState.sensorId)
+                loadSensorReadings(uiState.sensorId)
+                loadRule(uiState.sensorId)
+                if (uiState.rule != null) {
+                    loadActuator(uiState.rule!!.actuatorId)
+                }
+            }
+        }
+        catch (ex: Exception) {
+            handleError(ex)
+            Log.e("Load Data", ex.message!!, ex)
+        }
+    }
+    private suspend fun loadRule(sensorId: String) {
+        val rule = deviceRepository.getRuleByDeviceId(sensorId)
+        setRule(rule)
+    }
+    private suspend fun loadSensor(id: String) {
+        val sensor = deviceRepository.getDeviceById(id)
+        var localSensor = localDeviceRepository.getDevice(id)
+
+        if (localSensor == null) {
+            localSensor = sensor
+            localDeviceRepository.addDevice(localSensor)
+        } else {
+            // update local device
+            localSensor = sensor.copy(
+                isMuted = localSensor.isMuted,
+                lastReading = localSensor.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localSensor)
+        }
+        setSensor(localSensor)
+
+
+    }
+
+    fun refreshGraph() {
         viewModelScope.launch {
             try {
-                val sensorResult = async { deviceRepository.getDeviceById(sensorId) }
-                val ruleResult = async { deviceRepository.getRuleByDeviceId(sensorId)}
-                val authResult = async { localAuthRepository.getCredentials().email }
-                val results = awaitAll(sensorResult,ruleResult, authResult)
-                var sensor = localDeviceRepository.getDevice((results[0] as Device).id)
-                if (sensor == null) {
-                    sensor = results[0] as Device
-                    localDeviceRepository.addDevice(sensor)
-                }
-                setSensor(sensor)
-                setRule(results[1] as Rule?)
-                setUserEmail(results[2] as String)
-
-                if (uiState.rule != null) {
-                    val actuator = deviceRepository.getDeviceById(uiState.rule!!.actuatorId)
-                    var localActuator = localDeviceRepository.getDevice(actuator.id)
-                    if (localActuator == null) {
-                        localDeviceRepository.addDevice(actuator)
-                        localActuator = actuator
-                    }
-                    setActuator(localActuator)
-                }
-                // fetch graph readings
+                loadSensorReadings(uiState.sensorId)
             }
             catch (ex: Exception) {
                 handleError(ex)
-                Log.e("Init", ex.message!!, ex)
+                Log.e("Readings-Get", ex.message!!, ex)
+
             }
         }
+    }
+    private suspend fun loadSensorReadings(sensorId: String) {
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val startDate: String
+        val endDate: String
+        when(uiState.graphPeriod) {
+            GraphPeriods.Hours -> {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.HOURS).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.HOURS).format(dateTimeFormatter)
+            }
+            GraphPeriods.Months -> {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.DAYS).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.DAYS).format(dateTimeFormatter)
+            }
+            GraphPeriods.Years ->  {
+                startDate = uiState.startDate.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).format(dateTimeFormatter)
+                endDate = uiState.endDate.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).format(dateTimeFormatter)
+            }
+        }
+        val readings = deviceRepository.getGraphData(
+            sensorId = sensorId,
+            userId = uiState.userId,
+            period = uiState.graphPeriod,
+            graphDataRequest = GraphDataRequest(
+                startDate = startDate,
+                endDate = endDate
+        ))
+        if (readings.isEmpty()) {
+            setErrorMessage("No data found for required period.")
+        }
+        setGraphReadings(readings)
+    }
+    private fun setGraphReadings(readings: List<GraphReading>) {
+        uiState = uiState.copy(readings = readings)
+    }
+
+    fun setGraphPeriod(period: GraphPeriods) {
+        uiState = uiState.copy(graphPeriod = period)
+    }
+    fun setDates(startDate: LocalDateTime = LocalDateTime.now(), endDate: LocalDateTime = LocalDateTime.now(), isChosen: Boolean) {
+        uiState = uiState.copy(startDate = startDate, endDate = endDate, isPeriodChosen = isChosen)
+    }
+
+    private suspend fun loadUser() {
+        val user = localAuthRepository.getCredentials()
+        setUserEmail(user.email)
+        setUserId(user.id)
+    }
+
+    private fun setUserId(id: String) {
+        uiState = uiState.copy(userId = id)
+    }
+
+    private suspend fun loadActuator(id: String) {
+        val actuator = deviceRepository.getDeviceById(id)
+        var localActuator = localDeviceRepository.getDevice(actuator.id)
+        if (localActuator == null) {
+            localDeviceRepository.addDevice(actuator)
+            localActuator = actuator
+        } else {
+            // update local device
+            localActuator = actuator.copy(
+                isMuted = localActuator.isMuted,
+                lastReading = localActuator.lastReading
+            )
+            localDeviceRepository.updateDeviceLocal(localActuator)
+        }
+        setActuator(localActuator)
     }
 
     private fun setActuator(actuator: Device?) {
@@ -109,7 +208,7 @@ class GraphScreenViewModel @Inject constructor(
     fun deleteDevice(id: String, type: DeviceTypes, onSuccess: () -> Unit = { }) {
         viewModelScope.launch {
             try {
-                deviceRepository.removeDevice(id, uiState.userEmail)
+                deviceRepository.removeDevice(id, uiState.userEmail, uiState.userId)
                 if (type == DeviceTypes.Sensor) {
                     setSuccessMessage("Device removed")
                     onSuccess()
