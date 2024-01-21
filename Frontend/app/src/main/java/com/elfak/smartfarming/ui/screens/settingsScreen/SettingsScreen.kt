@@ -33,7 +33,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     LaunchedEffect(true) {
         val isRunning = viewModel.isServiceRunning(context)
-        viewModel.toggleService(isRunning)
+        viewModel.setEnabledService(isRunning)
     }
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -44,7 +44,7 @@ fun SettingsScreen(
                 description = stringResource(R.string.use_service_description),
                 switchState = viewModel.uiState.isServiceEnabled,
                 onSwitchToggle = {
-                    viewModel.toggleService(it)
+                    viewModel.toggleService(it, context)
                 }
             )
         }

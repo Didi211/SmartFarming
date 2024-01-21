@@ -10,10 +10,10 @@ data class RuleDetailsUiState(
     val toastData: ToastData = ToastData(),
     val rule: Rule = Rule(),
     val ruleId: String? = null,
-    val sensor: Device = Device(),
-    val actuator: Device = Device(),
+    val sensor: Device = Device(lastReadingTime = ""),
+    val actuator: Device = Device(lastReadingTime = ""),
     val ruleActions: Map<String, (Any?) -> Unit> = emptyMap(),
     val selectSensors: List<Device> = emptyList(),
     val selectActuators: List<Device> = emptyList(),
 
-)
+    )

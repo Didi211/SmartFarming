@@ -34,4 +34,5 @@
     <string name="use_service_description">Background service enables push notifications and real time updates for sensor readings.</string>
     <string name="real_time_sensor_updates_title">Real time sensor updates</string>
     <string name="real_time_sensor_updates_description">Track real time updates from sensors. Without this setting, only historical data will be available.</string>
+    <string name="service_description">Mqtt Listener Service for allowing real time data and notification alerts for Smart Farming App</string>
 </resources>

@@ -14,7 +14,7 @@ data class GraphUiState(
     val userId: String = "",
     val toastData: ToastData = ToastData(),
     val rule: Rule? = null,
-    val sensor: Device = Device(),
+    val sensor: Device = Device(lastReadingTime = ""),
     val actuator: Device? = null,
     val readings: List<GraphReading> = emptyList(),
     val graphPeriod: GraphPeriods = GraphPeriods.Hours,

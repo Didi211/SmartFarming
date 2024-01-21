@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.formatShortDate
 import com.elfak.smartfarming.domain.enums.DeviceState
 import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.domain.enums.DeviceTypes
@@ -275,7 +276,7 @@ fun DeviceDetailsCreateTab(
                         )
                         // last reading - disabled
                         BasicInputField(
-                            text = device.lastReading.toString(),
+                            text = "${device.lastReading}",
                             label = stringResource(id = R.string.device_last_reading) + ":",
                             enabled = false
                         )
@@ -402,7 +403,7 @@ fun DeviceDetailsViewTab(
                     )
                     // last reading - disabled
                     BasicInputField(
-                        text = device.lastReading.toString(),
+                        text = "${device.lastReading} at [${device.lastReadingTime.formatShortDate()}]",
                         label = stringResource(id = R.string.device_last_reading) + ":",
                         enabled = false
                     )
@@ -528,7 +529,7 @@ fun DeviceDetailsEditTab(
                     )
                     // last reading - disabled
                     BasicInputField(
-                        text = device.lastReading.toString(),
+                        text = "${device.lastReading} at [${device.lastReadingTime.formatShortDate()}]",
                         label = stringResource(id = R.string.device_last_reading) + ":",
                         enabled = false
                     )

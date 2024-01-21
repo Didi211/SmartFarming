@@ -13,6 +13,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +28,7 @@ class LocalDeviceRepository @Inject constructor(
     private val dataStore = context.deviceDataStore
 
     override suspend fun setIsMuted(id: String, isMuted: Boolean) {
-        var device = getDevice(id)
+        val device = getDevice(id)
             ?: throw Exception("Device with ID [${id}] not found in local storage.")
         device.isMuted = isMuted
         updateDeviceLocal(device)
@@ -53,6 +55,7 @@ class LocalDeviceRepository @Inject constructor(
             val localDevice = getDevice(it.id)
             it.isMuted = localDevice!!.isMuted
             it.lastReading = localDevice.lastReading
+            it.lastReadingTime = localDevice.lastReadingTime
             it
         }
     }
@@ -74,12 +77,13 @@ class LocalDeviceRepository @Inject constructor(
     }
 
     override suspend fun setRealTimeData(id: String, lastReading: Double) {
-        var device = getDevice(id)
+        val device = getDevice(id)
             ?: throw Exception("Device with ID [${id}] not found in local storage.")
         if (device.type != DeviceTypes.Sensor) {
             throw Exception("Device ${device.name} is not ${DeviceTypes.Sensor}. Can't set ${Device::lastReading.name} value")
         }
         device.lastReading = lastReading
+        device.lastReadingTime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).toString()
         updateDeviceLocal(device)
     }
 

@@ -124,7 +124,7 @@ class ListScreenViewModel @Inject constructor(
     }
 
     private fun toggleIsMutedDevice(id: String): Device {
-        var updatedDevice = Device()
+        var updatedDevice = Device(lastReadingTime = "")
         val devices = uiState.devices.map {
             if (it.id == id) {
                 updatedDevice = it.copy(isMuted = !it.isMuted)
