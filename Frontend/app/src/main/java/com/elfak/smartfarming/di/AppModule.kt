@@ -11,6 +11,8 @@ import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.INotificationRepository
 import com.elfak.smartfarming.data.repositories.interfaces.IRemoteAuthRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
+import com.elfak.smartfarming.data.repositories.interfaces.SettingsRepository
 import com.elfak.smartfarming.domain.retrofit.RetrofitClient
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.AuthApiWrapper
 import com.elfak.smartfarming.domain.retrofit.apiWrappers.DeviceApiWrapper
@@ -18,6 +20,7 @@ import com.elfak.smartfarming.domain.retrofit.apiWrappers.NotificationApiWrapper
 import com.elfak.smartfarming.domain.retrofit.apis.AuthApi
 import com.elfak.smartfarming.domain.retrofit.apis.DeviceApi
 import com.elfak.smartfarming.domain.retrofit.apis.NotificationApi
+import com.elfak.smartfarming.domain.utils.ServiceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +32,19 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Provides
+    @Singleton
+    fun provideServiceManager(
+        @ApplicationContext context: Context
+
+    ): ServiceManager = ServiceManager(context)
+
+    @Singleton
+    @Provides
+    fun provideSettingsRepository(
+        @ApplicationContext context: Context
+    ): ISettingsRepository = SettingsRepository(context)
+
     @Singleton
     @Provides
     fun provideLocalAuthRepository(

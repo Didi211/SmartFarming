@@ -16,24 +16,34 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
+import com.elfak.smartfarming.ui.components.ComposableLifecycle
+import com.elfak.smartfarming.ui.components.ToastHandler
 import com.elfak.smartfarming.ui.theme.Placeholder
 
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsScreenViewModel
+    viewModel: SettingsScreenViewModel,
 ) {
-    val context = LocalContext.current
-    LaunchedEffect(true) {
-        val isRunning = viewModel.isServiceRunning(context)
-        viewModel.setEnabledService(isRunning)
+    ToastHandler(
+        toastData = viewModel.uiState.toastData,
+        clearErrorMessage = viewModel::clearErrorMessage,
+        clearSuccessMessage = viewModel::clearSuccessMessage
+    )
+    ComposableLifecycle { _, event ->
+        when(event) {
+            Lifecycle.Event.ON_CREATE -> {
+                viewModel.prepareData()
+            }
+            else -> {}
+        }
     }
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -44,7 +54,7 @@ fun SettingsScreen(
                 description = stringResource(R.string.use_service_description),
                 switchState = viewModel.uiState.isServiceEnabled,
                 onSwitchToggle = {
-                    viewModel.toggleService(it, context)
+                    viewModel.toggleService(it)
                 }
             )
         }

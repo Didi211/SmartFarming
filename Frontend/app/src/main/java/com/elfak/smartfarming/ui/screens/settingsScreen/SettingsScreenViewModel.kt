@@ -1,33 +1,34 @@
 package com.elfak.smartfarming.ui.screens.settingsScreen
 
-import android.app.ActivityManager
-import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
-import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.elfak.smartfarming.domain.services.MqttListenerService
+import androidx.lifecycle.viewModelScope
+import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
+import com.elfak.smartfarming.domain.utils.ServiceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsScreenViewModel @Inject constructor(): ViewModel() {
+class SettingsScreenViewModel @Inject constructor(
+    private val settingsRepository: ISettingsRepository,
+    private val serviceManager: ServiceManager
+): ViewModel() {
 
     var uiState by mutableStateOf(SettingUiState())
         private set
 
     fun toggleNotificationSound(value: Boolean) {
         uiState = uiState.copy(isNotificationEnabled = value)
+        viewModelScope.launch {
+            settingsRepository.setNotificationSoundSetting(value)
+        }
     }
 
-    fun toggleService(enabled: Boolean, context: Context) {
-        val command = if (enabled) MqttListenerService.ACTION_START else MqttListenerService.ACTION_STOP
-        val intent = Intent(context, MqttListenerService::class.java).apply {
-            action = command
-        }
-        context.startForegroundService(intent)
+    fun toggleService(enabled: Boolean) {
+        if (enabled) serviceManager.startService() else serviceManager.stopService()
         setEnabledService(enabled)
         val state = if (enabled) "started" else "stopped"
         setSuccessMessage("Service $state.")
@@ -35,13 +36,9 @@ class SettingsScreenViewModel @Inject constructor(): ViewModel() {
 
     fun toggleRealTimeUpdate(value: Boolean) {
         uiState = uiState.copy(isRealTimeUpdatesEnabled = value)
-    }
-
-    @Suppress("DEPRECATION")
-    fun isServiceRunning(context: Context): Boolean {
-        return (context.getSystemService(ACTIVITY_SERVICE) as ActivityManager)
-            .getRunningServices(Integer.MAX_VALUE)
-            .any { it.service.className == MqttListenerService::class.java.name }
+        viewModelScope.launch {
+            settingsRepository.setRealTimeDataSetting(value)
+        }
     }
 
     // region TOAST HANDLER
@@ -59,7 +56,7 @@ class SettingsScreenViewModel @Inject constructor(): ViewModel() {
     fun setErrorMessage(message: String) {
         uiState = uiState.copy(toastData = uiState.toastData.copy(errorMessage = message, hasErrors = true))
     }
-    fun setSuccessMessage(message: String) {
+    private fun setSuccessMessage(message: String) {
         uiState = uiState.copy(toastData = uiState.toastData.copy(successMessage = message, hasSuccessMessage = true))
     }
     fun clearSuccessMessage() {
@@ -67,9 +64,20 @@ class SettingsScreenViewModel @Inject constructor(): ViewModel() {
     }
     // endregion
 
-    fun setEnabledService(enabled: Boolean) {
+    private fun setEnabledService(enabled: Boolean) {
         uiState = uiState.copy(isServiceEnabled = enabled)
     }
 
+    fun prepareData() {
+        val isRunning = serviceManager.isServiceRunning()
+        setEnabledService(isRunning)
+        viewModelScope.launch {
+            val realTimeSettingEnabled = settingsRepository.getRealTimeSetting()
+            val notificationSoundSettingEnabled = settingsRepository.getSoundSetting()
+            toggleNotificationSound(notificationSoundSettingEnabled?: false)
+            toggleRealTimeUpdate(realTimeSettingEnabled?: false)
 
+        }
+
+    }
 }
