@@ -42,6 +42,8 @@ import com.elfak.smartfarming.ui.components.menu.Menu
 import com.elfak.smartfarming.ui.theme.ErrorColor
 import com.elfak.smartfarming.ui.theme.FontColor
 import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DeviceCard(
@@ -109,6 +111,7 @@ fun DeviceCard(
                                 color = FontColor
                             )
                             Text(
+                                modifier = Modifier.fillMaxWidth(),
                                 text = "Last reading: ${device.lastReading} [${device.lastReadingTime.formatShortDate()}]",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
@@ -122,7 +125,6 @@ fun DeviceCard(
                                 fontWeight = FontWeight.Bold,
                                 color = FontColor
                             )
-
                         }
                     }
 
@@ -167,6 +169,21 @@ fun DeviceCard(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun adsa() { 
+    SmartFarmingTheme {
+        Column(Modifier.padding(10.dp)) {
+            DeviceCard(
+                device = Device(
+                    lastReading = 3.56,
+                    lastReadingTime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).toString()
+                )
+            )
         }
     }
 }

@@ -11,7 +11,7 @@ data class DeviceDetailsUiState(
     val userEmail: String = "",
     val userId: String = "",
     val rule: Rule? = null,
-    val device: Device = Device(lastReadingTime = ""),
+    val device: Device = Device(),
     val deviceId: String? = null,
     val deviceActions: Map<String, (Any?) -> Unit> = emptyMap()
 )

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
 import com.elfak.smartfarming.domain.utils.ServiceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -72,8 +73,8 @@ class SettingsScreenViewModel @Inject constructor(
         val isRunning = serviceManager.isServiceRunning()
         setEnabledService(isRunning)
         viewModelScope.launch {
-            val realTimeSettingEnabled = settingsRepository.getRealTimeSetting()
-            val notificationSoundSettingEnabled = settingsRepository.getSoundSetting()
+            val realTimeSettingEnabled = settingsRepository.getRealTimeSetting().firstOrNull()
+            val notificationSoundSettingEnabled = settingsRepository.getSoundSetting().firstOrNull()
             toggleNotificationSound(notificationSoundSettingEnabled?: false)
             toggleRealTimeUpdate(realTimeSettingEnabled?: false)
 

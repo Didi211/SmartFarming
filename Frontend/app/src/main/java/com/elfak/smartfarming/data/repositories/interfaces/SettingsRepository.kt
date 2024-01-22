@@ -6,7 +6,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,19 +44,23 @@ class SettingsRepository @Inject constructor(
         }
     }
 
-    override suspend fun getSoundSetting(): Boolean? {
+    override suspend fun getSoundSetting(): Flow<Boolean?> = callbackFlow {
         val key = booleanPreferencesKey(NOTIFICATION_SOUND_SETTING)
         val value = dataStore.data.map { preferences ->
             preferences[key]
         }
-        return value.firstOrNull()
+        value.collect {
+            trySend(it)
+        }
     }
 
-    override suspend fun getRealTimeSetting(): Boolean? {
+    override suspend fun getRealTimeSetting(): Flow<Boolean?> = callbackFlow {
         val key = booleanPreferencesKey(REAL_TIME_DATA_SETTING)
         val value = dataStore.data.map { preferences ->
             preferences[key]
         }
-        return value.firstOrNull()
+        value.collect {
+            trySend(it)
+        }
     }
 }

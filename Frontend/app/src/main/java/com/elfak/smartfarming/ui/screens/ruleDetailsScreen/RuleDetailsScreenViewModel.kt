@@ -92,11 +92,11 @@ class RuleDetailsScreenViewModel @Inject constructor(
         when (type) {
             DeviceTypes.Sensor -> {
                 val sensor = uiState.selectSensors.find { it.name == name }
-                setSensor(sensor?: Device(lastReadingTime = ""))
+                setSensor(sensor?: Device())
             }
             DeviceTypes.Actuator -> {
                 val actuator = uiState.selectActuators.find { it.name == name }
-                setActuator(actuator?: Device(lastReadingTime = ""))
+                setActuator(actuator?: Device())
             }
         }
 

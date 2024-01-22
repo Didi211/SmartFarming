@@ -62,7 +62,8 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             // update local device
             localDevice = device.copy(
                 isMuted = localDevice.isMuted,
-                lastReading = localDevice.lastReading
+                lastReading = localDevice.lastReading,
+                lastReadingTime = localDevice.lastReadingTime
             )
             localDeviceRepository.updateDeviceLocal(localDevice)
         }
@@ -119,12 +120,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     private fun setDeviceState(state: DeviceState?) {
         uiState = uiState.copy(device = uiState.device.copy(state = state))
     }
-    private fun setDeviceLastReading(reading: Double) {
-        uiState = uiState.copy(device = uiState.device.copy(lastReading = reading))
-    }
-    private fun setDeviceIsMuted(value: Boolean) {
-        uiState = uiState.copy(device = uiState.device.copy(isMuted = value))
-    }
+
     // endregion
 
     private fun setDevice(device: Device) {
@@ -239,6 +235,7 @@ class DeviceDetailsScreenViewModel @Inject constructor(
                 }
                 device.isMuted = uiState.device.isMuted
                 device.lastReading = uiState.device.lastReading
+                device.lastReadingTime = uiState.device.lastReadingTime
                 setDevice(device)
                 setDeviceId(device.id)
                 localDeviceRepository.addDevice(device)

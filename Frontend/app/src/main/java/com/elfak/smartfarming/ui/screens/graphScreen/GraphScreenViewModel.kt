@@ -79,7 +79,8 @@ class GraphScreenViewModel @Inject constructor(
             // update local device
             localSensor = sensor.copy(
                 isMuted = localSensor.isMuted,
-                lastReading = localSensor.lastReading
+                lastReading = localSensor.lastReading,
+                lastReadingTime = localSensor.lastReadingTime
             )
             localDeviceRepository.updateDeviceLocal(localSensor)
         }
@@ -162,7 +163,6 @@ class GraphScreenViewModel @Inject constructor(
             // update local device
             localActuator = actuator.copy(
                 isMuted = localActuator.isMuted,
-                lastReading = localActuator.lastReading
             )
             localDeviceRepository.updateDeviceLocal(localActuator)
         }

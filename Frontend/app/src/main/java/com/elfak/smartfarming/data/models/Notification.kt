@@ -51,7 +51,7 @@ fun String.formatDate(): String {
 fun String.formatShortDate(): String {
     if (this.isBlank()) return ""
     val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
-    val outputFormatter = DateTimeFormatter.ofPattern("HH:mm-dd/MM/yy")
+    val outputFormatter = DateTimeFormatter.ofPattern("HH:mm-dd/MM")
     val dateTime = LocalDateTime.parse(this, inputFormatter)
     return dateTime.format(outputFormatter)
 }
