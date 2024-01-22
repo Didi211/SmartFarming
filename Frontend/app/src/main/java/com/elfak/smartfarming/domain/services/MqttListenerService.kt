@@ -9,6 +9,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,19 +18,25 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import com.elfak.smartfarming.MainActivity
 import com.elfak.smartfarming.R
+import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
+import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
 import com.elfak.smartfarming.domain.enums.NavigationConstants
 import dagger.hilt.android.AndroidEntryPoint
+import info.mqtt.android.service.MqttAndroidClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MqttListenerService @Inject constructor(): Service() {
+class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended {
 
     companion object {
         const val ACTION_START = "ACTION_START"
@@ -52,6 +59,12 @@ class MqttListenerService @Inject constructor(): Service() {
     // region DI
     @Inject
     lateinit var localDeviceRepository: ILocalDeviceRepository
+    @Inject
+    lateinit var settingsRepository: ISettingsRepository
+    @Inject
+    lateinit var mqttClient: MqttAndroidClient
+    @Inject
+    lateinit var localAuthRepository: ILocalAuthRepository
     //endregion
 
     //region service functions
@@ -59,11 +72,15 @@ class MqttListenerService @Inject constructor(): Service() {
         super.onCreate()
         createSettingsChannel()
         createAlertChannel()
+        setSettings()
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+        mqttClient.disconnect()
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceScope.launch {
@@ -80,9 +97,8 @@ class MqttListenerService @Inject constructor(): Service() {
         serviceScope.launch {
             serviceSetup()
         }
-        val notification = createSettingsNotification("Smart Farming Service started working.")
+        val notification = createSettingsNotification("Service started working.")
         startForeground(SERVICE_WORKING_NOTIFICATION_ID, notification)
-//        updateNotification(notification, SERVICE_WORKING_NOTIFICATION_ID)
     }
 
 
@@ -92,7 +108,17 @@ class MqttListenerService @Inject constructor(): Service() {
     }
 
     private suspend fun serviceSetup() {
+        val user = localAuthRepository.getCredentials()
         // setup mqtt
+        mqttClient.setCallback(this)
+        mqttClient.connect()
+//        if (serviceState.isNotificationSoundEnabled) {
+//            mqttClient.subscribe("alerts/${user.mqttToken}/+", 0)
+//        }
+//        if (serviceState.isListeningRTData) {
+//            val topic = ""
+//        }
+
     }
     // endregion
 
@@ -103,6 +129,15 @@ class MqttListenerService @Inject constructor(): Service() {
     private fun setIsListeningRTData(isListening: Boolean) {
         serviceState = serviceState.copy(isListeningRTData = isListening)
     }
+    private fun setIsNotificationSoundEnabled(enabled: Boolean) {
+        serviceState = serviceState.copy(isNotificationSoundEnabled = enabled)
+    }
+    private fun setSettings() {
+        serviceScope.launch {
+            setIsListeningRTData(settingsRepository.getRealTimeSetting()?: false)
+            setIsNotificationSoundEnabled(settingsRepository.getSoundSetting()?: false)
+        }
+    }
     // endregion
 
     // region notifications
@@ -112,7 +147,7 @@ class MqttListenerService @Inject constructor(): Service() {
         return notification.build()
     }
     private fun createSettingsNotification(contentText: String): Notification {
-        val notification = createNotification(SERVICE_WORKING_CHANNEL_ID, "SmartFarming background Service", contentText)
+        val notification = createNotification(SERVICE_WORKING_CHANNEL_ID, "SmartFarming background service", contentText)
             .setContentIntent(createSettingsPendingIntent())
         return notification.build()
     }
@@ -143,7 +178,7 @@ class MqttListenerService @Inject constructor(): Service() {
         val name = "Smart Farming Alert notification channel"
         val description = "Channel for emitting alert notifications about devices' working status."
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val mChannel = NotificationChannel(SERVICE_WORKING_CHANNEL_ID, name, importance)
+        val mChannel = NotificationChannel(ALERT_CHANNEL_ID, name, importance)
         mChannel.description = description
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
@@ -166,5 +201,26 @@ class MqttListenerService @Inject constructor(): Service() {
         }
         return resultPendingIntent!!
     }
+    // endregion
+
+    // region Mqtt methods
+    override fun connectionLost(cause: Throwable?) {
+
+    }
+
+    override fun messageArrived(topic: String?, message: MqttMessage?) {
+        Log.d("MQTT", message.toString())
+
+    }
+
+    override fun deliveryComplete(token: IMqttDeliveryToken?) {
+
+    }
+
+    override fun connectComplete(reconnect: Boolean, serverURI: String?) {
+        println("MQTT Connection complete")
+        mqttClient.subscribe("#", 0)
+    }
+
     // endregion
 }

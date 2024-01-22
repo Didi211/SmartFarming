@@ -1,6 +1,7 @@
 package com.elfak.smartfarming.di
 
 import android.content.Context
+import com.elfak.smartfarming.BuildConfig
 import com.elfak.smartfarming.data.repositories.DeviceRepository
 import com.elfak.smartfarming.data.repositories.LocalAuthRepository
 import com.elfak.smartfarming.data.repositories.LocalDeviceRepository
@@ -26,12 +27,20 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import info.mqtt.android.service.MqttAndroidClient
+import org.eclipse.paho.client.mqttv3.MqttClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Provides
+    @Singleton
+    fun provideMqttClient(
+        @ApplicationContext context: Context
+    ): MqttAndroidClient = MqttAndroidClient(context, BuildConfig.MQTT_URL, MqttClient.generateClientId())
+
     @Provides
     @Singleton
     fun provideServiceManager(

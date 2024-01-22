@@ -35,6 +35,7 @@ android {
 
         debug {
             buildConfigField("String", "API_URL", "\"http://192.168.1.10:4001/\"")
+            buildConfigField("String", "MQTT_URL", "\"tcp://192.168.1.10:1883\"")
         }
     }
     compileOptions {
@@ -59,6 +60,11 @@ android {
 }
 
 dependencies {
+    // Paho MQTT
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("com.github.hannesa2:paho.mqtt.android:4.2")
+
+
     // Y Charts
     implementation("co.yml:ycharts:2.1.0")
     // Lifecycle
