@@ -26,6 +26,7 @@ import com.elfak.smartfarming.data.models.mqtt.RealTimeData
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
+import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.NavigationConstants
 import com.elfak.smartfarming.domain.enums.toDeviceStatus
@@ -36,7 +37,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
@@ -137,6 +137,7 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
     // region state methods
     private fun setIsSubscribedToAlerts(isSubscribed: Boolean) {
         serviceState = serviceState.copy(isSubscribedToAlerts = isSubscribed)
+
     }
     private fun setIsSubscribedToRtData(isSubscribed: Boolean) {
         serviceState = serviceState.copy(isSubscribedToRtData = isSubscribed)
@@ -172,15 +173,6 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
             soundNotifFlow.collect {
                 setIsNotificationSoundEnabled(it?: false)
                 Log.d("MQTT Service - Settings", "Sound Notification Setting changed to $it")
-                if (!mqttClient.isConnected)
-                    return@collect
-                if (it != null) {
-                    if (serviceState.isSubscribedToAlerts != it) {
-                        val topic = "alerts/${serviceState.user.mqttToken}"
-                        if (it) subscribeToTopic(topic) else unsubscribeFromTopic(topic)
-                        setIsSubscribedToAlerts(it)
-                    }
-                }
             }
         }
     }
@@ -275,14 +267,20 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
                    localDeviceRepository.addDevice(newDevice)
                     device = newDevice
                 }
-                if (!device.isMuted) {
-                    if (device.status != alert.metadata.status.toDeviceStatus()) {
-                        val notification = createAlertNotification(title = "Device status alert", contentText = alert.message)
-                        updateNotification(notification, ALERT_CHANNEL_NOTIFICATION_ID)
-                    }
+                if (shouldNotifyUser(device, alert.metadata.status.toDeviceStatus())) {
+                    val notification = createAlertNotification(title = "Device status alert", contentText = alert.message)
+                    updateNotification(notification, ALERT_CHANNEL_NOTIFICATION_ID)
                 }
+                device.status = alert.metadata.status.toDeviceStatus()
+                localDeviceRepository.updateDeviceLocal(device)
             }
         }
+    }
+
+    private fun shouldNotifyUser(device: Device, alertStatus: DeviceStatus): Boolean {
+        return serviceState.isNotificationSoundEnabled
+                && !device.isMuted
+                && alertStatus != device.status
     }
 
     private fun handleRealTimeDataMessages(message: String?) {
@@ -309,7 +307,7 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
     override fun connectComplete(reconnect: Boolean, serverURI: String?) {
         Log.d("MQTT Service - Connection", "Connected to MQTT")
         val user = runBlocking {localAuthRepository.getCredentials() }
-        if (serviceState.isNotificationSoundEnabled && !serviceState.isSubscribedToAlerts) {
+        if (!serviceState.isSubscribedToAlerts) {
             subscribeToTopic("alerts/${user.mqttToken}")
             setIsSubscribedToAlerts(true)
         }
@@ -328,6 +326,5 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
         Log.d("MQTT Service - Unsubscription", "Unsubscribed from topic [${topic}]")
 
     }
-
     // endregion
 }

@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,7 +34,10 @@ class DeviceDetailsScreenViewModel @Inject constructor(
 
     var uiState by mutableStateOf(DeviceDetailsUiState())
         private set
-
+    private val _deviceLiveData: MutableLiveData<Device?> by lazy {
+        MutableLiveData<Device?>(Device())
+    }
+    val deviceLiveData: LiveData<Device?> = _deviceLiveData
 
     init {
         val state: String = savedStateHandle["screenState"]!!
@@ -67,7 +72,11 @@ class DeviceDetailsScreenViewModel @Inject constructor(
             )
             localDeviceRepository.updateDeviceLocal(localDevice)
         }
-        setDevice(localDevice)
+        viewModelScope.launch {
+            localDeviceRepository.getDeviceAsFlow(id).collect {
+                setDevice(it)
+            }
+        }
     }
 
     fun loadData() {
@@ -78,7 +87,6 @@ class DeviceDetailsScreenViewModel @Inject constructor(
                     loadDevice(uiState.deviceId!!)
                     loadRule(uiState.deviceId!!)
                 }
-
             }
         }
         catch (ex: Exception) {
@@ -106,25 +114,31 @@ class DeviceDetailsScreenViewModel @Inject constructor(
 
     // region Device Actions
     private fun setDeviceName(name: String) {
-        uiState = uiState.copy(device = uiState.device.copy(name = name))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(name = name)
+//        uiState = uiState.copy(device = uiState.device.copy(name = name))
     }
     private fun setDeviceType(type: DeviceTypes) {
-        uiState = uiState.copy(device = uiState.device.copy(type = type))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(type = type)
+//        uiState = uiState.copy(device = uiState.device.copy(type = type))
     }
     private fun setDeviceStatus(status: DeviceStatus) {
-        uiState = uiState.copy(device = uiState.device.copy(status = status))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(status = status)
+//        uiState = uiState.copy(device = uiState.device.copy(status = status))
     }
     private fun setDeviceUnit(unit: String?) {
-        uiState = uiState.copy(device = uiState.device.copy(unit = unit))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(unit = unit)
+//        uiState = uiState.copy(device = uiState.device.copy(unit = unit))
     }
     private fun setDeviceState(state: DeviceState?) {
-        uiState = uiState.copy(device = uiState.device.copy(state = state))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(state = state)
+//        uiState = uiState.copy(device = uiState.device.copy(state = state))
     }
 
     // endregion
 
     private fun setDevice(device: Device) {
-        uiState = uiState.copy(device = device)
+        _deviceLiveData.value = device
+//        uiState = uiState.copy(device = device)
     }
 
     private fun setDeviceId(deviceId: String) {
@@ -186,8 +200,8 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     fun deleteDevice(onSuccess: () -> Unit = { }) {
         viewModelScope.launch {
             try {
-                deviceRepository.removeDevice(uiState.device.id, uiState.userEmail, uiState.userId)
-                localDeviceRepository.removeDevice(uiState.device.id)
+                deviceRepository.removeDevice(_deviceLiveData.value!!.id, uiState.userEmail, uiState.userId)
+                localDeviceRepository.removeDevice(_deviceLiveData.value!!.id)
                 setSuccessMessage("Device removed")
                 onSuccess()
             }
@@ -200,12 +214,12 @@ class DeviceDetailsScreenViewModel @Inject constructor(
 
     fun onDeviceBellIconClicked() {
         toggleIsMuted()
-        val isMuted = if (uiState.device.isMuted) "muted" else "not muted"
+        val isMuted = if (_deviceLiveData.value!!.isMuted) "muted" else "not muted"
         if (uiState.screenState != ScreenState.Create) {
             viewModelScope.launch {
-                localDeviceRepository.setIsMuted(uiState.device.id, uiState.device.isMuted)
+                localDeviceRepository.setIsMuted(_deviceLiveData.value!!.id, _deviceLiveData.value!!.isMuted)
             }
-            setSuccessMessage("Notifications for ${uiState.device.name} are $isMuted.")
+            setSuccessMessage("Notifications for ${_deviceLiveData.value!!.name} are $isMuted.")
         }
         else {
             setSuccessMessage("Notifications for this device will be $isMuted.")
@@ -213,29 +227,30 @@ class DeviceDetailsScreenViewModel @Inject constructor(
     }
 
     private fun toggleIsMuted() {
-        uiState = uiState.copy(device = uiState.device.copy(isMuted = !uiState.device.isMuted))
+        _deviceLiveData.value = _deviceLiveData.value?.copy(isMuted = !_deviceLiveData.value!!.isMuted)
+//        uiState = uiState.copy(device = uiState.device.copy(isMuted = !uiState.device.isMuted))
     }
 
     fun saveDevice() {
         viewModelScope.launch {
             try {
                 val deviceRequest = DeviceRequest(
-                    id = uiState.device.id,
-                    name = uiState.device.name,
+                    id = _deviceLiveData.value!!.id,
+                    name = _deviceLiveData.value!!.name,
                     userId = uiState.userId,
-                    type = uiState.device.type.name,
-                    status = uiState.device.status.name,
-                    state = uiState.device.state?.name,
-                    unit = uiState.device.unit
+                    type = _deviceLiveData.value!!.type.name,
+                    status = _deviceLiveData.value!!.status.name,
+                    state = _deviceLiveData.value!!.state?.name,
+                    unit = _deviceLiveData.value!!.unit
                 )
                 val device: Device = if (uiState.screenState == ScreenState.Create) {
                     deviceRepository.addDevice(deviceRequest, uiState.userEmail, uiState.userId)
                 } else { // else can only be Edit
                     deviceRepository.updateDevice(deviceRequest, uiState.userEmail)
                 }
-                device.isMuted = uiState.device.isMuted
-                device.lastReading = uiState.device.lastReading
-                device.lastReadingTime = uiState.device.lastReadingTime
+                device.isMuted = _deviceLiveData.value!!.isMuted
+                device.lastReading = _deviceLiveData.value!!.lastReading
+                device.lastReadingTime = _deviceLiveData.value!!.lastReadingTime
                 setDevice(device)
                 setDeviceId(device.id)
                 localDeviceRepository.addDevice(device)

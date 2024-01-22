@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
+import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.MenuItem
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.ScreenState
@@ -55,6 +57,10 @@ fun GraphScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    val sensor by viewModel.sensorLiveData.observeAsState(initial = Device())
+    val actuator by viewModel.actuatorLiveData.observeAsState(initial = Device())
+
+
     var showCalendarDialog by remember { mutableStateOf(false) }
 
     rememberCoroutineScope()
@@ -171,36 +177,33 @@ fun GraphScreen(
         Spacer(modifier = Modifier.height(10.dp))
         // devices cards
         CardContainerWithTitle(title = stringResource(R.string.related_devices)) {
-            val sensorId = viewModel.uiState.sensor.id
             DeviceCard(
-                device = viewModel.uiState.sensor,
+                device = sensor,
                 menuItems = prepareMenuItems(
-                    sensorId,
+                    sensor.id,
                     onEdit = navigateToDeviceDetails,
                     onDelete = {
-                        viewModel.deleteDevice(sensorId, DeviceTypes.Sensor) {
+                        viewModel.deleteDevice(sensor.id, DeviceTypes.Sensor) {
                             navigateBack()
                         }
                     }
                 ),
-                onCardClick = { navigateToDeviceDetails(sensorId, ScreenState.View) },
-                onBellIconClick = { viewModel.onDeviceBellIconClicked(sensorId, DeviceTypes.Sensor) }
+                onCardClick = { navigateToDeviceDetails(sensor.id, ScreenState.View) },
+                onBellIconClick = { viewModel.onDeviceBellIconClicked(sensor.id, DeviceTypes.Sensor) }
             )
             Spacer(modifier = Modifier.height(8.dp))
-            if (viewModel.uiState.actuator != null) {
-                val actuatorId = viewModel.uiState.actuator!!.id
-
+            if (actuator != null) {
                 DeviceCard(
-                    device = viewModel.uiState.actuator!!,
+                    device = actuator!!,
                     menuItems = prepareMenuItems(
-                        actuatorId,
+                        actuator!!.id,
                         onEdit = navigateToDeviceDetails,
                         onDelete = {
-                            viewModel.deleteDevice(actuatorId, DeviceTypes.Actuator)
+                            viewModel.deleteDevice(actuator!!.id, DeviceTypes.Actuator)
                         }
                     ),
-                    onCardClick = { navigateToDeviceDetails(actuatorId, ScreenState.View) },
-                    onBellIconClick = { viewModel.onDeviceBellIconClicked(actuatorId, DeviceTypes.Actuator) }
+                    onCardClick = { navigateToDeviceDetails(actuator!!.id, ScreenState.View) },
+                    onBellIconClick = { viewModel.onDeviceBellIconClicked(actuator!!.id, DeviceTypes.Actuator) }
 
                 )
             }

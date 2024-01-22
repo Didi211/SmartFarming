@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +33,14 @@ class RuleDetailsScreenViewModel @Inject constructor(
 ): ViewModel() {
     var uiState by mutableStateOf(RuleDetailsUiState())
         private set
-
+    private val _sensorLiveData: MutableLiveData<Device> by lazy {
+        MutableLiveData<Device>(Device())
+    }
+    private val _actuatorLiveData: MutableLiveData<Device> by lazy {
+        MutableLiveData<Device>(Device())
+    }
+    val sensorLiveData: LiveData<Device> = _sensorLiveData
+    val actuatorLiveData: LiveData<Device> = _actuatorLiveData
 
     init {
         val state: String = savedStateHandle["screenState"]!!
@@ -85,8 +94,16 @@ class RuleDetailsScreenViewModel @Inject constructor(
             localActuator = actuator
             localDeviceRepository.addDevice(localActuator)
         }
-        setSensor(localSensor)
-        setActuator(localActuator)
+        viewModelScope.launch {
+            localDeviceRepository.getDeviceAsFlow(uiState.rule.sensorId).collect {
+                setSensor(it)
+            }
+        }
+        viewModelScope.launch {
+            localDeviceRepository.getDeviceAsFlow(uiState.rule.actuatorId).collect {
+                setActuator(it)
+            }
+        }
     }
     fun setDeviceFromSelect(name: String, type: DeviceTypes) {
         when (type) {
@@ -125,15 +142,17 @@ class RuleDetailsScreenViewModel @Inject constructor(
     }
 
     private fun setActuator(device: Device) {
-        uiState = uiState.copy(
-            rule = uiState.rule.copy(actuatorId = device.id),
-            actuator = device
-        )
+        _actuatorLiveData.value = device
+//        uiState = uiState.copy(
+//            rule = uiState.rule.copy(actuatorId = device.id),
+//            actuator = device
+//        )
     }
     private fun setSensor(device: Device) {
-        uiState = uiState.copy(rule = uiState.rule.copy(sensorId = device.id),
-            sensor = device
-        )
+        _sensorLiveData.value = device
+//        uiState = uiState.copy(rule = uiState.rule.copy(sensorId = device.id),
+//            sensor = device
+//        )
     }
 
     private fun setStartTriggerLevel(level: String) {
@@ -199,19 +218,23 @@ class RuleDetailsScreenViewModel @Inject constructor(
     }
 
     private fun toggleIsMuted(type: DeviceTypes): Device {
-        uiState = when (type) {
+        return when (type) {
             DeviceTypes.Sensor -> {
-                uiState.copy(sensor = uiState.sensor.copy(isMuted = !uiState.sensor.isMuted))
+                _sensorLiveData.value = _sensorLiveData.value?.copy(isMuted = !_sensorLiveData.value!!.isMuted)
+                _sensorLiveData.value!!
+    //                uiState.copy(sensor = uiState.sensor.copy(isMuted = !uiState.sensor.isMuted))
             }
 
             DeviceTypes.Actuator -> {
-                uiState.copy(actuator = uiState.actuator.copy(isMuted = !uiState.actuator.isMuted))
+                _actuatorLiveData.value = _actuatorLiveData.value?.copy(isMuted = !_actuatorLiveData.value!!.isMuted)
+                _actuatorLiveData.value!!
+    //                uiState.copy(actuator = uiState.actuator!!.copy(isMuted = !uiState.actuator!!.isMuted))
             }
         }
-        return when (type) {
-            DeviceTypes.Sensor -> uiState.sensor
-            DeviceTypes.Actuator -> uiState.actuator
-        }
+//        return when (type) {
+//            DeviceTypes.Sensor -> uiState.sensor
+//            DeviceTypes.Actuator -> uiState.actuator!!
+//        }
     }
 
     fun saveRule() {
@@ -222,8 +245,8 @@ class RuleDetailsScreenViewModel @Inject constructor(
                     id = uiState.rule.id,
                     name = uiState.rule.name,
                     userId = user.id,
-                    sensorId = uiState.sensor.id,
-                    actuatorId = uiState.actuator.id,
+                    sensorId = _sensorLiveData.value!!.id,
+                    actuatorId = _actuatorLiveData.value!!.id,
                     startExpression = uiState.rule.startExpression.toSignString(),
                     stopExpression = uiState.rule.stopExpression.toSignString(),
                     startTriggerLevel = uiState.rule.startTriggerLevel.toInt(),

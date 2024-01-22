@@ -27,6 +27,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,6 +69,7 @@ fun DeviceDetailsScreen(
     navigateBack: () -> Unit = { },
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    val device by viewModel.deviceLiveData.observeAsState(initial = Device())
     ComposableLifecycle { _, event ->
         when(event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -92,13 +95,13 @@ fun DeviceDetailsScreen(
         Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             when (viewModel.uiState.screenState) {
                 ScreenState.Edit -> DeviceDetailsEditTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     deviceActions = viewModel.uiState.deviceActions,
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onEditIconClick = { viewModel.setScreenState(ScreenState.View)},
                     onButtonClick = { viewModel.saveDevice() })
                 ScreenState.View -> DeviceDetailsViewTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onEditIconClick = { viewModel.setScreenState(ScreenState.Edit)},
                     onButtonClick = {
@@ -107,7 +110,7 @@ fun DeviceDetailsScreen(
                         }
                     })
                 ScreenState.Create -> DeviceDetailsCreateTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     deviceActions = viewModel.uiState.deviceActions,
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onButtonClick = { viewModel.saveDevice() })

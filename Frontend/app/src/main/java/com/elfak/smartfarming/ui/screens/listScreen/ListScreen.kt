@@ -11,10 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.utils.Tabs
 import com.elfak.smartfarming.ui.components.ComposableLifecycle
@@ -29,6 +33,7 @@ fun ListScreen(
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
     navigateToRuleDetails: (ruleId: String, screenState: ScreenState) -> Unit
 ) {
+    val devices by viewModel.deviceLiveData.observeAsState(initial = emptyList())
     ComposableLifecycle { _, event ->
         when(event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -67,7 +72,8 @@ fun ListScreen(
         when(viewModel.uiState.tabSelected) {
             Tabs.Devices -> {
                 DeviceTab(
-                    devices = viewModel.uiState.devices,
+//                    devices = viewModel.uiState.devices,
+                    devices = devices,
                     refreshState = refreshState,
                     isRefreshing = viewModel.uiState.isRefreshing,
                     onDelete = viewModel::onDeviceDelete,

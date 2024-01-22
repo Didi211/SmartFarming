@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfak.smartfarming.data.models.Device
@@ -13,6 +15,7 @@ import com.elfak.smartfarming.data.repositories.interfaces.ILocalAuthRepository
 import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepository
 import com.elfak.smartfarming.domain.utils.Tabs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +28,10 @@ class ListScreenViewModel @Inject constructor(
 
     var uiState by mutableStateOf(ListScreenUiState())
         private set
+    private val _devicesLiveData: MutableLiveData<List<Device>> by lazy {
+        MutableLiveData<List<Device>>()
+    }
+    val deviceLiveData: LiveData<List<Device>> = _devicesLiveData
 
     private fun setSelectedTab(tab: Tabs) {
         uiState = uiState.copy(tabSelected = tab)
@@ -52,7 +59,20 @@ class ListScreenViewModel @Inject constructor(
             try {
                 val userId = localAuthRepository.getCredentials().id
                 val devices = deviceRepository.getAllDevices(userId)
-                setDevices(localDeviceRepository.updateDevicesLocal(devices))
+
+                viewModelScope.launch {
+                    try {
+                        localDeviceRepository.updateDevicesLocal(devices).catch { flowEx ->
+                            throw flowEx
+                        }.collect {
+                             _devicesLiveData.value = it
+                        }
+                    }
+                    catch (ex:Exception) {
+                        handleError(ex)
+                        Log.e("Devices-GET", ex.message!!, ex)
+                    }
+                }
             }
             catch (ex: Exception) {
                 handleError(ex)
@@ -62,10 +82,6 @@ class ListScreenViewModel @Inject constructor(
                 setRefreshingFlag(false)
             }
         }
-    }
-
-    private fun setDevices(devices: List<Device>) {
-        uiState = uiState.copy(devices = devices)
     }
 
     private fun getRules() {
@@ -110,6 +126,7 @@ class ListScreenViewModel @Inject constructor(
     }
 
     private fun removeDevice(id: String) {
+        _devicesLiveData.value = _devicesLiveData.value?.filter { it.id != id }
         uiState = uiState.copy(devices = uiState.devices.filter { it.id != id })
     }
 
@@ -125,15 +142,24 @@ class ListScreenViewModel @Inject constructor(
 
     private fun toggleIsMutedDevice(id: String): Device {
         var updatedDevice = Device()
-        val devices = uiState.devices.map {
+        val devices = _devicesLiveData.value?.map {
             if (it.id == id) {
                 updatedDevice = it.copy(isMuted = !it.isMuted)
                 updatedDevice
-            }
-            else it
+            } else it
         }
-        uiState = uiState.copy(devices = devices)
+        _devicesLiveData.value = devices
+//        uiState = uiState.copy(devices = devices)
         return updatedDevice
+//        val devices = uiState.devices.map {
+//            if (it.id == id) {
+//                updatedDevice = it.copy(isMuted = !it.isMuted)
+//                updatedDevice
+//            }
+//            else it
+//        }
+//        uiState = uiState.copy(devices = devices)
+//        return updatedDevice
     }
     fun onRuleDelete(id: String) {
         viewModelScope.launch {
