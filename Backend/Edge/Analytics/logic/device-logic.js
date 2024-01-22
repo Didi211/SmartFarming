@@ -111,16 +111,17 @@ const removeDevice = async (id) => {
     }
     try { 
         // remove in edgex also 
-        
+
         let device = await Device.findByIdAndDelete(id);
-        console.log('device', device);
         await edgexLogic.removeDevice(device.name);
 
         if (process.env.DEVICE_SIMULATOR_ENABLED) { 
             let path = `/remove/${device.type.toLowerCase()}/${device.name}`;
-            console.log('path', path);
             let simulatorResponse = await deviceSimulatorAxios.delete(path);
-            console.log(simulatorResponse);
+            if (simulatorResponse.status != 200) { 
+                throw simulatorResponse.data
+            }
+            console.log(simulatorResponse.data);
         }
     }
     catch(error) { 

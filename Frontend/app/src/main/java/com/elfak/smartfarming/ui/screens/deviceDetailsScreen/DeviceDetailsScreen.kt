@@ -27,6 +27,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
 import com.elfak.smartfarming.data.models.Device
+import com.elfak.smartfarming.data.models.formatShortDate
 import com.elfak.smartfarming.domain.enums.DeviceState
 import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.domain.enums.DeviceTypes
@@ -66,6 +69,7 @@ fun DeviceDetailsScreen(
     navigateBack: () -> Unit = { },
     navigateToRuleDetails: (ruleId: String?, screenState: ScreenState) -> Unit,
 ) {
+    val device by viewModel.deviceLiveData.observeAsState(initial = Device())
     ComposableLifecycle { _, event ->
         when(event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -91,13 +95,13 @@ fun DeviceDetailsScreen(
         Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             when (viewModel.uiState.screenState) {
                 ScreenState.Edit -> DeviceDetailsEditTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     deviceActions = viewModel.uiState.deviceActions,
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onEditIconClick = { viewModel.setScreenState(ScreenState.View)},
                     onButtonClick = { viewModel.saveDevice() })
                 ScreenState.View -> DeviceDetailsViewTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onEditIconClick = { viewModel.setScreenState(ScreenState.Edit)},
                     onButtonClick = {
@@ -106,7 +110,7 @@ fun DeviceDetailsScreen(
                         }
                     })
                 ScreenState.Create -> DeviceDetailsCreateTab(
-                    device = viewModel.uiState.device,
+                    device = device?: Device(),
                     deviceActions = viewModel.uiState.deviceActions,
                     onBellIconClick = { viewModel.onDeviceBellIconClicked() },
                     onButtonClick = { viewModel.saveDevice() })
@@ -275,7 +279,7 @@ fun DeviceDetailsCreateTab(
                         )
                         // last reading - disabled
                         BasicInputField(
-                            text = device.lastReading.toString(),
+                            text = "${device.lastReading}",
                             label = stringResource(id = R.string.device_last_reading) + ":",
                             enabled = false
                         )
@@ -402,7 +406,7 @@ fun DeviceDetailsViewTab(
                     )
                     // last reading - disabled
                     BasicInputField(
-                        text = device.lastReading.toString(),
+                        text = "${device.lastReading} at [${device.lastReadingTime.formatShortDate()}]",
                         label = stringResource(id = R.string.device_last_reading) + ":",
                         enabled = false
                     )
@@ -528,7 +532,7 @@ fun DeviceDetailsEditTab(
                     )
                     // last reading - disabled
                     BasicInputField(
-                        text = device.lastReading.toString(),
+                        text = "${device.lastReading} at [${device.lastReadingTime.formatShortDate()}]",
                         label = stringResource(id = R.string.device_last_reading) + ":",
                         enabled = false
                     )

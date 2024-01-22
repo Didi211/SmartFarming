@@ -29,9 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.MenuItem
+import com.elfak.smartfarming.data.models.formatShortDate
 import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.uppercase
@@ -39,6 +41,9 @@ import com.elfak.smartfarming.ui.components.buttons.ButtonWithIcon
 import com.elfak.smartfarming.ui.components.menu.Menu
 import com.elfak.smartfarming.ui.theme.ErrorColor
 import com.elfak.smartfarming.ui.theme.FontColor
+import com.elfak.smartfarming.ui.theme.SmartFarmingTheme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DeviceCard(
@@ -51,8 +56,8 @@ fun DeviceCard(
     var isMenuExpanded by remember { mutableStateOf(false) }
     Box {
         CurvedBottomBorderCard(modifier = Modifier
-                .clip(RoundedCornerShape(30.dp))
-                .clickable { onCardClick(device.id) }
+            .clip(RoundedCornerShape(30.dp))
+            .clickable { onCardClick(device.id) }
         ) {
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -106,7 +111,8 @@ fun DeviceCard(
                                 color = FontColor
                             )
                             Text(
-                                text = "Last reading: ${device.lastReading}",
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "Last reading: ${device.lastReading} [${device.lastReadingTime.formatShortDate()}]",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = FontColor
@@ -119,7 +125,6 @@ fun DeviceCard(
                                 fontWeight = FontWeight.Bold,
                                 color = FontColor
                             )
-
                         }
                     }
 
@@ -167,3 +172,19 @@ fun DeviceCard(
         }
     }
 }
+
+@Preview
+@Composable
+fun adsa() { 
+    SmartFarmingTheme {
+        Column(Modifier.padding(10.dp)) {
+            DeviceCard(
+                device = Device(
+                    lastReading = 3.56,
+                    lastReadingTime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).toString()
+                )
+            )
+        }
+    }
+}
+

@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,9 +19,9 @@ import com.elfak.smartfarming.data.repositories.interfaces.ILocalDeviceRepositor
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.GraphPeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -33,6 +35,15 @@ class GraphScreenViewModel @Inject constructor(
 ): ViewModel() {
     var uiState by mutableStateOf(GraphUiState())
         private set
+    private val _sensorLiveData: MutableLiveData<Device> by lazy {
+        MutableLiveData<Device>(Device())
+    }
+    private val _actuatorLiveData: MutableLiveData<Device?> by lazy {
+        MutableLiveData<Device?>(null)
+    }
+    val sensorLiveData: LiveData<Device> = _sensorLiveData
+    val actuatorLiveData: LiveData<Device?> = _actuatorLiveData
+
     init {
         val sensorId: String = savedStateHandle["sensorId"]!!
         uiState = uiState.copy(sensorId = sensorId)
@@ -79,11 +90,16 @@ class GraphScreenViewModel @Inject constructor(
             // update local device
             localSensor = sensor.copy(
                 isMuted = localSensor.isMuted,
-                lastReading = localSensor.lastReading
+                lastReading = localSensor.lastReading,
+                lastReadingTime = localSensor.lastReadingTime
             )
             localDeviceRepository.updateDeviceLocal(localSensor)
         }
-        setSensor(localSensor)
+        viewModelScope.launch {
+            localDeviceRepository.getDeviceAsFlow(id).collect {
+                setSensor(it)
+            }
+        }
 
 
     }
@@ -162,15 +178,19 @@ class GraphScreenViewModel @Inject constructor(
             // update local device
             localActuator = actuator.copy(
                 isMuted = localActuator.isMuted,
-                lastReading = localActuator.lastReading
             )
             localDeviceRepository.updateDeviceLocal(localActuator)
         }
-        setActuator(localActuator)
+        viewModelScope.launch {
+            localDeviceRepository.getDeviceAsFlow(id).collect {
+                setActuator(it)
+            }
+        }
     }
 
     private fun setActuator(actuator: Device?) {
-        uiState = uiState.copy(actuator = actuator)
+        _actuatorLiveData.value = actuator
+//        uiState = uiState.copy(actuator = actuator)
     }
 
     private fun setRule(rule: Rule?) {
@@ -179,7 +199,8 @@ class GraphScreenViewModel @Inject constructor(
     }
 
     private fun setSensor(sensor: Device) {
-        uiState = uiState.copy(sensor = sensor)
+        _sensorLiveData.value = sensor
+//        uiState = uiState.copy(sensor = sensor)
     }
 
     // region TOAST HANDLER
@@ -250,18 +271,22 @@ class GraphScreenViewModel @Inject constructor(
     }
 
     private fun toggleIsMuted(type: DeviceTypes): Device {
-        uiState = when (type) {
+        return when (type) {
             DeviceTypes.Sensor -> {
-                uiState.copy(sensor = uiState.sensor.copy(isMuted = !uiState.sensor.isMuted))
+                _sensorLiveData.value = _sensorLiveData.value?.copy(isMuted = !_sensorLiveData.value!!.isMuted)
+                _sensorLiveData.value!!
+    //                uiState.copy(sensor = uiState.sensor.copy(isMuted = !uiState.sensor.isMuted))
             }
 
             DeviceTypes.Actuator -> {
-                uiState.copy(actuator = uiState.actuator!!.copy(isMuted = !uiState.actuator!!.isMuted))
+                _actuatorLiveData.value = _actuatorLiveData.value?.copy(isMuted = !_actuatorLiveData.value!!.isMuted)
+                _actuatorLiveData.value!!
+    //                uiState.copy(actuator = uiState.actuator!!.copy(isMuted = !uiState.actuator!!.isMuted))
             }
         }
-        return when (type) {
-            DeviceTypes.Sensor -> uiState.sensor
-            DeviceTypes.Actuator -> uiState.actuator!!
-        }
+//        return when (type) {
+//            DeviceTypes.Sensor -> uiState.sensor
+//            DeviceTypes.Actuator -> uiState.actuator!!
+//        }
     }
 }

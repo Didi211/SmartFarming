@@ -4,7 +4,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
+import com.elfak.smartfarming.domain.enums.NavigationConstants
 import com.elfak.smartfarming.ui.screens.deviceDetailsScreen.DeviceDetailsScreen
 import com.elfak.smartfarming.ui.screens.deviceDetailsScreen.DeviceDetailsScreenViewModel
 import com.elfak.smartfarming.ui.screens.graphScreen.GraphScreen
@@ -79,9 +81,13 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                  }
             )
         }
-        composable(Screen.SettingScreen.route) {
+        composable(Screen.SettingScreen.route,
+            deepLinks = listOf(navDeepLink { uriPattern = NavigationConstants.SettingsUri })
+        ) {
             val viewModel = hiltViewModel<SettingsScreenViewModel>()
-            SettingsScreen(viewModel = viewModel)
+            SettingsScreen(
+                viewModel = viewModel,
+            )
         }
         composable(Screen.NotificationScreen.route) {
             val viewModel = hiltViewModel<NotificationScreenViewModel>()
@@ -122,8 +128,3 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
     }
 }
 
-private fun onAuthenticationFailed(navController: NavController) {
-    navController.navigate(Screen.WelcomeScreen.route) {
-        popUpTo(Screen.Main.route) { inclusive = true }
-    }
-}

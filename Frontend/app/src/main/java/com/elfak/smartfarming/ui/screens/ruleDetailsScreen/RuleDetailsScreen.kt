@@ -24,6 +24,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.elfak.smartfarming.R
+import com.elfak.smartfarming.data.models.Device
 import com.elfak.smartfarming.data.models.Rule
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.RuleExpressionType
@@ -62,6 +65,9 @@ fun RuleDetailsScreen(
     navigateBack: () -> Unit = { },
     navigateToDeviceDetails: (deviceId: String, screenState: ScreenState) -> Unit,
 ) {
+    val sensor by viewModel.sensorLiveData.observeAsState(initial = Device())
+    val actuator by viewModel.actuatorLiveData.observeAsState(initial = Device())
+
     ComposableLifecycle { _, event ->
         when(event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -120,8 +126,7 @@ fun RuleDetailsScreen(
                 )
             }
             else {
-                val sensorId = viewModel.uiState.sensor.id
-                AnimatedContent (sensorId.isBlank(), label = "") { isBlank ->
+                AnimatedContent (sensor.id.isBlank(), label = "") { isBlank ->
                     when (isBlank) {
                         true -> {
                             val dropdownItems = viewModel.uiState.selectSensors.map { it.name }
@@ -136,7 +141,7 @@ fun RuleDetailsScreen(
                                         width = 1.dp,
                                         shape = RoundedCornerShape(30.dp)
                                     ),
-                                value = if (dropdownItems.isNotEmpty()) sensorId else "No sensors available",
+                                value = if (dropdownItems.isNotEmpty()) sensor.id else "No sensors available",
                                 defaultText = "Choose sensor:",
                                 items = dropdownItems.ifEmpty { listOf("") },
                                 onSelect = { viewModel.setDeviceFromSelect(it, DeviceTypes.Sensor) }
@@ -144,24 +149,23 @@ fun RuleDetailsScreen(
                         }
                         false -> {
                             DeviceCard(
-                                device = viewModel.uiState.sensor,
+                                device = sensor,
                                 showMenu = false,
                                 onCardClick = {
                                     if (viewModel.uiState.screenState == ScreenState.Create) {
                                         viewModel.setDeviceFromSelect("", DeviceTypes.Sensor)
                                     } else {
-                                        navigateToDeviceDetails(sensorId, ScreenState.View)
+                                        navigateToDeviceDetails(sensor.id, ScreenState.View)
                                     }
                                 },
-                                onBellIconClick = { viewModel.onDeviceBellIconClicked(sensorId, DeviceTypes.Sensor) }
+                                onBellIconClick = { viewModel.onDeviceBellIconClicked(sensor.id, DeviceTypes.Sensor) }
                             )
                         }
                     }
 
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                val actuatorId = viewModel.uiState.actuator.id
-                AnimatedContent (actuatorId.isBlank(), label = "") { isBlank ->
+                AnimatedContent (actuator.id.isBlank(), label = "") { isBlank ->
                     when(isBlank) {
                         true -> {
                             val dropdownItems = viewModel.uiState.selectActuators.map { it.name }
@@ -176,7 +180,7 @@ fun RuleDetailsScreen(
                                         width = 1.dp,
                                         shape = RoundedCornerShape(30.dp)
                                     ),
-                                value = if (dropdownItems.isNotEmpty()) actuatorId else "No actuators available",
+                                value = if (dropdownItems.isNotEmpty()) actuator.id else "No actuators available",
                                 defaultText = "Choose actuator:",
                                 items = dropdownItems.ifEmpty { listOf("") },
                                 onSelect = { viewModel.setDeviceFromSelect(it, DeviceTypes.Actuator) }
@@ -184,16 +188,16 @@ fun RuleDetailsScreen(
                         }
                         false -> {
                             DeviceCard(
-                                device = viewModel.uiState.actuator,
+                                device = actuator,
                                 showMenu = false,
                                 onCardClick = {
                                     if (viewModel.uiState.screenState == ScreenState.Create) {
                                         viewModel.setDeviceFromSelect("", DeviceTypes.Actuator)
                                     } else {
-                                        navigateToDeviceDetails(actuatorId, ScreenState.View)
+                                        navigateToDeviceDetails(actuator.id, ScreenState.View)
                                     }
                                 },
-                                onBellIconClick = { viewModel.onDeviceBellIconClicked(actuatorId, DeviceTypes.Actuator) }
+                                onBellIconClick = { viewModel.onDeviceBellIconClicked(actuator.id, DeviceTypes.Actuator) }
                             )
                         }
                     }

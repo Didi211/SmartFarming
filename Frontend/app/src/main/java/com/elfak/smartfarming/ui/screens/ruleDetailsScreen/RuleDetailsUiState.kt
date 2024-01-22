@@ -16,4 +16,4 @@ data class RuleDetailsUiState(
     val selectSensors: List<Device> = emptyList(),
     val selectActuators: List<Device> = emptyList(),
 
-)
+    )

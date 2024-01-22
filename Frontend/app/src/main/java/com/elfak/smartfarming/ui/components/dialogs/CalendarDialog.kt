@@ -46,7 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.elfak.smartfarming.R
-import com.elfak.smartfarming.data.models.formatDate
 import com.elfak.smartfarming.domain.enums.GraphPeriods
 import com.elfak.smartfarming.domain.enums.toGraphPeriod
 import com.elfak.smartfarming.ui.components.buttons.ButtonWithIconAndText
@@ -60,7 +59,6 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

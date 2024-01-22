@@ -250,19 +250,19 @@ fun prepareMenuList(navController: NavController, signOutAction: () -> Unit): Li
             }
         ),
         MenuItem(
-            name = Screen.SettingScreen.displayName,
-            icon = Icons.Rounded.Settings,
+            name = Screen.NotificationScreen.displayName,
+            icon = Icons.Rounded.Home,
             action = {
-                navController.navigate(Screen.SettingScreen.route) {
+                navController.navigate(Screen.NotificationScreen.route) {
                     popUpTo(Screen.HomeScreen.route)
                 }
             }
         ),
         MenuItem(
-            name = Screen.NotificationScreen.displayName,
-            icon = Icons.Rounded.Home,
+            name = Screen.SettingScreen.displayName,
+            icon = Icons.Rounded.Settings,
             action = {
-                navController.navigate(Screen.NotificationScreen.route) {
+                navController.navigate(Screen.SettingScreen.route) {
                     popUpTo(Screen.HomeScreen.route)
                 }
             }

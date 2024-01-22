@@ -36,6 +36,27 @@ const validateForAdd = (rule) => {
     return result;
 }
 
+let validateLogic = (rule) => { 
+    if (rule.startTriggerLevel <= 0 ) { 
+        throw "Rule start trigger level must be larger than 0."
+    }
+    if (rule.stopTriggerLevel <= 0) { 
+        throw "Rule stop trigger level must be larger than 0."
+    }
+    if (rule.startTriggerLevel > 100) { 
+        throw "Rule start trigger level can be maximum 100."
+    }
+    if (rule.stopTriggerLevel > 100) { 
+        throw "Rule stop trigger level can be maximum 100."
+    }
+    if (rule.startTriggerLevel == rule.stopTriggerLevel) { 
+        throw "Start and stop value cannot be the same."
+    }
+
+    
+
+}
+
 const validateForUpdate = (id, rule) => { 
     let result = "";
     try { 
