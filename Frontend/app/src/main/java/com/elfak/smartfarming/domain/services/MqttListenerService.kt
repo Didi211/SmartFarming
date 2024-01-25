@@ -29,6 +29,7 @@ import com.elfak.smartfarming.data.repositories.interfaces.ISettingsRepository
 import com.elfak.smartfarming.domain.enums.DeviceStatus
 import com.elfak.smartfarming.domain.enums.DeviceTypes
 import com.elfak.smartfarming.domain.enums.NavigationConstants
+import com.elfak.smartfarming.domain.enums.ScreenState
 import com.elfak.smartfarming.domain.enums.toDeviceStatus
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -179,11 +180,15 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
     // endregion
 
     // region notifications
-    private fun createAlertNotification(title:String, contentText: String): Notification {
+    private fun createAlertNotification(title:String, contentText: String, deviceId: String): Notification {
         val notification = createNotification(ALERT_CHANNEL_ID, title, contentText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
+            .setContentIntent(createAlertPendingIntent(deviceId))
         return notification.build()
     }
+
+
+
     private fun createSettingsNotification(contentText: String): Notification {
         val notification = createNotification(SERVICE_WORKING_CHANNEL_ID, "SmartFarming background service", contentText)
             .setContentIntent(createSettingsPendingIntent())
@@ -214,7 +219,7 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
 
     private fun createAlertChannel() {
         val name = "Smart Farming Alert notification channel"
-        val description = "Channel for emitting alert notifications about devices' working status."
+        val description = "Channel for emitting alert notifications about device's working status."
         val importance = NotificationManager.IMPORTANCE_HIGH
         val mChannel = NotificationChannel(ALERT_CHANNEL_ID, name, importance)
         mChannel.description = description
@@ -226,6 +231,9 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
     // region pending intent methods
     private fun createSettingsPendingIntent() : PendingIntent {
         return createPendingIntent(NavigationConstants.SettingsUri)
+    }
+    private fun createAlertPendingIntent(deviceId: String): PendingIntent? {
+        return createPendingIntent("${NavigationConstants.DeviceDetailsUri}/${deviceId}/${ScreenState.View.name}")
     }
     private fun createPendingIntent(deepLink: String): PendingIntent {
         val startActivityIntent = Intent(
@@ -268,7 +276,7 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
                     device = newDevice
                 }
                 if (shouldNotifyUser(device, alert.metadata.status.toDeviceStatus())) {
-                    val notification = createAlertNotification(title = "Device status alert", contentText = alert.message)
+                    val notification = createAlertNotification(title = "Device status alert", contentText = alert.message, alert.metadata.deviceId)
                     updateNotification(notification, ALERT_CHANNEL_NOTIFICATION_ID)
                 }
                 device.status = alert.metadata.status.toDeviceStatus()

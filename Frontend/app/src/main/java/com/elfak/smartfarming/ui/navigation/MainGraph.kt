@@ -93,7 +93,9 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             val viewModel = hiltViewModel<NotificationScreenViewModel>()
             NotificationScreen(viewModel = viewModel)
         }
-        composable(Screen.DeviceDetailsScreen.route + "/{screenState}?deviceId={deviceId}") {
+        composable(Screen.DeviceDetailsScreen.route + "/{screenState}?deviceId={deviceId}",
+            deepLinks = listOf(navDeepLink { uriPattern = NavigationConstants.DeviceDetailsUri + "/{deviceId}/{screenState}"})
+        ) {
             val viewModel = hiltViewModel<DeviceDetailsScreenViewModel>()
             DeviceDetailsScreen(
                 viewModel = viewModel,
