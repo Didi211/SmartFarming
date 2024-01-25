@@ -63,7 +63,7 @@ fun RuleCard(
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .fillMaxWidth(0.8f)
+                            .fillMaxWidth(0.85f)
                             .padding(10.dp),
                         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
                         horizontalAlignment = Alignment.Start,
@@ -76,6 +76,7 @@ fun RuleCard(
                         Spacer(Modifier.height(7.35f.dp))
                         // rule description
                         Text(
+                            modifier = Modifier.fillMaxWidth(),
                             text = rule.description,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,

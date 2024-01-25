@@ -210,7 +210,9 @@ fun DeviceDetailsCreateTab(
             .clip(RoundedCornerShape(30.dp))
             .background(Color.White)
             .padding(horizontal = 10.dp, vertical = 10.dp)
-            .wrapContentSize()
+            .wrapContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         // name
         BasicInputField(
@@ -231,7 +233,7 @@ fun DeviceDetailsCreateTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = BorderColor,
                     width = 1.dp,
@@ -248,7 +250,7 @@ fun DeviceDetailsCreateTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = BorderColor,
                     width = 1.dp,
@@ -292,7 +294,7 @@ fun DeviceDetailsCreateTab(
                             .padding(top = 8.dp)
                             .width(290.dp)
                             .height(56.dp)
-                            .padding(end = 10.dp)
+                            .padding(horizontal = 5.dp)
                             .border(
                                 color = BorderColor,
                                 width = 1.dp,
@@ -357,7 +359,9 @@ fun DeviceDetailsViewTab(
             .clip(RoundedCornerShape(30.dp))
             .background(Color.White)
             .padding(horizontal = 10.dp, vertical = 10.dp)
-            .wrapContentSize()
+            .wrapContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         // name
         BasicInputField(
@@ -371,7 +375,7 @@ fun DeviceDetailsViewTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = Disabled,
                     width = 1.dp,
@@ -386,7 +390,7 @@ fun DeviceDetailsViewTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = Disabled,
                     width = 1.dp,
@@ -419,7 +423,7 @@ fun DeviceDetailsViewTab(
                         .padding(top = 8.dp)
                         .width(290.dp)
                         .height(56.dp)
-                        .padding(end = 10.dp)
+                        .padding(horizontal = 5.dp)
                         .border(
                             color = Disabled,
                             width = 1.dp,
@@ -476,7 +480,8 @@ fun DeviceDetailsEditTab(
             .clip(RoundedCornerShape(30.dp))
             .background(Color.White)
             .padding(horizontal = 10.dp, vertical = 10.dp)
-            .wrapContentSize()
+            .wrapContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // name
         BasicInputField(
@@ -490,7 +495,7 @@ fun DeviceDetailsEditTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = Disabled,
                     width = 1.dp,
@@ -505,7 +510,7 @@ fun DeviceDetailsEditTab(
                 .padding(top = 8.dp)
                 .width(290.dp)
                 .height(56.dp)
-                .padding(end = 10.dp)
+                .padding(horizontal = 5.dp)
                 .border(
                     color = Disabled,
                     width = 1.dp,
@@ -545,7 +550,7 @@ fun DeviceDetailsEditTab(
                         .padding(top = 8.dp)
                         .width(290.dp)
                         .height(56.dp)
-                        .padding(end = 10.dp)
+                        .padding(horizontal = 5.dp)
                         .border(
                             color = Disabled,
                             width = 1.dp,
