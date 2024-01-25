@@ -184,6 +184,7 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
         val notification = createNotification(ALERT_CHANNEL_ID, title, contentText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setContentIntent(createAlertPendingIntent(deviceId))
+            .setAutoCancel(true)
         return notification.build()
     }
 
@@ -277,7 +278,8 @@ class MqttListenerService @Inject constructor(): Service(), MqttCallbackExtended
                 }
                 if (shouldNotifyUser(device, alert.metadata.status.toDeviceStatus())) {
                     val notification = createAlertNotification(title = "Device status alert", contentText = alert.message, alert.metadata.deviceId)
-                    updateNotification(notification, ALERT_CHANNEL_NOTIFICATION_ID)
+                    updateNotification(notification, alert.metadata.deviceId.hashCode())
+//                    updateNotification(notification, ALERT_CHANNEL_NOTIFICATION_ID)
                 }
                 device.status = alert.metadata.status.toDeviceStatus()
                 localDeviceRepository.updateDeviceLocal(device)
