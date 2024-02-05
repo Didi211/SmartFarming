@@ -35,7 +35,7 @@ fun NotificationCard(
     onDelete: (id: String) -> Unit
 ) {
     Box {
-        CurvedBottomBorderCard(height = 150.dp) {
+        CurvedBottomBorderCard() {
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp)) {
@@ -77,7 +77,7 @@ fun NotificationCard(
                             // message
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = notification.message,
+                                text = notification.noDeviceName(),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             //

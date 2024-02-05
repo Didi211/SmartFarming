@@ -24,6 +24,10 @@ data class Notification(
         }
         return null
     }
+    fun noDeviceName(): String {
+        if (this.message.isBlank()) return ""
+        return this.message.replace(Regex(" \\[.*?]"), "")
+    }
 
     companion object {
         fun fromApiResponse(data: Any): Notification {
@@ -55,3 +59,4 @@ fun String.formatShortDate(): String {
     val dateTime = LocalDateTime.parse(this, inputFormatter)
     return dateTime.format(outputFormatter)
 }
+
