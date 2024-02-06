@@ -13,4 +13,4 @@ Example `.env` file:
 
 ```plaintext
 PORT=3001
-MONGO_DB_URI=mongodb+srv://miticd99:6Dxi1D2Vajzulgj1@cluster0.1sivlqa.mongodb.net/?retryWrites=true&w=majority
+MONGO_DB_URI=YOUR_MONGODB_URI_HERE
