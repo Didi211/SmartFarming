@@ -22,7 +22,7 @@ Example `.env` file:
 
 ```plaintext
 PORT=5001
-USER_EMAIL=dimitrije.mitic@email.com
+USER_EMAIL=email.example@email.com
 CLOUD_MQTT_URL=mqtt://cloud-mqtt:1883
 EDGE_MQTT_URL=mqtt://edge-mqtt:1884
 MQTT_TOPIC_RT_DATA_EDGE=edgex-events
