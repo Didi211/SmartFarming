@@ -28,3 +28,4 @@ This repository consists of two parts: the backend composed of microservices and
 | InfluxDB  |  |
 | MongoDB  |  |
 | Firebase and Firestore  |  |
+| EdgeX Foundry - IoT Platform  |  |
