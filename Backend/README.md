@@ -29,15 +29,15 @@ docker compose up -d --build
 To view the list of environment variables required for each microservice, please refer to the following services:
 
 - **Cloud Services:**
-  - Device Management: [Documentation](device_management_cloud_env_variables.md)
-  - Gateway: [Documentation](gateway_cloud_env_variables.md)
-  - Notification: [Documentation](notification_cloud_env_variables.md)
-  - Sensor Data: [Documentation](sensor_data_cloud_env_variables.md)
-  - User Management: [Documentation](user_management_cloud_env_variables.md)
+  - Device Management: [Documentation](Cloud/DeviceManagement/README.md)
+  - Gateway: [Documentation](Cloud/Gateway/README.md)
+  - Notification: [Documentation](Cloud/Notification/README.md)
+  - Sensor Data: [Documentation](Cloud/SensorData/README.md)
+  - User Management: [Documentation](Cloud/UserManagement/README.md)
 
 - **Edge Services:**
-  - Analytics: [Documentation](analytics_edge_env_variables.md)
-  - Device Management: [Documentation](device_management_edge_env_variables.md)
-  - Devices/Sensor: [Documentation](devices_sensor_edge_env_variables.md)
-  - Gateway: [Documentation](gateway_edge_env_variables.md)
-  - Persistence: [Documentation](persistence_edge_env_variables.md)
+  - Analytics: [Documentation](Edge/Analytics/README.md)
+  - Device Management: [Documentation](Edge/DeviceManagement/README.md)
+  - Devices/Sensor: [Documentation](Edge/DevicesSensor/README.md)
+  - Gateway: [Documentation](Edge/Gateway/README.md)
+  - Persistence: [Documentation](Edge/Persistence/README.md)
