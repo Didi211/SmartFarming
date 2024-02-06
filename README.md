@@ -25,7 +25,7 @@ This repository consists of two parts: the backend composed of microservices and
 | ------------- | ------------- |
 | Node.js  | Kotlin  |
 | Express.js  | Jetpack Compose  |
-| InfluxDB  |  |
-| MongoDB  |  |
-| Firebase and Firestore  |  |
+| InfluxDB  | Retrofit |
+| MongoDB  | Y Charts - Open Chart Library |
+| Firebase and Firestore  | Hilt Dependency Injection |
 | EdgeX Foundry - IoT Platform  |  |
