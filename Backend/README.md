@@ -38,6 +38,6 @@ To view the list of environment variables required for each microservice, please
 - **Edge Services:**
   - Analytics: [Documentation](Edge/Analytics/README.md)
   - Device Management: [Documentation](Edge/DeviceManagement/README.md)
-  - Devices/Sensor: [Documentation](Edge/DevicesSensor/README.md)
+  - Devices/Sensor: [Documentation](Edge/Devices/Sensor/README.md)
   - Gateway: [Documentation](Edge/Gateway/README.md)
   - Persistence: [Documentation](Edge/Persistence/README.md)
