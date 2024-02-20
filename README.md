@@ -29,3 +29,15 @@ This repository consists of two parts: the backend composed of microservices and
 | MongoDB  | Y Charts - Open Chart Library |
 | Firebase and Firestore  | Hilt Dependency Injection |
 | EdgeX Foundry - IoT Platform  |  |
+
+## Screenshots
+**Complete architecture of backend system**
+<div align="center">
+  <img width="839" alt="arhitektura-projekta" src="https://github.com/Didi211/SmartFarming/assets/82868612/898cef30-0710-4e01-879c-a4435a230daa">
+</div>
+
+
+**Mobile app**
+| Home Screen | Graph Screen | Setting Screen | Filtered locations |
+|:-:|:-:|:-:|:-:|
+| <img src="https://github.com/Didi211/SmartFarming/assets/82868612/c0419a63-88ed-43ab-be9e-f814480f84ff" alt="Home Screen" width="250" height="auto"> | <img src="https://github.com/Didi211/SmartFarming/assets/82868612/a5eff66a-3ef5-4361-993f-008735de8d46" alt="Graph Screen" width="250" height="auto"> | <img src="https://github.com/Didi211/SmartFarming/assets/82868612/aa59fe64-6747-423d-a9ea-cf7f786b1d29" width="250" height="auto" alt="Setting Screen"> | <img src="https://github.com/Didi211/SmartFarming/assets/82868612/e3a7e9f9-aa8b-4986-ac6e-549d4dcd5299" alt="Rule Details" width="250" height="auto">
